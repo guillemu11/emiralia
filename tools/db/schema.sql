@@ -2,6 +2,9 @@
 -- Emiralia — Database Schema
 -- ============================================================
 
+-- Required extension for GIST indexes (overlap queries)
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
 CREATE TABLE IF NOT EXISTS properties (
   -- Identificación
   pf_id                TEXT PRIMARY KEY,

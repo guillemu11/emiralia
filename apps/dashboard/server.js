@@ -1919,8 +1919,30 @@ app.get('/api/skills/recent', async (req, res) => {
     }
 });
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// PRODUCTION: Serve React Build
+// ═══════════════════════════════════════════════════════════════════════════════
+
+if (process.env.NODE_ENV === 'production') {
+    const path = await import('path');
+    const { fileURLToPath } = await import('url');
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    // Serve static files from dist/
+    app.use(express.static(path.join(__dirname, 'dist')));
+
+    // SPA catch-all: non-API routes serve index.html
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    });
+}
+
 // ─── Start ───────────────────────────────────────────────────────────────────
 
 app.listen(port, () => {
-    console.log(`Emiralia API running at http://localhost:${port}`);
+    console.log(`🚀 Dashboard server running on http://localhost:${port}`);
+    console.log(`📊 API endpoints: http://localhost:${port}/api/*`);
+    if (process.env.NODE_ENV === 'production') {
+        console.log(`📦 Serving React build from dist/`);
+    }
 });
