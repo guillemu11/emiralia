@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from '../api.js';
 
 export default function DailyAiSummary({ department, date, t }) {
     const [summary, setSummary] = useState(null);

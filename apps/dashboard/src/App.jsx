@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DepartmentKanban from './components/DepartmentKanban';
 import { useLanguage } from './i18n/LanguageContext.jsx';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from './api.js';
 
 // ─── Componentes de Bloque ───────────────────────────────────────────────────
 

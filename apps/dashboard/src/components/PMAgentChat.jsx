@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from '../api.js';
 
 export default function PMAgentChat({ inboxItemId, onItemCreated, onStatusChange, onClose }) {
     const { t } = useLanguage();

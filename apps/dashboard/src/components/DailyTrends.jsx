@@ -3,8 +3,7 @@ import {
     AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
     Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from '../api.js';
 
 const moodColors = {
     productive: '#10b981',

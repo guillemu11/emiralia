@@ -5,8 +5,7 @@ import BrainstormPanel from '../components/BrainstormPanel';
 import WeeklyReport from '../components/WeeklyReport';
 import PipelineBoard from '../components/PipelineBoard';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from '../api.js';
 
 const themeMap = {
     data: 'theme-green',

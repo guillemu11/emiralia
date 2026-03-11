@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from '../api.js';
 
 const severityColors = {
     CRITICA: '#ef4444',

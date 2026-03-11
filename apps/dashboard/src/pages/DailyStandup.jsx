@@ -5,8 +5,7 @@ import DailyEodModal from '../components/DailyEodModal.jsx';
 import DailyCoverageAlert from '../components/DailyCoverageAlert.jsx';
 import DailyTrends from '../components/DailyTrends.jsx';
 import DailyAiSummary from '../components/DailyAiSummary.jsx';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from '../api.js';
 
 const themeMap = {
     data: 'theme-green',

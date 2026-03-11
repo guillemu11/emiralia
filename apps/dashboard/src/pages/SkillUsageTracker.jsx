@@ -4,8 +4,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     AreaChart, Area, PieChart, Pie, Cell, Legend
 } from 'recharts';
-
-const API_URL = 'http://localhost:3002/api';
+import { API_URL } from '../api.js';
 
 const DOMAIN_COLORS = {
     ejecucion: '#2563EB',
