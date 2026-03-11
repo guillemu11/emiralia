@@ -1,0 +1,955 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #2563EB;
+  /* Safe area insets for notched devices */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  @apply font-display bg-background-light text-primary-text antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Hero background */
+.hero-gradient {
+  background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.45)),
+    url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Hide scrollbar — cross-browser */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Scroll reveal — only hide sections AFTER JS has loaded (prevents FOUC) */
+.js-loaded .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.js-loaded .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Range Input — consistent cross-browser */
+input[type='range'] {
+  @apply w-full accent-primary h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer;
+  -webkit-appearance: none;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  @apply w-5 h-5 rounded-full bg-primary shadow-lg border-2 border-white;
+  margin-top: -7px;
+}
+
+input[type='range']::-moz-range-thumb {
+  @apply w-5 h-5 rounded-full bg-primary shadow-lg border-2 border-white;
+  border: 2px solid white;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  @apply h-1.5 rounded-lg;
+}
+
+/* ========== Mobile nav — transparent over hero, solid after scroll ========== */
+@media (max-width: 639px) {
+  .nav-logo-text {
+    color: white;
+  }
+  .nav-logo-text .text-primary {
+    color: #2563EB;
+  }
+  .nav-icon-color {
+    color: white;
+  }
+  .nav-mobile-btn-ghost {
+    color: white;
+  }
+
+  /* Scrolled state — solid background */
+  #main-nav.nav-scrolled {
+    @apply bg-white/95 backdrop-blur-md border-b border-gray-200;
+  }
+  #main-nav.nav-scrolled .nav-logo-text {
+    @apply text-primary-text;
+  }
+  #main-nav.nav-scrolled .nav-icon-color {
+    @apply text-primary;
+  }
+  #main-nav.nav-scrolled .nav-mobile-btn-ghost {
+    @apply text-primary-text;
+  }
+
+  /* Hide top nav when sticky search is visible and scrolled past hero */
+  #main-nav.nav-hidden {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  /* Sticky search: delay entry so nav exits first */
+  #sticky-search-wrapper {
+    transition: max-height 0.3s ease 0.25s, opacity 0.3s ease 0.25s;
+  }
+
+  /* When hiding sticky (scroll up), no delay — hide immediately */
+  #sticky-search-wrapper.is-hiding {
+    transition: max-height 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* Category tabs: collapse on scroll down */
+  #category-tabs {
+    max-height: 60px;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  }
+  #category-tabs.tabs-hidden {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* ========== Search modal ========== */
+#search-modal {
+  will-change: transform;
+}
+
+#search-modal.modal-open {
+  transform: translateY(0);
+}
+
+/* ========== Category tabs ========== */
+.category-tab {
+  transition: all 0.2s ease;
+}
+
+.category-tab.active i {
+  @apply text-primary-text;
+}
+
+.category-tab:not(.active):hover i,
+.category-tab:not(.active):hover span {
+  @apply text-primary-text;
+}
+
+/* ========== Mobile tap highlight removal ========== */
+@media (hover: none) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Lock body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Safe area padding for notched phones */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .fixed.bottom-6 {
+    bottom: calc(1.5rem + var(--safe-bottom));
+  }
+}
+
+/* ========== Developer project images — fixed equal height ========== */
+.project-img-container {
+  position: relative;
+  height: 220px;
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.project-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .project-img-container {
+    height: 240px;
+    margin-bottom: 16px;
+  }
+}
+
+/* ========== Developer page: timeline connector (mobile vertical) ========== */
+@media (max-width: 639px) {
+  .dev-timeline-vertical {
+    position: relative;
+  }
+  .dev-timeline-vertical::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    bottom: 28px;
+    left: 28px;
+    width: 2px;
+    background: #334155; /* slate-700 */
+  }
+}
+
+/* ========== Leaflet custom styles (propiedades.html) ========== */
+
+/* Price bubble markers */
+.marker-bubble {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    z-index: 1;
+}
+
+.marker-secondary {
+    background: #2563EB;
+    color: white;
+}
+
+.marker-offplan {
+    background: #F97316;
+    color: white;
+}
+
+.marker-bubble.marker-hover,
+.marker-bubble:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000 !important;
+}
+
+/* Cluster icons */
+.cluster-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2563EB;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    border: 3px solid white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Override leaflet default cluster styles */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+    background: transparent !important;
+}
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+    background: transparent !important;
+}
+
+/* Popup card */
+.emiralia-popup .leaflet-popup-content-wrapper {
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid #F3F4F6;
+}
+
+.emiralia-popup .leaflet-popup-content {
+    margin: 0;
+    min-width: 180px;
+}
+
+.emiralia-popup .popup-card {
+    padding: 12px 14px;
+}
+
+.emiralia-popup .leaflet-popup-tip-container {
+    display: none;
+}
+
+.emiralia-popup .leaflet-popup-close-button {
+    top: 8px !important;
+    right: 8px !important;
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 16px !important;
+    color: #64748B !important;
+}
+
+/* ========== Line clamp (for card titles) ========== */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ========== Properties page: full-height layout ========== */
+#filter-bar {
+    top: 3.5rem; /* 56px = top-14 — explicit fallback for Tailwind JIT */
+}
+
+@media (min-width: 640px) {
+    #filter-bar {
+        top: 4rem; /* 64px = sm:top-16 */
+    }
+}
+
+#results-main {
+    overflow: hidden;
+}
+
+/* Ensure map panel takes full height in split view */
+#map-panel {
+    min-height: 0;
+}
+
+@media (min-width: 1024px) {
+    #map-panel {
+        height: 100%;
+    }
+}
+
+#results-panel {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
+}
+
+#results-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#results-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#results-panel::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 6px;
+}
+
+#results-panel::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+
+/* ========== Card staggered fade-in ========== */
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.property-card {
+    animation: cardFadeIn 0.4s ease-out both;
+}
+
+.property-card:nth-child(1) { animation-delay: 0s; }
+.property-card:nth-child(2) { animation-delay: 0.04s; }
+.property-card:nth-child(3) { animation-delay: 0.08s; }
+.property-card:nth-child(4) { animation-delay: 0.12s; }
+.property-card:nth-child(5) { animation-delay: 0.16s; }
+.property-card:nth-child(6) { animation-delay: 0.20s; }
+.property-card:nth-child(7) { animation-delay: 0.24s; }
+.property-card:nth-child(8) { animation-delay: 0.28s; }
+.property-card:nth-child(9) { animation-delay: 0.32s; }
+.property-card:nth-child(10) { animation-delay: 0.36s; }
+
+/* ========== Shimmer loading effect ========== */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(
+        90deg,
+        #e2e8f0 25%,
+        #f1f5f9 50%,
+        #e2e8f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+/* ========== Filters modal slide-in ========== */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0.8;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInBackdrop {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#filters-modal:not(.hidden) #filters-backdrop {
+    animation: fadeInBackdrop 0.25s ease-out;
+}
+
+#filters-modal:not(.hidden) > div:last-child {
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ========== Filter option hover states ========== */
+.filter-option {
+    transition: all 0.2s ease;
+}
+
+.filter-option:hover:not(.bg-primary) {
+    background-color: #F1F5F9;
+    border-color: #CBD5E1;
+}
+
+/* Price preset hover */
+.price-preset {
+    transition: all 0.2s ease;
+}
+
+.price-preset:hover {
+    background-color: #F1F5F9;
+    border-color: #CBD5E1;
+}
+
+/* ========== Active filter chip with glow ========== */
+.filter-chip.bg-primary {
+    @apply border-primary;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ========== Active filter pill transition ========== */
+@keyframes pillFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.filter-pill {
+    animation: pillFadeIn 0.2s ease-out both;
+}
+
+/* ========== Favorite button animation ========== */
+.fav-btn {
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.fav-btn:hover {
+    transform: scale(1.15);
+}
+
+.fav-btn:hover i {
+    color: #EF4444 !important;
+}
+
+/* ========== Card image gallery dots ========== */
+.gallery-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.gallery-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transition: background 0.2s ease;
+}
+
+.gallery-dot.active {
+    background: white;
+    width: 6px;
+    height: 6px;
+}
+
+/* ========== Map marker pulse ========== */
+@keyframes markerPulse {
+    0% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+    50% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 6px rgba(37, 99, 235, 0.15); }
+    100% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+}
+
+.marker-bubble {
+    animation: markerPulse 2.5s ease-in-out 1;
+}
+
+.marker-offplan {
+    animation: markerPulse 2.5s ease-in-out 1;
+}
+
+/* ========== Enhanced map popup ========== */
+.emiralia-popup .popup-card {
+    padding: 0;
+}
+
+.emiralia-popup .popup-img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.emiralia-popup .popup-body {
+    padding: 10px 14px 12px;
+}
+
+/* ========== Off-Plan badge gradient ========== */
+.badge-offplan {
+    background: linear-gradient(135deg, #F97316 0%, #FB923C 100%);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+}
+
+/* ========== Alto Potencial badge ========== */
+.badge-alto-potencial {
+    background: linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
+}
+
+/* ========== Developer badge ========== */
+.badge-developer {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #F1F5F9;
+    color: #475569;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px 2px 6px;
+    border-radius: 9999px;
+    max-width: 140px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* ========== Amenity icon pill ========== */
+.amenity-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #F1F5F9;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #475569;
+    transition: background 0.2s ease;
+}
+
+/* ========== Drop shadow text on images ========== */
+.drop-shadow-lg {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ========== Image count badge ========== */
+.property-card .relative img + .absolute {
+    z-index: 5;
+}
+
+/* ========== Results header gradient divider ========== */
+.results-divider {
+    height: 2px;
+    background: linear-gradient(90deg, #2563EB 0%, #3B82F6 40%, transparent 100%);
+    border: none;
+    margin: 0;
+}
+
+/* ========== Card property hover elevation ========== */
+.property-card {
+    transition: background-color 0.2s ease, box-shadow 0.3s ease;
+    border-radius: 16px;
+    border: 1px solid #E5E7EB;
+    background: #FFFFFF;
+    overflow: hidden;
+}
+
+.property-card:hover {
+    background: #F8FAFC;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border-color: #CBD5E1;
+}
+
+/* ========== Mobile bottom sheet gradient edges ========== */
+#sheet-cards {
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 16px,
+        black calc(100% - 24px),
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 16px,
+        black calc(100% - 24px),
+        transparent 100%
+    );
+}
+
+/* ========== Empty state gradient circle ========== */
+.empty-icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========== Loading more premium spinner ========== */
+.loading-more-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid #E2E8F0;
+    border-top-color: #2563EB;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========== CTA glow button ========== */
+.btn-glow {
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-glow:hover {
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    transform: translateY(-1px);
+}
+
+/* ========== Focus states (accessibility) ========== */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid #2563EB;
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+/* ========== Carousel (property cards) ========== */
+.card-carousel {
+    position: relative;
+}
+
+.carousel-track {
+    display: flex;
+    height: 100%;
+    will-change: transform;
+}
+
+.carousel-prev,
+.carousel-next {
+    transition: opacity 0.2s ease, background-color 0.15s ease;
+}
+
+@media (max-width: 639px) {
+    /* On mobile, always show arrows on carousels with >1 image */
+    .card-carousel[data-total]:not([data-total="1"]) .carousel-prev,
+    .card-carousel[data-total]:not([data-total="1"]) .carousel-next {
+        opacity: 0.7 !important;
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.2s ease;
+}
+
+.carousel-dot.active {
+    background: white;
+    width: 8px;
+    height: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== AI Score Badge ========== */
+.ai-score-badge {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ai-score-badge:hover {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== Property Detail Page ========== */
+
+/* Hero image transition */
+#hero-img {
+    transition: opacity 0.3s ease;
+}
+
+/* Gallery hover: show arrows */
+#hero-gallery:hover #gallery-prev,
+#hero-gallery:hover #gallery-next {
+    opacity: 1 !important;
+}
+
+/* Property map popup (light theme) */
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Custom marker pulse (brand primary blue) */
+.custom-marker-detail > div {
+    animation: markerPulseDetail 2s ease-in-out infinite;
+}
+
+@keyframes markerPulseDetail {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+    50% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
+}
+
+/* Thumbnail scrollbar (light theme) */
+#thumbnails {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+#thumbnails::-webkit-scrollbar {
+    height: 4px;
+}
+
+#thumbnails::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+}
+
+/* ========== Desktop-only enhancements ========== */
+@media (min-width: 1024px) {
+  /* Sticky sidebar z-index safety */
+  aside.lg\:sticky {
+    z-index: 10;
+  }
+}
+
+/* ========== Blog page styles (dark theme) ========== */
+
+/* Hero */
+.blog-hero {
+    min-height: 420px;
+}
+
+@media (min-width: 640px) {
+    .blog-hero {
+        min-height: 500px;
+    }
+}
+
+/* Hero overlay: cielo dramatico ambar-dorado sobre skyline oscuro */
+.blog-hero-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(15, 23, 42, 0.3) 0%,
+        rgba(15, 23, 42, 0.5) 40%,
+        rgba(15, 23, 42, 0.85) 75%,
+        rgba(2, 6, 23, 0.95) 100%
+    );
+}
+
+/* Category icon cards */
+.blog-cat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #0F172A;
+    border: 1px solid #1E293B;
+    border-radius: 16px;
+    color: #94A3B8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.blog-cat-card:hover {
+    background: #1E293B;
+    border-color: #334155;
+    color: #E2E8F0;
+}
+
+.blog-cat-card.active {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: #2563EB;
+    color: white;
+}
+
+.blog-cat-card.active .blog-cat-icon {
+    background: rgba(37, 99, 235, 0.2);
+    color: #2563EB;
+}
+
+.blog-cat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #1E293B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748B;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.blog-cat-card:hover .blog-cat-icon {
+    background: #334155;
+    color: #E2E8F0;
+}
+
+/* Sort buttons (dark theme) */
+.blog-sort {
+    background: transparent;
+    color: #64748B;
+    border: 1px solid #334155;
+}
+
+.blog-sort:hover {
+    color: white;
+    border-color: #475569;
+}
+
+.blog-sort.active {
+    background: white;
+    color: #0F172A;
+    border-color: white;
+}
+
+/* Blog card animations */
+.blog-card {
+    animation: cardFadeIn 0.4s ease-out both;
+}
+
+.blog-card:nth-child(1) { animation-delay: 0s; }
+.blog-card:nth-child(2) { animation-delay: 0.06s; }
+.blog-card:nth-child(3) { animation-delay: 0.12s; }
+.blog-card:nth-child(4) { animation-delay: 0.18s; }
+.blog-card:nth-child(5) { animation-delay: 0.24s; }
+.blog-card:nth-child(6) { animation-delay: 0.30s; }
+
+/* ========== Blog article: TOC active state ========== */
+.toc-link {
+    padding-left: 8px;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.toc-link.toc-active {
+    color: #2563EB;
+    font-weight: 600;
+    border-left-color: #2563EB;
+}
+
+.toc-link.toc-active span {
+    color: #2563EB;
+}
+
+/* ========== Blog article: typography ========== */
+.article-content p {
+    line-height: 1.75;
+}
+
+/* ========== Reading progress bar ========== */
+#reading-progress {
+    transition: width 0.1s linear;
+}

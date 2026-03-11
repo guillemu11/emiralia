@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/gmunoz02/AppData/Local/Temp/pm-skills/pm-product-discovery/commands/**)",
+      "WebFetch(domain:unsplash.com)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-files.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/memory-enforcement.sh\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/reinject-context.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

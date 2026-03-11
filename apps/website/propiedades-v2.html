@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="description"
+        content="Descubre las mejores propiedades de inversion en Emiratos Arabes Unidos. Analisis con IA, ROI estimado y datos verificados." />
+    <title>Propiedades V2 - Emiralia</title>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.577.0"></script>
+    <!-- Brand: always light theme per brand-guidelines.md -->
+    <style>
+        body { opacity: 0; }
+        body.styles-ready { opacity: 1; transition: opacity 0.2s ease-in; }
+    </style>
+</head>
+
+<body class="antialiased font-display leading-relaxed bg-white">
+
+    <!-- ========== NAV ========== -->
+    <nav id="main-nav"
+        class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-border-color transition-all duration-300">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="/" class="flex items-center gap-2 shrink-0">
+                <i data-lucide="building-2" class="w-6 h-6 sm:w-7 sm:h-7 text-primary"></i>
+                <span class="text-base sm:text-lg font-bold tracking-tight uppercase text-primary-text">EMIRA<span class="text-primary">LIA</span></span>
+            </a>
+
+            <!-- Desktop nav -->
+            <div class="hidden lg:flex items-center gap-8 font-medium text-sm text-primary-text/80">
+                <a class="text-primary font-semibold" href="/propiedades-v2.html">Comprar</a>
+                <a class="hover:text-primary transition-colors" href="/invertir.html">Invertir</a>
+                <a class="hover:text-primary transition-colors" href="/desarrolladores.html">Proyectos</a>
+                <a class="hover:text-primary transition-colors" href="/blog.html">Academia</a>
+                <a class="hover:text-primary transition-colors flex items-center gap-1.5" href="/ai-insights.html">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>AI Insights
+                </a>
+            </div>
+
+            <!-- Desktop actions -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="/interes.html" class="px-4 py-2 text-sm font-semibold hover:bg-gray-50 rounded-full transition-colors text-primary-text cursor-pointer">Login</a>
+                <a href="/interes.html" class="bg-primary text-slate-900 px-5 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg hover:bg-primary transition-all active:scale-95 cursor-pointer">Acceso</a>
+            </div>
+
+            <!-- Mobile actions -->
+            <div class="flex sm:hidden items-center gap-2">
+                <button class="flex items-center justify-center w-11 h-11 rounded-full text-primary-text cursor-pointer" aria-label="Buscar">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </button>
+                <button class="flex items-center justify-center w-11 h-11 rounded-full bg-primary text-slate-900 shadow-lg shadow-primary/30 active:scale-95 transition-transform cursor-pointer" aria-label="Cuenta">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SEARCH SECTION ========== -->
+    <section class="pt-20 sm:pt-24 pb-6 sm:pb-8 bg-gradient-to-b from-slate-50 to-white">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Title -->
+            <div class="mb-5 sm:mb-6">
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-primary-text tracking-tight">
+                    Propiedades en <span class="text-primary">Emiratos</span>
+                </h1>
+                <p class="text-secondary-text text-sm sm:text-base mt-1.5 max-w-xl">
+                    Analisis inteligente de cada propiedad. Datos reales, ROI estimado y scoring por IA.
+                </p>
+            </div>
+
+            <!-- Search bar + Quick filters -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <!-- Search input -->
+                <div class="relative flex-1 max-w-xl">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-muted-text pointer-events-none"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por comunidad, proyecto o zona..."
+                        class="w-full pl-11 pr-4 py-3 sm:py-3.5 rounded-full border border-border-emphasis bg-white text-sm text-primary-text placeholder:text-muted-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm" />
+                </div>
+                <!-- Filter chips row -->
+                <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+                    <button class="filter-chip-v2 shrink-0 px-4 py-2.5 sm:py-3 rounded-full border border-border-emphasis text-sm font-medium text-primary-text hover:border-primary hover:text-primary cursor-pointer transition-all bg-white shadow-sm" data-filter="off_plan">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 inline mr-1 align-[-2px]"></i>Off-Plan
+                    </button>
+                    <button class="filter-chip-v2 shrink-0 px-4 py-2.5 sm:py-3 rounded-full border border-border-emphasis text-sm font-medium text-primary-text hover:border-primary hover:text-primary cursor-pointer transition-all bg-white shadow-sm" data-filter="verified">
+                        <i data-lucide="badge-check" class="w-3.5 h-3.5 inline mr-1 align-[-2px]"></i>Verificadas
+                    </button>
+                    <button id="open-filters-v2" class="shrink-0 px-4 py-2.5 sm:py-3 rounded-full border border-border-emphasis text-sm font-medium text-primary-text hover:border-primary hover:text-primary cursor-pointer transition-all bg-white shadow-sm flex items-center gap-1.5">
+                        <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+                        <span>Filtros</span>
+                        <span id="filter-count-badge" class="hidden ml-0.5 w-5 h-5 rounded-full bg-primary text-slate-900 text-[10px] font-bold flex items-center justify-center">0</span>
+                    </button>
+                    <div class="hidden sm:block h-6 w-px bg-border-emphasis shrink-0"></div>
+                    <select id="sort-select-v2" class="shrink-0 text-sm border border-border-emphasis rounded-full px-4 py-2.5 sm:py-3 bg-white font-medium cursor-pointer text-primary-text shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+                        <option value="ai_recommended">Recomendado por IA</option>
+                        <option value="roi_desc">Mayor ROI</option>
+                        <option value="price_asc">Precio: menor a mayor</option>
+                        <option value="price_desc">Precio: mayor a menor</option>
+                        <option value="newest">Mas recientes</option>
+                        <option value="size_desc">Superficie: mayor</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Active filters -->
+            <div id="active-filters-v2" class="flex items-center gap-2 mt-3 flex-wrap"></div>
+        </div>
+    </section>
+
+    <!-- ========== RESULTS STATS BAR ========== -->
+    <div class="sticky top-14 sm:top-16 z-30 bg-white/90 backdrop-blur-md border-b border-border-color">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-10 sm:h-11 flex items-center justify-between">
+            <p class="text-xs sm:text-sm text-secondary-text">
+                <span id="results-count-v2" class="font-bold text-primary">--</span> propiedades encontradas
+            </p>
+            <!-- View toggle -->
+            <div class="flex items-center gap-1 border border-border-emphasis rounded-full p-0.5">
+                <button class="view-btn-v2 active px-2.5 py-1 rounded-full cursor-pointer transition-all" data-view="grid" title="Cuadricula">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                </button>
+                <button class="view-btn-v2 px-2.5 py-1 rounded-full cursor-pointer transition-all" data-view="list" title="Lista">
+                    <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MAIN GRID ========== -->
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+        <!-- Cards grid — responsive masonry-like -->
+        <div id="cards-grid-v2" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+            <!-- Cards rendered by JS -->
+        </div>
+
+        <!-- Loading skeleton (vertical cards) -->
+        <div id="loading-skeleton-v2" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+            <div class="skeleton-card-v2 rounded-2xl overflow-hidden border border-border-color">
+                <div class="h-[220px] sm:h-[240px] skeleton-shimmer"></div>
+                <div class="p-4 space-y-3">
+                    <div class="h-4 skeleton-shimmer w-3/4 rounded-full"></div>
+                    <div class="h-3 skeleton-shimmer w-1/2 rounded-full"></div>
+                    <div class="h-5 skeleton-shimmer w-2/5 rounded-full"></div>
+                    <div class="flex gap-2"><div class="h-7 skeleton-shimmer w-16 rounded-full"></div><div class="h-7 skeleton-shimmer w-16 rounded-full"></div><div class="h-7 skeleton-shimmer w-14 rounded-full"></div></div>
+                </div>
+            </div>
+            <div class="skeleton-card-v2 rounded-2xl overflow-hidden border border-border-color hidden sm:block">
+                <div class="h-[220px] sm:h-[240px] skeleton-shimmer"></div>
+                <div class="p-4 space-y-3">
+                    <div class="h-4 skeleton-shimmer w-2/3 rounded-full"></div>
+                    <div class="h-3 skeleton-shimmer w-2/5 rounded-full"></div>
+                    <div class="h-5 skeleton-shimmer w-1/3 rounded-full"></div>
+                    <div class="flex gap-2"><div class="h-7 skeleton-shimmer w-14 rounded-full"></div><div class="h-7 skeleton-shimmer w-16 rounded-full"></div></div>
+                </div>
+            </div>
+            <div class="skeleton-card-v2 rounded-2xl overflow-hidden border border-border-color hidden lg:block">
+                <div class="h-[220px] sm:h-[240px] skeleton-shimmer"></div>
+                <div class="p-4 space-y-3">
+                    <div class="h-4 skeleton-shimmer w-4/5 rounded-full"></div>
+                    <div class="h-3 skeleton-shimmer w-1/3 rounded-full"></div>
+                    <div class="h-5 skeleton-shimmer w-1/4 rounded-full"></div>
+                    <div class="flex gap-2"><div class="h-7 skeleton-shimmer w-16 rounded-full"></div><div class="h-7 skeleton-shimmer w-12 rounded-full"></div></div>
+                </div>
+            </div>
+            <div class="skeleton-card-v2 rounded-2xl overflow-hidden border border-border-color hidden xl:block">
+                <div class="h-[220px] sm:h-[240px] skeleton-shimmer"></div>
+                <div class="p-4 space-y-3">
+                    <div class="h-4 skeleton-shimmer w-3/5 rounded-full"></div>
+                    <div class="h-3 skeleton-shimmer w-1/2 rounded-full"></div>
+                    <div class="h-5 skeleton-shimmer w-2/5 rounded-full"></div>
+                    <div class="flex gap-2"><div class="h-7 skeleton-shimmer w-14 rounded-full"></div><div class="h-7 skeleton-shimmer w-16 rounded-full"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state-v2" class="hidden flex flex-col items-center justify-center py-24 sm:py-32 text-center px-6">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center mb-6">
+                <i data-lucide="search-x" class="w-11 h-11 text-primary"></i>
+            </div>
+            <h3 class="font-bold text-xl sm:text-2xl mb-2 text-primary-text">No encontramos propiedades</h3>
+            <p class="text-secondary-text text-sm sm:text-base mb-1 max-w-md">Intenta ampliar el rango de precio, elegir otra ubicacion o cambiar los filtros activos.</p>
+            <p class="text-muted-text text-xs mb-6">Hay miles de opciones esperandote en todo EAU.</p>
+            <button id="clear-all-v2" class="bg-primary text-slate-900 px-8 py-3.5 rounded-full text-sm font-semibold cursor-pointer transition-all shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 active:scale-95">
+                Limpiar todos los filtros
+            </button>
+        </div>
+
+        <!-- Infinite scroll sentinel -->
+        <div id="scroll-sentinel-v2" class="h-6"></div>
+
+        <!-- Loading more indicator -->
+        <div id="loading-more-v2" class="hidden py-10 text-center">
+            <div class="inline-flex flex-col items-center gap-2.5">
+                <div class="loading-more-spinner"></div>
+                <span class="text-xs text-muted-text font-medium">Cargando mas propiedades</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== FILTERS MODAL (reuse same structure) ========== -->
+    <div id="filters-modal-v2" class="fixed inset-0 z-[60] hidden">
+        <!-- Backdrop -->
+        <div id="filters-backdrop-v2" class="absolute inset-0 bg-black/40 backdrop-blur-sm cursor-pointer"></div>
+        <!-- Panel -->
+        <div class="absolute inset-y-0 right-0 w-full sm:w-[440px] bg-white shadow-2xl flex flex-col filters-panel-v2">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-5 border-b border-border-color">
+                <h2 class="text-lg font-bold text-primary-text">Filtros</h2>
+                <div class="flex items-center gap-3">
+                    <button id="clear-filters-v2" class="text-sm text-primary font-medium cursor-pointer hover:underline">Limpiar todo</button>
+                    <button id="close-filters-v2" class="w-11 h-11 rounded-full hover:bg-gray-50 flex items-center justify-center cursor-pointer transition-colors">
+                        <i data-lucide="x" class="w-5 h-5 text-primary-text"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable filters -->
+            <div class="flex-1 overflow-y-auto px-6 py-6 space-y-7">
+                <!-- Tipo de Propiedad -->
+                <div>
+                    <h3 class="text-sm font-semibold text-primary-text mb-3 flex items-center gap-2">
+                        <i data-lucide="home" class="w-4 h-4 text-muted-text"></i>Tipo de Propiedad
+                    </h3>
+                    <div class="flex flex-wrap gap-2" id="filter-property-type-v2">
+                        <button class="filter-opt-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="Apartment">Apartamento</button>
+                        <button class="filter-opt-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="Villa">Villa</button>
+                        <button class="filter-opt-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="Townhouse">Adosado</button>
+                        <button class="filter-opt-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="Penthouse">Atico</button>
+                        <button class="filter-opt-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="Duplex">Duplex</button>
+                    </div>
+                </div>
+
+                <!-- Habitaciones -->
+                <div>
+                    <h3 class="text-sm font-semibold text-primary-text mb-3 flex items-center gap-2">
+                        <i data-lucide="bed-double" class="w-4 h-4 text-muted-text"></i>Habitaciones
+                    </h3>
+                    <div class="flex flex-wrap gap-2" id="filter-bedrooms-v2">
+                        <button class="filter-opt-v2 px-5 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="0">Studio</button>
+                        <button class="filter-opt-v2 px-5 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="1">1</button>
+                        <button class="filter-opt-v2 px-5 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="2">2</button>
+                        <button class="filter-opt-v2 px-5 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="3">3</button>
+                        <button class="filter-opt-v2 px-5 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-value="4">4+</button>
+                    </div>
+                </div>
+
+                <!-- Precio -->
+                <div>
+                    <h3 class="text-sm font-semibold text-primary-text mb-3 flex items-center gap-2">
+                        <i data-lucide="banknote" class="w-4 h-4 text-muted-text"></i>Rango de Precio (AED)
+                    </h3>
+                    <div class="flex items-center gap-3 mb-3">
+                        <input type="number" id="filter-price-min-v2" placeholder="Min" class="flex-1 px-4 py-2.5 rounded-full border border-border-emphasis text-sm bg-white text-primary-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                        <span class="text-muted-text text-sm">&mdash;</span>
+                        <input type="number" id="filter-price-max-v2" placeholder="Max" class="flex-1 px-4 py-2.5 rounded-full border border-border-emphasis text-sm bg-white text-primary-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="filter-price-presets-v2">
+                        <button class="price-preset-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-xs font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-min="0" data-max="500000">&lt; 500K</button>
+                        <button class="price-preset-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-xs font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-min="500000" data-max="1000000">500K - 1M</button>
+                        <button class="price-preset-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-xs font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-min="1000000" data-max="2000000">1M - 2M</button>
+                        <button class="price-preset-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-xs font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-min="2000000" data-max="5000000">2M - 5M</button>
+                        <button class="price-preset-v2 px-4 py-2.5 rounded-full border border-border-emphasis text-xs font-medium cursor-pointer transition-all hover:border-primary hover:text-primary" data-min="5000000" data-max="">5M+</button>
+                    </div>
+                </div>
+
+                <!-- Estado -->
+                <div>
+                    <h3 class="text-sm font-semibold text-primary-text mb-3 flex items-center gap-2">
+                        <i data-lucide="hard-hat" class="w-4 h-4 text-muted-text"></i>Estado
+                    </h3>
+                    <div class="flex gap-2" id="filter-off-plan-v2">
+                        <button class="filter-opt-v2 flex-1 px-3 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all text-center active" data-value="">Todos</button>
+                        <button class="filter-opt-v2 flex-1 px-3 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all text-center" data-value="true">Off-Plan</button>
+                        <button class="filter-opt-v2 flex-1 px-3 py-2.5 rounded-full border border-border-emphasis text-sm font-medium cursor-pointer transition-all text-center" data-value="false">Secundario</button>
+                    </div>
+                </div>
+
+                <!-- Verificadas -->
+                <div class="flex items-center justify-between py-2">
+                    <h3 class="text-sm font-semibold text-primary-text flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-muted-text"></i>Solo verificadas
+                    </h3>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="filter-verified-v2" class="sr-only peer" />
+                        <div class="w-11 h-6 bg-border-emphasis peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-5 border-t border-border-color">
+                <button id="apply-filters-v2" class="w-full bg-primary text-slate-900 py-3.5 rounded-full font-semibold text-sm cursor-pointer transition-all shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 active:scale-95">
+                    <span id="apply-filters-label-v2">Ver propiedades</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SCROLL TO TOP FAB ========== -->
+    <button id="scroll-top-fab" class="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-primary text-slate-900 shadow-xl shadow-primary/30 flex items-center justify-center cursor-pointer transition-all opacity-0 pointer-events-none hover:scale-110 active:scale-95" aria-label="Volver arriba">
+        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    </button>
+
+    <!-- App module -->
+    <script type="module" src="/src/propiedades-v2.js"></script>
+</body>
+
+</html>

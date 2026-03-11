@@ -1,0 +1,54 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# Build outputs
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.cache
+
+# Vite
+.vite/
+vite.config.js.timestamp-*
+
+# Docker volumes (no commitear datos)
+postgres-data/
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+tmp/
+
+# Logs
+logs/
+*.log
+apps/api/api.log
+
+# Claude Code
+.claude/projects/
+
+# Testing
+coverage/
+.nyc_output/

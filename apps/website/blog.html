@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <meta name="theme-color" content="#0F172A" />
+    <meta name="description"
+        content="Academia Emiralia: Guias, analisis y articulos sobre inversion inmobiliaria en Emiratos Arabes Unidos para hispanohablantes." />
+    <title>Academia - Emiralia | Blog de Inversion Inmobiliaria en EAU</title>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.577.0"></script>
+    <!-- Prevent FOUC -->
+    <style>
+        body { opacity: 0; }
+        body.styles-ready { opacity: 1; transition: opacity 0.15s ease-in; }
+    </style>
+</head>
+
+<body class="antialiased font-display leading-relaxed bg-slate-50 text-slate-900">
+
+    <!-- ========== NAV ========== -->
+    <nav id="main-nav"
+        class="fixed top-0 w-full z-50 transition-all duration-300 bg-slate-50/90 backdrop-blur-md border-b border-slate-800/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="/" class="flex items-center gap-2 shrink-0">
+                <i data-lucide="building-2" class="w-7 h-7 sm:w-8 sm:h-8 text-primary"></i>
+                <span class="text-lg sm:text-xl font-bold tracking-tight uppercase text-slate-900">EMIRA<span class="text-primary">LIA</span></span>
+                <span class="text-xs font-medium text-slate-400 ml-1 hidden sm:inline">Academia</span>
+            </a>
+
+            <!-- Desktop nav -->
+            <div class="hidden lg:flex items-center gap-8 font-medium text-sm text-primary-text/80">
+                <a class="hover:text-slate-900 transition-colors" href="/">Inicio</a>
+                <a class="hover:text-slate-900 transition-colors" href="/propiedades-v2.html">Propiedades</a>
+                <a class="hover:text-slate-900 transition-colors" href="/invertir.html">Invertir</a>
+                <a class="text-primary font-semibold" href="/blog.html">Academia</a>
+                <a class="hover:text-slate-900 transition-colors" href="/ai-insights.html">AI Insights</a>
+            </div>
+
+            <!-- Desktop actions -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="/interes.html" class="px-4 py-2 text-sm font-semibold hover:bg-slate-800 rounded-full transition-colors text-slate-900">Login</a>
+                <a href="/interes.html" class="bg-primary text-slate-900 px-6 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95">Empezar</a>
+            </div>
+
+            <!-- Mobile actions -->
+            <div class="flex sm:hidden items-center gap-2">
+                <button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-800 text-slate-900" aria-label="Buscar">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+                <button class="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-slate-900 shadow-lg shadow-primary/30 active:scale-95 transition-transform" aria-label="Cuenta">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+
+        <!-- ========== HERO ========== -->
+        <section class="blog-hero relative pt-24 sm:pt-32 pb-16 sm:pb-24 overflow-hidden">
+            <!-- Background: skyline silhouette con cielo dramatico -->
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000"
+                     alt="Dubai skyline" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 blog-hero-overlay"></div>
+            </div>
+
+            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
+                <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-slate-900/90 text-xs font-medium px-4 py-1.5 rounded-full mb-6 border border-white/10">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
+                    EMIRALIA ACADEMIA
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight max-w-3xl mx-auto mb-4">
+                    Guia Definitiva 2026: Invertir en el Mercado Inmobiliario de Emiratos
+                </h1>
+                <p class="text-base sm:text-lg text-white max-w-2xl mx-auto mb-8">
+                    Descubre como comprar piso en Dubai, vivir en Abu Dhabi y maximizar tu ROI con datos reales del mercado.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="#featured"
+                       class="bg-primary text-slate-900 px-8 py-3 rounded-full text-sm font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all active:scale-95 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        Guia de Inversion
+                    </a>
+                    <a href="#articles"
+                       class="bg-white/10 backdrop-blur-sm text-slate-900 px-8 py-3 rounded-full text-sm font-semibold border border-white/20 hover:bg-white/20 transition-all active:scale-95 flex items-center gap-2">
+                        <i data-lucide="newspaper" class="w-4 h-4"></i>
+                        Ultimo Informe
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CATEGORIES (icon cards grid) ========== -->
+        <section class="bg-slate-50 py-10 sm:py-14">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-6">Categorias de Inversion</h2>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button class="blog-cat-card active group" data-category="invertir">
+                        <div class="blog-cat-icon">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-sm font-medium">Invertir en Dubai</span>
+                    </button>
+                    <button class="blog-cat-card group" data-category="abu-dhabi">
+                        <div class="blog-cat-icon">
+                            <i data-lucide="building" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-sm font-medium">Comprar en Abu Dhabi</span>
+                    </button>
+                    <button class="blog-cat-card group" data-category="legal">
+                        <div class="blog-cat-icon">
+                            <i data-lucide="scale" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-sm font-medium">Legal y Golden Visa</span>
+                    </button>
+                    <button class="blog-cat-card group" data-category="lifestyle">
+                        <div class="blog-cat-icon">
+                            <i data-lucide="sun" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-sm font-medium">Estilo de Vida</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== FEATURED ARTICLE + SIDEBAR ========== -->
+        <section id="featured" class="bg-slate-50/50 py-12 sm:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    <!-- Featured Article (2/3) -->
+                    <div class="lg:col-span-2">
+                        <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-6 flex items-center gap-2">
+                            <i data-lucide="star" class="w-4 h-4 text-primary"></i>
+                            Articulo Destacado
+                        </h2>
+                        <a href="/articulo.html?id=guia-completa" class="group block bg-slate-50 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300">
+                            <div class="relative h-64 sm:h-80 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1582407947092-50b8c425e9f0?auto=format&fit=crop&q=80&w=1200"
+                                     alt="Propiedad en Dubai" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
+                                <div class="absolute top-4 left-4 flex items-center gap-2">
+                                    <span class="bg-primary text-slate-900 text-xs font-semibold px-3 py-1 rounded-full">Guia</span>
+                                    <span class="bg-slate-50/80 backdrop-blur-sm text-slate-900 text-xs font-medium px-3 py-1 rounded-full border border-slate-700">12 min lectura</span>
+                                </div>
+                            </div>
+                            <div class="p-6 sm:p-8">
+                                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors leading-snug">
+                                    Como comprar tu primera propiedad en Dubai desde Espana o Latam
+                                </h3>
+                                <p class="text-slate-400 text-sm sm:text-base leading-relaxed mb-4 line-clamp-2">
+                                    Una guia completa para inversores: estrategias, documentos legales, financiamiento, Golden Visa y como elegir la zona con mayor ROI de acuerdo al analisis de la plataforma Emiralia.
+                                </p>
+                                <div class="flex items-center gap-4 text-xs text-slate-500">
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                        8 Mar 2026
+                                    </span>
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                        2,450 vistas
+                                    </span>
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                                        18 comentarios
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Sidebar: Master Guide (1/3) -->
+                    <div class="lg:col-span-1">
+                        <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-6 flex items-center gap-2">
+                            <i data-lucide="bookmark" class="w-4 h-4 text-primary"></i>
+                            Guia Maestra de Inversion
+                        </h2>
+                        <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-800">
+                            <!-- Imagen hero de la guia -->
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=600"
+                                     alt="Interior lujo Dubai" class="w-full h-full object-cover" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+                                <div class="absolute bottom-4 left-5 right-5">
+                                    <span class="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">Serie completa</span>
+                                    <h3 class="text-lg font-bold text-slate-900 mt-2 leading-snug">Guia paso a paso para invertir en Emiratos</h3>
+                                </div>
+                            </div>
+                            <!-- Capitulos -->
+                            <div class="p-5">
+                                <nav class="space-y-0.5">
+                                    <a href="/articulo.html?id=por-que-invertir-eau" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">1</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Por que invertir en EAU</span>
+                                    </a>
+                                    <a href="/articulo.html?id=zonas-mayor-roi" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">2</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Zonas con mayor ROI</span>
+                                    </a>
+                                    <a href="/articulo.html?id=golden-visa" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">3</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Golden Visa paso a paso</span>
+                                    </a>
+                                    <a href="/articulo.html?id=financiacion-extranjeros" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">4</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Financiacion para extranjeros</span>
+                                    </a>
+                                    <a href="/articulo.html?id=off-plan-vs-resale" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">5</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Off-plan vs resale</span>
+                                    </a>
+                                    <a href="/articulo.html?id=costes-ocultos" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">6</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Costes ocultos y fees</span>
+                                    </a>
+                                    <a href="/articulo.html?id=developers-confianza" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">7</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Developers de confianza</span>
+                                    </a>
+                                    <a href="/articulo.html?id=checklist-comprador" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800 transition-colors group">
+                                        <span class="w-6 h-6 rounded-md bg-primary/15 text-primary text-[11px] font-bold flex items-center justify-center shrink-0">8</span>
+                                        <span class="text-sm text-slate-300 group-hover:text-slate-900 transition-colors">Checklist del comprador</span>
+                                    </a>
+                                </nav>
+                                <a href="/interes.html" class="mt-4 w-full bg-primary text-slate-900 text-sm font-semibold py-3 rounded-full flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                    Descargar Guia Completa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ARTICLES SEO GRID ========== -->
+        <section id="articles" class="bg-slate-50 py-12 sm:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+                        Ultimos Articulos SEO
+                    </h2>
+                    <div class="hidden sm:flex items-center gap-2">
+                        <button class="blog-sort active px-4 py-2 rounded-full text-xs font-medium transition-all" data-sort="recent">Recientes</button>
+                        <button class="blog-sort px-4 py-2 rounded-full text-xs font-medium transition-all" data-sort="popular">Populares</button>
+                    </div>
+                </div>
+
+                <!-- Articles grid -->
+                <div id="articles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- Article Card 1 -->
+                    <a href="/articulo.html?id=dubai-marina-2026" class="blog-card group bg-slate-50 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300" data-category="invertir">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1546412414-e1885259563a?auto=format&fit=crop&q=80&w=600"
+                                 alt="Dubai Marina" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-primary/90 text-slate-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Inversion</span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-base font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                Las mejores zonas para invertir en Dubai Marina en 2026
+                            </h3>
+                            <p class="text-sm text-slate-400 line-clamp-2 mb-4">
+                                Analisis detallado del ROI por torre, precios por m2 y tendencias del mercado en Dubai Marina.
+                            </p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    8 min
+                                </span>
+                                <span>5 Mar 2026</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Article Card 2 -->
+                    <a href="/articulo.html?id=golden-visa-2026" class="blog-card group bg-slate-50 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300" data-category="legal">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1582407947092-50b8c425e9f0?auto=format&fit=crop&q=80&w=600"
+                                 alt="Golden Visa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-emerald-500/90 text-slate-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Legal</span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-base font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                Golden Visa 2026: requisitos actualizados para inversores inmobiliarios
+                            </h3>
+                            <p class="text-sm text-slate-400 line-clamp-2 mb-4">
+                                Todo lo que necesitas saber sobre la Golden Visa de EAU: montos minimos, proceso y beneficios para tu familia.
+                            </p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    10 min
+                                </span>
+                                <span>2 Mar 2026</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Article Card 3 -->
+                    <a href="/articulo.html?id=saadiyat-island" class="blog-card group bg-slate-50 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300" data-category="abu-dhabi">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1597659840241-37e2b9c2f55f?auto=format&fit=crop&q=80&w=600"
+                                 alt="Abu Dhabi" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-amber-500/90 text-slate-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Abu Dhabi</span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-base font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                Saadiyat Island: la isla cultural que atrae inversores de todo el mundo
+                            </h3>
+                            <p class="text-sm text-slate-400 line-clamp-2 mb-4">
+                                Con el Louvre y el Guggenheim como vecinos, Saadiyat se posiciona como la zona premium de Abu Dhabi.
+                            </p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    6 min
+                                </span>
+                                <span>28 Feb 2026</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Article Card 4 -->
+                    <a href="/articulo.html?id=ranking-off-plan-2026" class="blog-card group bg-slate-50 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300" data-category="invertir">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&q=80&w=600"
+                                 alt="Dubai Creek" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-primary/90 text-slate-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Inversion</span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-base font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                Ranking 2026: mejores barrios para compras off-plan en Dubai
+                            </h3>
+                            <p class="text-sm text-slate-400 line-clamp-2 mb-4">
+                                Comparamos JVC, Business Bay, Dubai Hills y MBR City por rentabilidad proyectada y riesgo.
+                            </p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    7 min
+                                </span>
+                                <span>25 Feb 2026</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Article Card 5 -->
+                    <a href="/articulo.html?id=coste-vida-dubai-2026" class="blog-card group bg-slate-50 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300" data-category="lifestyle">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=600"
+                                 alt="Vida en Dubai" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-violet-500/90 text-slate-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Lifestyle</span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-base font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                Coste de vida en Dubai 2026: guia completa para hispanohablantes
+                            </h3>
+                            <p class="text-sm text-slate-400 line-clamp-2 mb-4">
+                                Alquiler, transporte, colegios, supermercados: cuanto cuesta vivir en Dubai comparado con Madrid y CDMX.
+                            </p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    9 min
+                                </span>
+                                <span>20 Feb 2026</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Article Card 6 -->
+                    <a href="/articulo.html?id=contratos-off-plan" class="blog-card group bg-slate-50 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300" data-category="legal">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=600"
+                                 alt="Contratos Dubai" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-emerald-500/90 text-slate-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Legal</span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-base font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                                SPA y contratos off-plan: que revisar antes de firmar en Dubai
+                            </h3>
+                            <p class="text-sm text-slate-400 line-clamp-2 mb-4">
+                                Clausulas criticas, penalizaciones por retraso y como proteger tu inversion con un buen abogado local.
+                            </p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    11 min
+                                </span>
+                                <span>15 Feb 2026</span>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+
+                <!-- Load more -->
+                <div class="text-center mt-10">
+                    <button id="load-more-btn" class="px-8 py-3 rounded-full text-sm font-semibold border border-slate-700 text-slate-900 hover:bg-slate-800 transition-all active:scale-95 flex items-center gap-2 mx-auto">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        Cargar mas articulos
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== NEWSLETTER CTA ========== -->
+        <section class="bg-slate-50/50 py-16 sm:py-20 border-t border-slate-800/50">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+                <div class="bg-slate-50 rounded-2xl p-8 sm:p-12 border border-slate-800">
+                    <i data-lucide="mail" class="w-10 h-10 text-primary mx-auto mb-4"></i>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+                        Recibe analisis exclusivos cada semana
+                    </h2>
+                    <p class="text-slate-400 text-sm sm:text-base mb-8 max-w-lg mx-auto">
+                        Datos del mercado, oportunidades de inversion y guias practicas directamente en tu bandeja de entrada. Sin spam, solo valor.
+                    </p>
+                    <form class="flex flex-col sm:flex-row items-center gap-3 max-w-md mx-auto">
+                        <input type="email" placeholder="tu@email.com"
+                               class="w-full sm:flex-1 px-5 py-3 rounded-full bg-slate-800 border border-slate-700 text-slate-900 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" />
+                        <button type="submit"
+                                class="w-full sm:w-auto bg-primary text-slate-900 px-8 py-3 rounded-full text-sm font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 whitespace-nowrap">
+                            Suscribirme
+                        </button>
+                    </form>
+                    <p class="text-slate-600 text-xs mt-4">+2,500 inversores ya reciben nuestro newsletter</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-slate-50 border-t border-slate-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
+                <div>
+                    <h4 class="text-slate-900 font-semibold text-sm mb-4">Emiralia</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="/" class="hover:text-slate-900 transition-colors">Inicio</a></li>
+                        <li><a href="/propiedades.html" class="hover:text-slate-900 transition-colors">Propiedades</a></li>
+                        <li><a href="/desarrolladores.html" class="hover:text-slate-900 transition-colors">Developers</a></li>
+                        <li><a href="/blog.html" class="hover:text-slate-900 transition-colors">Academia</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-slate-900 font-semibold text-sm mb-4">Invertir</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a class="hover:text-slate-900 transition-colors">Dubai</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Abu Dhabi</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Off-Plan</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Golden Visa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-slate-900 font-semibold text-sm mb-4">Recursos</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a class="hover:text-slate-900 transition-colors">Guia de Inversion</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Market Data</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Simulador ROI</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-slate-900 font-semibold text-sm mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a class="hover:text-slate-900 transition-colors">Privacidad</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Terminos</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Cookies</a></li>
+                        <li><a class="hover:text-slate-900 transition-colors">Contacto</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="building-2" class="w-5 h-5 text-primary"></i>
+                    <span class="text-sm font-bold text-slate-900 uppercase tracking-tight">EMIRA<span class="text-primary">LIA</span></span>
+                </div>
+                <p class="text-xs text-slate-500">2026 Emiralia. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Vite entry -->
+    <script type="module" src="/src/blog.js"></script>
+</body>
+
+</html>

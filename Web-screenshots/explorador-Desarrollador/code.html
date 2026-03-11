@@ -1,0 +1,389 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f2b90d",
+            "background-light": "#f8f8f5",
+            "background-dark": "#181611",
+            "neutral-dark": "#221e10",
+            "neutral-muted": "#393528",
+            "neutral-text": "#bab29c",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Manrope', sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-neutral-muted px-6 md:px-10 lg:px-40 py-4 bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<span class="material-symbols-outlined text-3xl">domain</span>
+</div>
+<h2 class="text-white text-xl font-extrabold leading-tight tracking-[-0.015em]">EMIRALIA</h2>
+</div>
+<nav class="hidden lg:flex items-center gap-9">
+<a class="text-slate-300 hover:text-primary text-sm font-medium transition-colors" href="#">Proyectos</a>
+<a class="text-primary text-sm font-bold border-b-2 border-primary" href="#">Desarrolladores</a>
+<a class="text-slate-300 hover:text-primary text-sm font-medium transition-colors" href="#">Inversiones</a>
+<a class="text-slate-300 hover:text-primary text-sm font-medium transition-colors" href="#">Mercado</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden md:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full overflow-hidden">
+<div class="text-neutral-text flex border-none bg-neutral-muted items-center justify-center pl-4 border-r-0">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-neutral-muted text-white focus:ring-0 h-full placeholder:text-neutral-text px-4 text-base font-normal" placeholder="Buscar..." value=""/>
+</div>
+</label>
+<button class="hidden sm:flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold tracking-wide hover:brightness-110 transition-all">
+          Acceso Inversores
+        </button>
+<div class="size-10 rounded-full border border-neutral-muted overflow-hidden flex items-center justify-center bg-neutral-muted">
+<span class="material-symbols-outlined text-neutral-text">account_circle</span>
+</div>
+</div>
+</header>
+<main class="flex-1 px-6 md:px-10 lg:px-40 py-6">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 mb-8">
+<a class="text-neutral-text text-sm hover:text-primary" href="#">Inicio</a>
+<span class="material-symbols-outlined text-neutral-text text-xs">chevron_right</span>
+<span class="text-white text-sm font-semibold">Desarrolladores</span>
+</div>
+<!-- Hero Section -->
+<section class="mb-12">
+<div class="relative min-h-[420px] rounded-2xl overflow-hidden flex flex-col justify-end p-8 md:p-12 lg:p-16 border border-neutral-muted shadow-2xl">
+<div class="absolute inset-0 z-0 bg-cover bg-center" data-alt="Panoramic view of Dubai skyline at sunset with golden glow" style='background-image: linear-gradient(rgba(0,0,0,0.2) 0%, rgba(24, 22, 17, 0.95) 90%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBVRKaH0jvSipD7DY1E0m4CqagYI32DSG-O1zwKQkgcWA7gCkWH2MBi7lCV7684Pa6OFr3cVXbK_eir1khbLUtAZeho0_oqV-AKfqU5V59JfBW0VbFMPvF0H785un49K2kJtfkN6NjXQ-puS9nBC06Y_X0oNnjZBQ6KMMTxh95ShqYaKdWZPHfnxa1DPoqw7YWY9AvVSuAg-Mn0D7RLHBxjk9ALhGRxCi237mPdzZJv7Qq8BjxUjbRA7eQw-tEP4oz2boE7GwcDY3Vb");'></div>
+<div class="relative z-10 max-w-3xl">
+<h1 class="text-white text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] mb-4 tracking-tight">
+              Análisis de Desarrolladores en <span class="text-primary">Emiratos</span>
+</h1>
+<p class="text-neutral-text text-lg md:text-xl font-medium max-w-2xl mb-8 leading-relaxed">
+              Comparamos el historial de entregas, calidad y revalorización de los principales constructores del mercado. Transparencia impulsada por IA.
+            </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-background-dark font-bold px-8 py-4 rounded-xl hover:scale-105 transition-transform flex items-center gap-2">
+<span class="material-symbols-outlined">leaderboard</span>
+                Ver Rankings
+              </button>
+<button class="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all">
+                Informe de Mercado 2024
+              </button>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+<!-- Main Content Area -->
+<div class="lg:col-span-3">
+<!-- Filters & Search -->
+<div class="flex flex-col md:flex-row gap-4 mb-10 items-center justify-between">
+<div class="relative w-full md:max-w-md">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-neutral-text">search</span>
+<input class="w-full bg-neutral-dark border border-neutral-muted rounded-xl py-4 pl-12 pr-4 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="Buscar desarrollador (ej. Emaar, Nakheel...)" type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto">
+<button class="flex items-center gap-2 px-4 py-2 bg-neutral-dark border border-neutral-muted rounded-lg text-sm text-white hover:border-primary whitespace-nowrap">
+                Ranking de Entrega <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 bg-neutral-dark border border-neutral-muted rounded-lg text-sm text-white hover:border-primary whitespace-nowrap">
+                ROI Promedio <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 bg-neutral-dark border border-neutral-muted rounded-lg text-sm text-white hover:border-primary whitespace-nowrap">
+                Calidad <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Developer Grid -->
+<div class="space-y-12">
+<!-- Developer Card 1: EMAAR -->
+<div class="bg-neutral-dark/40 border border-neutral-muted rounded-2xl p-6 hover:border-primary/50 transition-colors">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+<div class="flex items-center gap-4">
+<div class="size-16 bg-white rounded-xl flex items-center justify-center p-2 shadow-inner">
+<img alt="EMAAR Logo" class="max-h-full" data-alt="Logo of Emaar Properties developer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWNBrbQa1qyWHVBsyAklMULYMhzYAJj3veIcFIRBa55aMHj9PuAjKyFThti5fa3XXHmjT-7mbXfbP-jz-MV8IJ3Qx58yZprsdhg4V84E4UqeFZWl_UtQ_MRsZkIjY5WTX2udCv-xJyBQwhiElp50zncU18GSR47L-NInfGrM3Myzcs6ii7JpqR6_oaV8D2tNK4WAuUNp3OUzARxkcrwKdGTfz-MsCKFbfgAp9ZdoLrNFdmvqa8W3ar7xBq1OVMK8e7CIcQSBi9E6Hx"/>
+</div>
+<div>
+<h3 class="text-2xl font-bold text-white tracking-tight">Emaar Properties</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-green-500/10 text-green-500 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Top Rated</span>
+<span class="text-neutral-text text-xs">Est. 1997 • Dubai, UAE</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-4 w-full md:w-auto">
+<div class="flex-1 md:flex-none bg-neutral-muted/30 px-4 py-2 rounded-lg border border-neutral-muted">
+<p class="text-neutral-text text-[10px] uppercase font-bold tracking-widest">Proyectos</p>
+<p class="text-white font-bold text-lg">105+</p>
+</div>
+<div class="flex-1 md:flex-none bg-neutral-muted/30 px-4 py-2 rounded-lg border border-neutral-muted">
+<p class="text-neutral-text text-[10px] uppercase font-bold tracking-widest">ROI Medio</p>
+<p class="text-primary font-bold text-lg">7.2%</p>
+</div>
+<div class="flex-1 md:flex-none bg-neutral-muted/30 px-4 py-2 rounded-lg border border-green-500/50">
+<p class="text-neutral-text text-[10px] uppercase font-bold tracking-widest text-green-500">A Tiempo</p>
+<p class="text-green-500 font-bold text-lg">98%</p>
+</div>
+</div>
+</div>
+<!-- Featured Projects Carousel for Developer -->
+<div>
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-sm font-bold uppercase tracking-widest text-neutral-text">Proyectos más rentables</h4>
+<a class="text-primary text-xs font-bold hover:underline" href="#">Ver todos los 42 activos</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Project 1 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-xl overflow-hidden mb-3">
+<img alt="Address The Bay" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" data-alt="Modern high-rise beachfront tower in Dubai" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKmivPyZI6ZyU5_lEWkhCObcRSKmyHhG9xfREnwDUumEWTKpumefFNABAxTgtW4rdCrg9hkAYnBXhJeST1gDPGEuiXh5UCADrMD_uz4s4EMLywPQWvLQZwrcA_HXm8M-ggmN8Iyd13dw1Y31gVNZZzGvmtvm0yaOgGBoDrnoI13U-p3xqSC8bjqjFGWJX-y53hkWVIDVpIl_Dpr2dfPuXB1PHeQzwgnyAaMC8zYwHyvJbsiWD040o-HvRUdUV8omhamD7URvabn_fa"/>
+<div class="absolute top-2 right-2 bg-background-dark/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-primary">ROI 8.5%</div>
+</div>
+<h5 class="text-white font-bold text-sm truncate">Address The Bay</h5>
+<div class="flex justify-between mt-1">
+<span class="text-neutral-text text-xs">Desde AED 2.4M</span>
+<span class="text-neutral-text text-xs">Entrega Q4 2026</span>
+</div>
+</div>
+<!-- Project 2 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-xl overflow-hidden mb-3">
+<img alt="Emaar Beachfront" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" data-alt="Luxury coastal apartment complex" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_QR5GoVm-t4_ZQ9Ji8n9slzuyh3ea0odhryRXF_Lp12G4RjDFMPon7Ih49HictZmEw5Y_RfveKZAzC3jT3duOZlZTBZd1nFVaUDY5llAETvuU_lxrJIUqQJuN3arAeNsQDVXwE0MrGSfNBJL11lV_1J9pHoflIBgMW76FebjornuXPMRhD0Q3NhcLtmDZQGLuahgdHtRlxUGRN8RdOrMxuZG_X5JrS26VGRf4g-5f2S5PC69uNEaNHLmdEAeMdt3_NyV6AnBSv7M3"/>
+<div class="absolute top-2 right-2 bg-background-dark/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-primary">ROI 7.9%</div>
+</div>
+<h5 class="text-white font-bold text-sm truncate">Beachgate By Address</h5>
+<div class="flex justify-between mt-1">
+<span class="text-neutral-text text-xs">Desde AED 3.1M</span>
+<span class="text-neutral-text text-xs">Entrega Q3 2027</span>
+</div>
+</div>
+<!-- Project 3 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-xl overflow-hidden mb-3">
+<img alt="Dubai Hills" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" data-alt="Green community apartments overlooking golf course" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrpy1HgytE21BSG_12p8JlEHawmuiFznthus_D4wZMfLHFa7vtztrNyxtKvHnulrxl34peobz0Ty0tTJ2jdue-Y6V4sqHD4WxdOSEMcA7tVHeXMxl5FUBgWzFW6yK8AUXB4ZG2fAik4O5pXNHLbF7K1ngvgZPlclTK9oBezxDLvGckcVkLpcEcK-FU5NbyNSyomNZ8O3gHnjRJBP4EVIN_rm6CLtTMmWjGNTqg0TP6X5CrS3Cof_pD-Dgb_EtTe4fgn8Phkv2_KDdn"/>
+<div class="absolute top-2 right-2 bg-background-dark/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-primary">ROI 6.8%</div>
+</div>
+<h5 class="text-white font-bold text-sm truncate">Park Horizon - Hills</h5>
+<div class="flex justify-between mt-1">
+<span class="text-neutral-text text-xs">Desde AED 1.8M</span>
+<span class="text-neutral-text text-xs">Entrega Q2 2025</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Developer Card 2: DAMAC -->
+<div class="bg-neutral-dark/40 border border-neutral-muted rounded-2xl p-6 hover:border-primary/50 transition-colors">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+<div class="flex items-center gap-4">
+<div class="size-16 bg-white rounded-xl flex items-center justify-center p-2 shadow-inner">
+<img alt="DAMAC Logo" class="max-h-full" data-alt="Logo of Damac Properties developer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2-vfPQvwNpSOfCyNiYyk4iH8IedrYSpFjb6ONxBssN_yiBfLqfPgRgDWivf4M2cXbe3y2_rnr1Yo-MY0UZjqtzWnjVEztclZgsdoHwSwDaXxCPTNuFNSULsNGCMxjaVbJUP0vFV_NuMCPyPgk-UOX_Skxd9JgH1VFkqygDLqD7wvMToyc47T2MMkZCQ78RGhORdSy3BVvNSRK2hyU238Lgl5mFrv2WrA2jOpOzwRyWNOPndP4XHI3bZT_Qgf_89VPYUI5eKtyZ5pX"/>
+</div>
+<div>
+<h3 class="text-2xl font-bold text-white tracking-tight">Damac Properties</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Luxury Leader</span>
+<span class="text-neutral-text text-xs">Est. 2002 • Dubai, UAE</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-4 w-full md:w-auto">
+<div class="flex-1 md:flex-none bg-neutral-muted/30 px-4 py-2 rounded-lg border border-neutral-muted">
+<p class="text-neutral-text text-[10px] uppercase font-bold tracking-widest">Proyectos</p>
+<p class="text-white font-bold text-lg">82+</p>
+</div>
+<div class="flex-1 md:flex-none bg-neutral-muted/30 px-4 py-2 rounded-lg border border-neutral-muted">
+<p class="text-neutral-text text-[10px] uppercase font-bold tracking-widest">ROI Medio</p>
+<p class="text-primary font-bold text-lg">8.1%</p>
+</div>
+<div class="flex-1 md:flex-none bg-neutral-muted/30 px-4 py-2 rounded-lg border border-yellow-500/50">
+<p class="text-neutral-text text-[10px] uppercase font-bold tracking-widest text-yellow-500">A Tiempo</p>
+<p class="text-yellow-500 font-bold text-lg">91%</p>
+</div>
+</div>
+</div>
+<!-- Featured Projects Carousel for DAMAC -->
+<div>
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-sm font-bold uppercase tracking-widest text-neutral-text">Proyectos más rentables</h4>
+<a class="text-primary text-xs font-bold hover:underline" href="#">Ver todos los 29 activos</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-xl overflow-hidden mb-3">
+<img alt="Damac Lagoons" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" data-alt="Mediterranean inspired villa community with crystal lagoon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDygJ6rCYY336sxAv69EEzVigMvqKoSM_StvcyaREdCIxC-wLFad09r-NEmj0puCnffd6fF4do5clVmbGGPnLGIfexHDOB72amjP5UQnx7QWaA0r-gVqMD860bcD97iMo2CRZTqmENZTjIJkbdaS41677PHU2BTlpJZzf7W9s7RnCMG7rQUZqM3lJabR7JY6NI6TkEhpjHUdtAEZ-85eixGvGFHSbdGpXLKnabNlJcaOvrnLR3BdCe05XkbxcKDdoM4UUfXfdwO0Lfx"/>
+<div class="absolute top-2 right-2 bg-background-dark/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-primary">ROI 9.2%</div>
+</div>
+<h5 class="text-white font-bold text-sm truncate">Damac Lagoons</h5>
+<div class="flex justify-between mt-1">
+<span class="text-neutral-text text-xs">Desde AED 1.6M</span>
+<span class="text-neutral-text text-xs">Entrega Q1 2025</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-xl overflow-hidden mb-3">
+<img alt="Damac Bay" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" data-alt="Branded luxury skyscraper by Cavalli" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX874vO4teQD8m7-OxAoa3W5evmhk96off04SPxvBnklXmhjhTq7gN9rjs981Bh97bhoTL-snZzZqJ5cLQz856pcw87_M5vMoXO4CdyAnXq393AHvWQgGnsk3--HSo2Gcv2ydKpxGRiyCg_m1nTCr0D7sUifCEcWjCjs0EFaiPqMdGxDpYRlN9dkMfXcImY7WNC355bdVY-X9r6Iq5Lf31_cro8Ngy6zZivjRc68rm0gx56Oz9UDI-HurVusgkH4tNw9fLGotzXpbx"/>
+<div class="absolute top-2 right-2 bg-background-dark/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-primary">ROI 8.4%</div>
+</div>
+<h5 class="text-white font-bold text-sm truncate">Damac Bay by Cavalli</h5>
+<div class="flex justify-between mt-1">
+<span class="text-neutral-text text-xs">Desde AED 4.5M</span>
+<span class="text-neutral-text text-xs">Entrega Q4 2027</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-xl overflow-hidden mb-3">
+<img alt="Safa Two" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" data-alt="High-end urban apartments with futuristic architecture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1jaojLv6KFfbWq7WRimTGBWO6c5Mb8bgfw2ysq-XfE0ytX776brYzRihD8RdV4nPeopxd5AWVoNbhseJhvJcnsvT2NZRv6zIxDrIwzYuV4QY8PkXsgnxeyKPKBVBxIVeOH22aJ2DfAjHiANYqtA0v-vb3Yymi0UOnBO02ignKp4YtulFZ9TtD6lO8-v8iPrZbJyoSQDIDeCRxiF5ghAecXOQStOboiYEmOohhzUKmVGYbfwetE7kch-GvBkTgbXJss3OzQbol0QEg"/>
+<div class="absolute top-2 right-2 bg-background-dark/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-primary">ROI 7.5%</div>
+</div>
+<h5 class="text-white font-bold text-sm truncate">Safa Two de Grisogono</h5>
+<div class="flex justify-between mt-1">
+<span class="text-neutral-text text-xs">Desde AED 2.2M</span>
+<span class="text-neutral-text text-xs">Entrega Q3 2026</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Widget -->
+<aside class="space-y-6">
+<div class="bg-primary/10 border border-primary/20 rounded-2xl p-6">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">info</span>
+<h4 class="text-white font-bold">¿Por qué el Developer?</h4>
+</div>
+<p class="text-neutral-text text-sm leading-relaxed mb-4">
+              En el mercado de Dubai, el <strong>historial del constructor</strong> es el factor #1 de riesgo. Evaluamos:
+            </p>
+<ul class="space-y-3 text-sm text-slate-300">
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                Puntualidad histórica de entrega.
+              </li>
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                Calidad de acabados post-garantía.
+              </li>
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                Liquidez en el mercado secundario.
+              </li>
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-primary text-base">check_circle</span>
+                Gestión de áreas comunes.
+              </li>
+</ul>
+</div>
+<div class="bg-neutral-dark border border-neutral-muted rounded-2xl p-6">
+<h4 class="text-white font-bold mb-4">Rankings Semanales</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b border-neutral-muted pb-3">
+<div class="flex items-center gap-3">
+<span class="text-neutral-text font-bold">01</span>
+<span class="text-white text-sm">Sobha Realty</span>
+</div>
+<span class="text-green-500 text-xs font-bold">+2.4% ROI</span>
+</div>
+<div class="flex items-center justify-between border-b border-neutral-muted pb-3">
+<div class="flex items-center gap-3">
+<span class="text-neutral-text font-bold">02</span>
+<span class="text-white text-sm">Ellington Prop.</span>
+</div>
+<span class="text-green-500 text-xs font-bold">+1.8% ROI</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="text-neutral-text font-bold">03</span>
+<span class="text-white text-sm">Meraas</span>
+</div>
+<span class="text-green-500 text-xs font-bold">+1.2% ROI</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-neutral-muted text-neutral-text text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-neutral-muted transition-colors">
+              Descargar Reporte PDF
+            </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-neutral-dark border-t border-neutral-muted mt-20 pt-16 pb-8 px-6 md:px-10 lg:px-40">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+<div class="space-y-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">domain</span>
+<h2 class="text-white text-xl font-extrabold tracking-tight">EMIRALIA</h2>
+</div>
+<p class="text-neutral-text text-sm leading-relaxed">
+            Plataforma líder en análisis de inversión inmobiliaria en los Emiratos Árabes Unidos. Datos reales, decisiones inteligentes.
+          </p>
+<div class="flex gap-4">
+<a class="text-neutral-text hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-neutral-text hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+<a class="text-neutral-text hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+</div>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6">Plataforma</h4>
+<ul class="space-y-4 text-neutral-text text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Explorador de Proyectos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Mapa de Calor ROI</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Comparador de Desarrolladores</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Pre-Lanzamientos</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6">Recursos</h4>
+<ul class="space-y-4 text-neutral-text text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Guía de Inversión 2024</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Calculadora de Impuestos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Golden Visa UAE</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Blog de Mercado</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6">Newsletter Premium</h4>
+<p class="text-neutral-text text-sm mb-4">Recibe oportunidades off-market antes que nadie.</p>
+<form class="space-y-3">
+<input class="w-full bg-neutral-muted/50 border border-neutral-muted rounded-lg px-4 py-2 text-white outline-none focus:border-primary" placeholder="Email profesional" type="email"/>
+<button class="w-full bg-primary text-background-dark font-bold py-2 rounded-lg hover:brightness-110">Suscribirme</button>
+</form>
+</div>
+</div>
+<div class="border-t border-neutral-muted pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-text">
+<p>© 2024 Emiralia AI Investments. Todos los derechos reservados.</p>
+<div class="flex gap-6">
+<a class="hover:text-white transition-colors" href="#">Términos de Servicio</a>
+<a class="hover:text-white transition-colors" href="#">Política de Privacidad</a>
+<a class="hover:text-white transition-colors" href="#">Aviso Legal</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

@@ -1,0 +1,35 @@
+{
+    "name": "emiralia",
+    "version": "0.1.0",
+    "description": "Emiralia AI Operating System — tools and agents",
+    "type": "module",
+    "scripts": {
+        "scrape:propertyfinder": "node tools/apify_propertyfinder.js",
+        "scrape:panicselling": "node tools/apify_panicselling.js",
+        "pm:bot": "node tools/telegram/bot.js",
+        "dashboard:dev": "npm run dev --prefix apps/dashboard",
+        "dashboard:server": "npm run server --prefix apps/dashboard",
+        "db:init": "node tools/db/init_db.js",
+        "db:up": "docker compose up -d",
+        "db:down": "docker compose down",
+        "db:logs": "docker compose logs -f postgres",
+        "website:dev": "npm run dev --prefix apps/website",
+        "website:build": "npm run build --prefix apps/website",
+        "dev:dashboard": "concurrently -n server,vite -c blue,green \"npm run dashboard:server\" \"npm run dashboard:dev\"",
+        "dev:website": "npm run website:dev",
+        "dev:all": "concurrently -n server,dashboard,website -c blue,green,yellow \"npm run dashboard:server\" \"npm run dashboard:dev\" \"npm run website:dev\""
+    },
+    "dependencies": {
+        "@anthropic-ai/sdk": "^0.78.0",
+        "@notionhq/client": "^5.11.1",
+        "axios": "^1.7.0",
+        "dotenv": "^16.4.0",
+        "openai": "^6.25.0",
+        "pg": "^8.13.0",
+        "playwright": "^1.58.2",
+        "telegraf": "^4.16.3"
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
+    }
+}

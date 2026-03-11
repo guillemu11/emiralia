@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="description"
+        content="La primera plataforma en español que analiza el mercado inmobiliario de Emiratos en tiempo real." />
+    <title>Emiralia - Invierte en Emiratos con Datos</title>
+    <!-- Inter Font — optimized loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.577.0"></script>
+    
+    <!-- Prevent FOUC: hide body until Vite injects styles -->
+    <style>
+        body { opacity: 0; }
+        body.styles-ready { opacity: 1; transition: opacity 0.1s ease-in; }
+    </style>
+</head>
+
+<body class="antialiased font-display leading-relaxed">
+
+    <!-- ========== NAV ========== -->
+    <nav id="main-nav"
+        class="fixed top-0 w-full z-50 transition-all duration-300 sm:bg-white/80 sm:backdrop-blur-md sm:border-b sm:border-border-emphasis">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="/" class="flex items-center gap-2 shrink-0">
+                <i data-lucide="building-2" class="w-7 h-7 sm:w-8 sm:h-8 nav-icon-color sm:text-primary"></i>
+                <span
+                    class="text-lg sm:text-xl font-bold tracking-tight uppercase nav-logo-text sm:text-slate-900">EMIRA<span
+                        class="text-primary">LIA</span></span>
+            </a>
+
+            <!-- Desktop nav -->
+            <div class="hidden lg:flex items-center gap-8 font-medium text-sm text-slate-600">
+                <a class="hover:text-primary transition-colors" href="/propiedades-v2.html">Propiedades</a>
+                <a class="hover:text-primary transition-colors" href="/invertir.html">Invertir</a>
+                <a class="hover:text-primary transition-colors" href="/blog.html">Academia</a>
+                <a class="hover:text-primary transition-colors" href="/ai-insights.html">AI Insights</a>
+            </div>
+
+            <!-- Desktop actions -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="/interes.html"
+                    class="px-4 py-2 text-sm font-semibold hover:bg-slate-800:bg-slate-800 rounded-full transition-colors text-white">Login</a>
+                <a href="/interes.html"
+                    class="bg-primary text-slate-900 px-6 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all active:scale-95">Empezar</a>
+            </div>
+
+            <!-- Mobile actions -->
+            <div class="flex sm:hidden items-center gap-2">
+                <button
+                    class="flex items-center justify-center w-10 h-10 rounded-full nav-mobile-btn-ghost"
+                    aria-label="Buscar">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+                <button
+                    class="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-slate-900 shadow-lg shadow-primary/30 active:scale-95 transition-transform"
+                    aria-label="Cuenta">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- ========== HERO ========== -->
+        <section id="hero-section"
+            class="hero-gradient min-h-[100svh] sm:min-h-[600px] sm:pt-32 sm:pb-20 flex flex-col justify-end sm:justify-center sm:items-center px-5 sm:px-6 relative pb-6 pt-20">
+
+            <!-- Mobile: centered text + search -->
+            <div class="sm:hidden flex-1 flex flex-col items-center justify-center text-center -mt-12">
+                <h1 class="text-[2.5rem] font-bold text-white leading-[1.08] drop-shadow-lg mb-4">
+                    Invierta con<br />datos.<br /><span class="text-white drop-shadow-lg">No con<br />intuicion.</span>
+                </h1>
+                <p class="text-base text-white drop-shadow-lg drop-shadow-md max-w-[280px] mb-6">
+                    La primera plataforma que analiza el mercado inmobiliario en tiempo real.
+                </p>
+                <!-- Search pill -->
+                <button id="hero-search-trigger" class="w-full bg-white rounded-full shadow-2xl p-2 flex items-center gap-3 active:scale-[0.98] transition-transform">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-300"></i>
+                    </div>
+                    <div class="flex-1 min-w-0 text-left">
+                        <p class="text-sm font-semibold text-slate-900 truncate">Donde invertir?</p>
+                        <p class="text-xs text-slate-600 truncate">Cualquier zona &bull; Rentabilidad alta</p>
+                    </div>
+                    <div class="w-10 h-10 bg-white border border-border-emphasis rounded-full flex items-center justify-center shrink-0">
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4 text-slate-900"></i>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Desktop: centered text -->
+            <div class="hidden sm:block max-w-4xl text-center mb-8 sm:mb-12">
+                <h1 class="text-5xl lg:text-7xl font-bold text-white mb-6 drop-shadow-lg animate-fade-in leading-[1.1]">
+                    Invierte con datos. <br /><span class="opacity-90">No con intuicion.</span>
+                </h1>
+                <p class="text-xl text-white/90 max-w-2xl mx-auto drop-shadow-md">
+                    La primera plataforma en español que analiza el mercado inmobiliario de Emiratos en tiempo real.
+                </p>
+            </div>
+
+            <!-- Desktop: horizontal search pill -->
+            <div
+                class="hidden sm:block w-full max-w-5xl bg-white rounded-full shadow-2xl p-2 border border-border-color">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 grid grid-cols-4 w-full">
+                        <div
+                            class="px-6 py-4 border-r border-border-color hover:bg-slate-50 rounded-l-full cursor-pointer transition-colors">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Ubicacion</p>
+                            <p class="text-sm font-medium text-slate-900">Dubai Marina</p>
+                        </div>
+                        <div
+                            class="px-6 py-4 border-r border-border-color hover:bg-slate-50 cursor-pointer transition-colors">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Tipo</p>
+                            <p class="text-sm font-medium text-slate-900">Apartamento</p>
+                        </div>
+                        <div
+                            class="px-6 py-4 border-r border-border-color hover:bg-slate-50 cursor-pointer transition-colors">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Presupuesto</p>
+                            <p class="text-sm font-medium text-slate-900">Cualquiera</p>
+                        </div>
+                        <div
+                            class="px-6 py-4 hover:bg-slate-50 cursor-pointer transition-colors">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">ROI Minimo</p>
+                            <p class="text-sm font-medium text-slate-900">8% +</p>
+                        </div>
+                    </div>
+                    <button id="hero-analyze-btn"
+                        class="bg-primary text-white p-4 rounded-full flex items-center justify-center gap-2 px-8 hover:brightness-110 transition-all shadow-lg shadow-primary/20 shrink-0 cursor-pointer">
+                        <i data-lucide="search" class="w-5 h-5 stroke-[1.5px]"></i>
+                        <span class="font-bold">Analizar</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MOBILE: STICKY SEARCH + CATEGORY TABS ========== -->
+        <div class="sm:hidden sticky top-0 z-40 bg-white border-b border-border-color" id="mobile-sticky-search">
+            <!-- Search pill clone (hidden until hero pill scrolls away) -->
+            <div id="sticky-search-wrapper" class="overflow-hidden transition-all duration-300" style="max-height:0;opacity:0">
+                <button id="sticky-search-trigger" class="mx-4 mt-3 mb-3 w-[calc(100%-2rem)] bg-white rounded-full shadow-lg border border-border-emphasis p-2 flex items-center gap-3 active:scale-[0.98] transition-transform">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-300"></i>
+                    </div>
+                    <div class="flex-1 min-w-0 text-left">
+                        <p class="text-sm font-semibold text-slate-900 truncate">Donde invertir?</p>
+                        <p class="text-xs text-slate-600 truncate">Cualquier zona &bull; Rentabilidad alta</p>
+                    </div>
+                    <div class="w-10 h-10 bg-white border border-border-emphasis rounded-full flex items-center justify-center shrink-0">
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4 text-slate-900"></i>
+                    </div>
+                </button>
+            </div>
+            <!-- Category tabs (collapse on scroll down, expand on scroll up) -->
+            <div class="flex gap-6 overflow-x-auto hide-scrollbar px-4 py-3 transition-all duration-300 overflow-hidden" id="category-tabs">
+                <button class="category-tab active flex flex-col items-center gap-1.5 shrink-0 pb-2 border-b-2 border-primary" data-category="alta-rentabilidad">
+                    <i data-lucide="trending-up" class="w-7 h-7 text-primary stroke-[1.25]"></i>
+                    <span class="text-[11px] font-semibold text-slate-900 whitespace-nowrap">Alta Rentabilidad</span>
+                </button>
+                <button class="category-tab flex flex-col items-center gap-1.5 shrink-0 pb-2 border-b-2 border-transparent" data-category="frente-al-mar">
+                    <i data-lucide="waves" class="w-7 h-7 text-slate-600 stroke-[1.25]"></i>
+                    <span class="text-[11px] font-medium text-slate-600 whitespace-nowrap">Frente al mar</span>
+                </button>
+                <button class="category-tab flex flex-col items-center gap-1.5 shrink-0 pb-2 border-b-2 border-transparent" data-category="lujo">
+                    <i data-lucide="gem" class="w-7 h-7 text-slate-600 stroke-[1.25]"></i>
+                    <span class="text-[11px] font-medium text-slate-600 whitespace-nowrap">Lujo</span>
+                </button>
+                <button class="category-tab flex flex-col items-center gap-1.5 shrink-0 pb-2 border-b-2 border-transparent" data-category="off-plan">
+                    <i data-lucide="landmark" class="w-7 h-7 text-slate-600 stroke-[1.25]"></i>
+                    <span class="text-[11px] font-medium text-slate-600 whitespace-nowrap">Proyectos Off-Plan</span>
+                </button>
+                <button class="category-tab flex flex-col items-center gap-1.5 shrink-0 pb-2 border-b-2 border-transparent" data-category="developers">
+                    <i data-lucide="building" class="w-7 h-7 text-slate-600 stroke-[1.25]"></i>
+                    <span class="text-[11px] font-medium text-slate-600 whitespace-nowrap">Developers</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========== OPORTUNIDADES ALPHA ========== -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-24">
+            <div class="flex justify-between items-end mb-6 sm:mb-10">
+                <div>
+                    <h2 class="text-xl sm:text-3xl font-bold mb-1 sm:mb-2 text-slate-900">
+                        Oportunidades Alpha</h2>
+                    <p class="text-slate-600 text-xs sm:text-base">Seleccionadas por nuestra IA hoy</p>
+                </div>
+                <a class="text-primary font-semibold flex items-center gap-1 hover:underline underline-offset-4 text-sm shrink-0"
+                    href="#">
+                    Ver todas <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <!-- Mobile: vertical list / Desktop: grid -->
+            <div class="sm:grid sm:grid-cols-3 gap-5 sm:gap-8 space-y-6 sm:space-y-0">
+
+                <!-- Card 1 -->
+                <div class="group cursor-pointer">
+                    <div
+                        class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3 sm:mb-4 shadow-sm group-hover:shadow-xl transition-all">
+                        <img alt="Marina Gate"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            loading="lazy"
+                            src="https://plus.unsplash.com/premium_photo-1697729983477-345d7407a0d3?q=80&w=800" />
+                        <div
+                            class="absolute top-3 left-3 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-slate-800">
+                            DESTACADO</div>
+                        <button
+                            class="absolute top-3 right-3 sm:top-4 sm:right-4 text-slate-900 hover:scale-110 transition-transform bg-black/20 hover:bg-black/40 p-2 rounded-full backdrop-blur-sm"
+                            aria-label="Guardar propiedad">
+                            <i data-lucide="heart" class="w-5 h-5 stroke-[1.5px]"></i>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start mb-1">
+                        <h3 class="font-bold text-base sm:text-lg text-slate-900">Marina Gate
+                            Residences</h3>
+                        <div class="text-right shrink-0 ml-2">
+                            <p class="font-bold text-base sm:text-lg text-slate-900">1.2M AED</p>
+                            <p class="text-xs text-slate-600">~ $326k USD</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-3">Dubai Marina, Emiratos Arabes</p>
+                    <div class="flex items-center gap-6 py-3 border-t border-border-color">
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">ROI EST.</p>
+                            <p class="font-bold text-success">9.2% <i data-lucide="trending-up" class="w-3 h-3 inline"></i></p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">SCORE IA</p>
+                            <p class="font-bold text-slate-900">94<span class="text-slate-600 font-normal">/100</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="group cursor-pointer">
+                    <div
+                        class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3 sm:mb-4 shadow-sm group-hover:shadow-xl transition-all">
+                        <img alt="Address Beach"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            loading="lazy"
+                            src="https://plus.unsplash.com/premium_photo-1697730117675-21d537b6fa12?q=80&w=800" />
+                        <div
+                            class="absolute top-3 left-3 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-slate-800">
+                            DISTRESSED DEAL</div>
+                        <button
+                            class="absolute top-3 right-3 sm:top-4 sm:right-4 text-slate-900 hover:scale-110 transition-transform bg-black/20 hover:bg-black/40 p-2 rounded-full backdrop-blur-sm"
+                            aria-label="Guardar propiedad">
+                            <i data-lucide="heart" class="w-5 h-5 stroke-[1.5px]"></i>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start mb-1">
+                        <h3 class="font-bold text-base sm:text-lg text-slate-900">Address Beach
+                            Resort</h3>
+                        <div class="text-right shrink-0 ml-2">
+                            <p class="font-bold text-base sm:text-lg text-slate-900">3.5M AED</p>
+                            <p class="text-xs text-slate-600">~ $953k USD</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 text-sm mb-3">JBR, Dubai</p>
+                    <div class="flex items-center gap-6 py-3 border-t border-border-color">
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">ROI EST.</p>
+                            <p class="font-bold text-success">11.4% <i data-lucide="trending-up" class="w-3 h-3 inline"></i></p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">SCORE IA</p>
+                            <p class="font-bold text-slate-900">98<span class="text-slate-600 font-normal">/100</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="group cursor-pointer">
+                    <div
+                        class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3 sm:mb-4 shadow-sm group-hover:shadow-xl transition-all">
+                        <img alt="Emaar Beachfront"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            loading="lazy"
+                            src="https://plus.unsplash.com/premium_photo-1694475218266-b93569487419?q=80&w=800" />
+                        <div
+                            class="absolute top-3 left-3 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-slate-800">
+                            OFF-PLAN</div>
+                        <button
+                            class="absolute top-3 right-3 sm:top-4 sm:right-4 text-slate-900 hover:scale-110 transition-transform bg-black/20 hover:bg-black/40 p-2 rounded-full backdrop-blur-sm"
+                            aria-label="Guardar propiedad">
+                            <i data-lucide="heart" class="w-5 h-5 stroke-[1.5px]"></i>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start mb-1">
+                        <h3 class="font-bold text-base sm:text-lg text-slate-900">Emaar Beachfront</h3>
+                        <div class="text-right shrink-0 ml-2">
+                            <p class="font-bold text-base sm:text-lg text-slate-900">2.8M AED</p>
+                            <p class="text-xs text-slate-600">~ $762k USD</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-3">Dubai Harbour</p>
+                    <div class="flex items-center gap-6 py-3 border-t border-border-color">
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">ROI EST.</p>
+                            <p class="font-bold text-success">8.8% <i data-lucide="trending-up" class="w-3 h-3 inline"></i></p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">SCORE IA</p>
+                            <p class="font-bold text-slate-900">91<span class="text-slate-600 font-normal">/100</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== DEVELOPERS ========== -->
+        <section class="bg-white py-12 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <div class="flex items-center justify-between mb-6 sm:mb-12">
+                    <h2 class="text-xl sm:text-3xl font-bold text-slate-900">Proyectos
+                        por Desarrollador</h2>
+                    <a href="/desarrolladores.html" class="text-primary text-sm font-semibold hover:underline hidden sm:inline-flex items-center gap-1">Ver todos <i data-lucide="arrow-right" class="w-4 h-4 inline"></i></a>
+                </div>
+
+                <!-- Mobile: horizontal scroll / Desktop: grid -->
+                <div
+                    class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-4 sm:pb-0">
+                    <a href="/desarrollador.html?dev=emaar"
+                        class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-slate-300 transition-all snap-start shrink-0 w-[70vw] sm:w-auto cursor-pointer block no-underline">
+                        <div
+                            class="w-14 h-14 sm:w-16 sm:h-16 bg-slate-100 rounded-xl flex items-center justify-center mb-5 sm:mb-6 text-lg sm:text-2xl font-black text-slate-700">
+                            EMAAR</div>
+                        <h4 class="font-bold mb-2 text-slate-900">Emaar Properties</h4>
+                        <div class="space-y-1 text-sm text-slate-600">
+                            <p class="flex justify-between"><span>Proyectos Activos</span> <span
+                                    class="font-semibold text-slate-900">42</span></p>
+                            <p class="flex justify-between"><span>Yield Promedio</span> <span
+                                    class="font-semibold text-primary">6.8%</span></p>
+                        </div>
+                    </a>
+                    <a href="/desarrollador.html?dev=nakheel"
+                        class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-slate-300 transition-all snap-start shrink-0 w-[70vw] sm:w-auto cursor-pointer block no-underline">
+                        <div
+                            class="w-14 h-14 sm:w-16 sm:h-16 bg-slate-100 rounded-xl flex items-center justify-center mb-5 sm:mb-6 text-lg sm:text-2xl font-black text-slate-700">
+                            NAK</div>
+                        <h4 class="font-bold mb-2 text-slate-900">Nakheel</h4>
+                        <div class="space-y-1 text-sm text-slate-600">
+                            <p class="flex justify-between"><span>Proyectos Activos</span> <span
+                                    class="font-semibold text-slate-900">18</span></p>
+                            <p class="flex justify-between"><span>Yield Promedio</span> <span
+                                    class="font-semibold text-primary">7.2%</span></p>
+                        </div>
+                    </a>
+                    <a href="/desarrollador.html?dev=damac"
+                        class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-slate-300 transition-all snap-start shrink-0 w-[70vw] sm:w-auto cursor-pointer block no-underline">
+                        <div
+                            class="w-14 h-14 sm:w-16 sm:h-16 bg-slate-100 rounded-xl flex items-center justify-center mb-5 sm:mb-6 text-lg sm:text-2xl font-black text-slate-700">
+                            DAMAC</div>
+                        <h4 class="font-bold mb-2 text-slate-900">Damac Properties</h4>
+                        <div class="space-y-1 text-sm text-slate-600">
+                            <p class="flex justify-between"><span>Proyectos Activos</span> <span
+                                    class="font-semibold text-slate-900">35</span></p>
+                            <p class="flex justify-between"><span>Yield Promedio</span> <span
+                                    class="font-semibold text-primary">8.0%</span></p>
+                        </div>
+                    </a>
+                    <a href="/desarrollador.html?dev=sobha"
+                        class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-slate-300 transition-all snap-start shrink-0 w-[70vw] sm:w-auto cursor-pointer block no-underline">
+                        <div
+                            class="w-14 h-14 sm:w-16 sm:h-16 bg-slate-100 rounded-xl flex items-center justify-center mb-5 sm:mb-6 text-lg sm:text-2xl font-black text-slate-700">
+                            SOBHA</div>
+                        <h4 class="font-bold mb-2 text-slate-900">Sobha Realty</h4>
+                        <div class="space-y-1 text-sm text-slate-600">
+                            <p class="flex justify-between"><span>Proyectos Activos</span> <span
+                                    class="font-semibold text-slate-900">12</span></p>
+                            <p class="flex justify-between"><span>Yield Promedio</span> <span
+                                    class="font-semibold text-primary">7.5%</span></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AREA MAP ========== -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-24">
+            <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-16">
+                <h2 class="text-xl sm:text-4xl font-bold mb-3 sm:mb-4 text-slate-900">Propiedades
+                    en Emiratos por zona</h2>
+                <p class="text-slate-600 text-xs sm:text-base px-2">Explora el rendimiento en tiempo real de los
+                    barrios mas demandados. Datos actualizados cada 15 minutos.</p>
+            </div>
+            <div
+                class="relative w-full h-[350px] sm:h-[600px] bg-slate-100 rounded-3xl overflow-hidden shadow-inner border border-border-emphasis">
+                <div class="absolute inset-0 opacity-40">
+                    <img alt="Mapa de Emiratos" class="w-full h-full object-cover grayscale" loading="lazy"
+                        src="https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?q=80&w=2000" />
+                </div>
+                <!-- Legend -->
+                <div
+                    class="absolute top-4 left-4 sm:top-8 sm:left-8 bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-border-color max-w-[200px] sm:max-w-xs">
+                    <h4 class="font-bold mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base text-slate-900">
+                        <span class="w-2 h-2 bg-success rounded-full animate-pulse"></span> Leyenda
+                    </h4>
+                    <div class="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Alto Yield (&gt;7%)</span>
+                            <span class="w-3 h-3 sm:w-4 sm:h-4 bg-primary rounded-full shrink-0"></span>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Medio (5-7%)</span>
+                            <span class="w-3 h-3 sm:w-4 sm:h-4 bg-warning rounded-full shrink-0"></span>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Crecimiento Estable</span>
+                            <span class="w-3 h-3 sm:w-4 sm:h-4 bg-secondary rounded-full shrink-0"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Map markers -->
+                <div class="absolute top-[40%] left-[30%] group cursor-pointer">
+                    <div
+                        class="bg-primary text-slate-900 font-bold px-2.5 py-1 rounded-full text-[10px] sm:text-xs shadow-lg transform -translate-x-1/2 -translate-y-full mb-1 group-hover:scale-110 transition-transform whitespace-nowrap">
+                        9.2% ROI</div>
+                    <div
+                        class="w-5 h-5 sm:w-6 sm:h-6 bg-primary border-[3px] sm:border-4 border-white rounded-full shadow-lg group-hover:ring-8 group-hover:ring-primary/20 transition-all">
+                    </div>
+                </div>
+                <div class="absolute top-[60%] left-[65%] group cursor-pointer">
+                    <div
+                        class="bg-primary text-slate-900 font-bold px-2.5 py-1 rounded-full text-[10px] sm:text-xs shadow-lg transform -translate-x-1/2 -translate-y-full mb-1 group-hover:scale-110 transition-transform whitespace-nowrap">
+                        11.4% ROI</div>
+                    <div
+                        class="w-5 h-5 sm:w-6 sm:h-6 bg-primary border-[3px] sm:border-4 border-white rounded-full shadow-lg group-hover:ring-8 group-hover:ring-primary/20 transition-all">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SIMULATOR ========== -->
+        <section class="bg-slate-50 py-12 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-12 sm:gap-20 items-center">
+                <div>
+                    <h2 class="text-2xl sm:text-5xl font-bold mb-4 sm:mb-6 leading-tight text-slate-900">Proyecta tu libertad
+                        financiera.</h2>
+                    <p class="text-base sm:text-xl text-slate-600 mb-8 sm:mb-12">Construye tu cartera ideal y descubre
+                        el impacto de tus decisiones con datos reales del mercado.</p>
+                    <div class="space-y-6 sm:space-y-8">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                <i data-lucide="trending-up" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-base sm:text-lg mb-1 text-slate-900">Proyecciones Basadas en IA</h4>
+                                <p class="text-slate-600 text-sm">Modelos predictivos que analizan mas de 500 variables
+                                    macroeconomicas.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                <i data-lucide="settings-2" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-base sm:text-lg mb-1 text-slate-900">Personalizacion Total</h4>
+                                <p class="text-slate-600 text-sm">Ajusta tu inversion inicial, horizonte temporal y
+                                    perfil de riesgo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="mt-8 sm:mt-12 w-full sm:w-auto bg-primary text-white px-8 py-4 rounded-full font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-transform active:scale-[0.98] text-center">
+                        Empezar simulacion gratuita
+                    </button>
+                </div>
+
+                <!-- Simulator Card -->
+                <div
+                    class="bg-white p-5 sm:p-8 rounded-3xl border border-gray-200 shadow-xl relative z-10">
+                    <div class="flex justify-between items-center mb-6 sm:mb-8">
+                        <h3 class="font-bold text-sm sm:text-base text-slate-900">Portfolio Simulado</h3>
+                        <span
+                            class="text-[10px] sm:text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-full uppercase">Simulador
+                            Live</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
+                        <div class="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-gray-200">
+                            <p class="text-xs text-slate-600 uppercase font-bold mb-1 sm:mb-2">ROI PROYECTADO</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-green-600">12.4% <span
+                                    class="text-xs sm:text-sm font-normal text-slate-600">/año</span></p>
+                        </div>
+                        <div class="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-gray-200">
+                            <p class="text-xs text-slate-600 uppercase font-bold mb-1 sm:mb-2">CASHFLOW MENSUAL</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-slate-900">$4,250 <span
+                                    class="text-xs sm:text-sm font-normal text-slate-600">USD</span></p>
+                        </div>
+                    </div>
+                    <div class="space-y-6 sm:space-y-8">
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Inversion Inicial</span>
+                                <span class="font-bold text-slate-900" id="investment-display">$500,000</span>
+                            </div>
+                            <input id="slider-investment" class="w-full touch-pan-x" type="range" min="50000"
+                                max="10000000" step="10000" value="500000" />
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Horizonte Temporal</span>
+                                <span class="font-bold text-slate-900" id="horizon-display">15 Años</span>
+                            </div>
+                            <input id="slider-horizon" class="w-full touch-pan-x" type="range" min="1" max="30"
+                                step="1" value="15" />
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-3">
+                                <span class="text-slate-600">Perfil de Riesgo</span>
+                                <span class="font-bold text-slate-900" id="risk-display">Moderado</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button class="risk-btn h-2 rounded-full bg-slate-300 cursor-pointer hover:bg-primary/50 transition-colors"
+                                    data-risk="Conservador" data-index="0"></button>
+                                <button class="risk-btn h-2 rounded-full bg-primary cursor-pointer"
+                                    data-risk="Moderado" data-index="1"></button>
+                                <button class="risk-btn h-2 rounded-full bg-slate-300 cursor-pointer hover:bg-primary/50 transition-colors"
+                                    data-risk="Agresivo" data-index="2"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== NEWSLETTER ========== -->
+        <section class="bg-white py-12 sm:py-24 sm:mb-0 mb-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <div class="max-w-2xl mx-auto text-center">
+                    <h2 class="text-xl sm:text-4xl font-bold mb-4 sm:mb-6 text-slate-900">Recibe
+                        analisis de mercado <br /><span class="text-primary">personalizados.</span></h2>
+                    <p class="text-slate-600 mb-8 sm:mb-10 text-sm sm:text-lg px-2">Deja tus datos y un experto en
+                        datos te enviara un informe detallado basado en tus objetivos de inversion.</p>
+                    <div
+                        class="flex flex-col sm:flex-row gap-3 p-2 bg-slate-50 rounded-2xl sm:rounded-full border border-gray-200">
+                        <input
+                            class="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none px-5 sm:px-6 py-3 rounded-full text-base sm:text-lg text-slate-900 placeholder:text-slate-400"
+                            placeholder="tu@correo.com" type="email" />
+                        <button
+                            class="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-transform shrink-0">
+                            Suscribirme
+                        </button>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-500 flex items-center justify-center gap-2">
+                        <i data-lucide="lock" class="w-4 h-4"></i> Datos encriptados y seguros
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== FOOTER (hidden on mobile, bottom nav replaces it) ========== -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-12 sm:py-16 hidden sm:block">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 sm:gap-12 mb-12 sm:mb-16">
+                <div class="sm:col-span-2">
+                    <a href="/" class="flex items-center gap-2 mb-5 sm:mb-6">
+                        <i data-lucide="building-2" class="text-primary w-7 h-7 sm:w-8 sm:h-8"></i>
+                        <span
+                            class="text-lg sm:text-xl font-bold text-white uppercase">EMIRA<span
+                                class="text-primary">LIA</span></span>
+                    </a>
+                    <p class="text-slate-300 max-w-xs mb-6 sm:mb-8 text-sm sm:text-base">
+                        Plataforma de inteligencia inmobiliaria para inversores institucionales y particulares en GCC.
+                    </p>
+                    <div class="flex gap-3">
+                        <a class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-slate-900 transition-all"
+                            href="#" aria-label="Web">
+                            <i data-lucide="globe" class="w-4 h-4"></i>
+                        </a>
+                        <a class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-slate-900 transition-all"
+                            href="#" aria-label="Email">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-4 sm:mb-6 text-white">Producto</h5>
+                    <ul class="space-y-3 sm:space-y-4 text-sm text-slate-300">
+                        <li><a class="hover:text-primary transition-colors" href="#">Market Scanner</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Calculadora ROI</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Heatmaps</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-4 sm:mb-6 text-white">Compañia</h5>
+                    <ul class="space-y-3 sm:space-y-4 text-sm text-slate-300">
+                        <li><a class="hover:text-primary transition-colors" href="#">Sobre Nosotros</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Carreras</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-4 sm:mb-6 text-white">Legal</h5>
+                    <ul class="space-y-3 sm:space-y-4 text-sm text-slate-300">
+                        <li><a class="hover:text-primary transition-colors" href="#">Privacidad</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Terminos</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-400">
+                <p>&copy; 2026 Emiralia. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a class="hover:underline" href="#">Privacy Policy</a>
+                    <a class="hover:underline" href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== MOBILE BOTTOM TAB BAR ========== -->
+    <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border-emphasis px-2 pb-[env(safe-area-inset-bottom,0px)]">
+        <div class="flex items-center justify-around h-14">
+            <a href="#" class="flex flex-col items-center gap-0.5 text-primary">
+                <i data-lucide="search" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold">Explorar</span>
+            </a>
+            <a href="#" class="flex flex-col items-center gap-0.5 text-slate-300">
+                <i data-lucide="heart" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Favoritos</span>
+            </a>
+            <a href="#" class="flex flex-col items-center gap-0.5 text-slate-300">
+                <i data-lucide="calculator" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Simulador</span>
+            </a>
+            <a href="#" class="flex flex-col items-center gap-0.5 text-slate-300">
+                <i data-lucide="chart-column" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Market Data</span>
+            </a>
+            <a href="#" class="flex flex-col items-center gap-0.5 text-slate-300 relative">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Perfil</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ========== SEARCH MODAL (Airbnb-style, mobile only) ========== -->
+    <div id="search-modal" class="sm:hidden fixed inset-0 z-[60] bg-slate-800 translate-y-full transition-transform duration-300 ease-out overflow-y-auto">
+        <!-- Modal header -->
+        <div class="sticky top-0 bg-slate-800 px-4 pt-4 pb-2 flex items-center justify-between z-10">
+            <div></div>
+            <button id="search-modal-close" class="w-11 h-11 rounded-full bg-white border border-border-emphasis flex items-center justify-center">
+                <i data-lucide="x" class="w-4 h-4 text-slate-900"></i>
+            </button>
+        </div>
+
+        <!-- Ubicacion card -->
+        <div class="px-4 mb-3">
+            <div class="bg-white rounded-3xl p-6 shadow-lg">
+                <h3 class="text-2xl font-bold text-slate-900 mb-4">Ubicacion?</h3>
+                <div class="flex items-center gap-3 border border-border-emphasis rounded-2xl px-4 py-3 mb-5">
+                    <i data-lucide="search" class="w-5 h-5 text-slate-400 shrink-0"></i>
+                    <input type="text" placeholder="Busca por zona o comunidad" class="flex-1 bg-transparent border-none focus:outline-none text-sm placeholder:text-slate-400 text-slate-900" />
+                </div>
+                <!-- Location suggestions -->
+                <div class="space-y-1">
+                    <button class="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors text-left">
+                        <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden shrink-0">
+                            <img src="https://images.unsplash.com/photo-1582653280643-e798e9424b3c?q=60&w=100" alt="Dubai Marina" class="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm text-slate-900">Dubai Marina</p>
+                            <p class="text-xs text-slate-600">Yield promedio 7.2% &bull; 156 propiedades</p>
+                        </div>
+                    </button>
+                    <button class="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors text-left">
+                        <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="navigation" class="w-5 h-5 text-secondary"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm text-slate-900">Zonas con mayor ROI</p>
+                            <p class="text-xs text-slate-600">Descubre las zonas mas rentables</p>
+                        </div>
+                    </button>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider pt-3 pb-1 px-3">Busquedas recientes</p>
+                    <button class="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors text-left">
+                        <div class="w-12 h-12 rounded-xl bg-success-bg flex items-center justify-center shrink-0">
+                            <i data-lucide="building-2" class="w-5 h-5 text-success"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm text-slate-900">Downtown Dubai</p>
+                            <p class="text-xs text-slate-600">Apartamento &bull; &gt;8% ROI</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tipo card -->
+        <div class="px-4 mb-3">
+            <div class="bg-white rounded-3xl p-5 shadow-sm flex items-center justify-between">
+                <span class="text-base font-semibold text-slate-900">Tipo de propiedad</span>
+                <span class="text-base font-semibold text-slate-600">Cualquiera</span>
+            </div>
+        </div>
+
+        <!-- Presupuesto card -->
+        <div class="px-4 mb-3">
+            <div class="bg-white rounded-3xl p-5 shadow-sm flex items-center justify-between">
+                <span class="text-base font-semibold text-slate-900">Presupuesto</span>
+                <span class="text-base font-semibold text-slate-600">Sin limite</span>
+            </div>
+        </div>
+
+        <!-- ROI card -->
+        <div class="px-4 mb-6">
+            <div class="bg-white rounded-3xl p-5 shadow-sm flex items-center justify-between">
+                <span class="text-base font-semibold text-slate-900">ROI Minimo</span>
+                <span class="text-base font-semibold text-slate-600">8% +</span>
+            </div>
+        </div>
+
+        <!-- Bottom actions -->
+        <div class="sticky bottom-0 bg-slate-800 border-t border-slate-700 px-4 py-4 flex items-center justify-between gap-3">
+            <button class="text-sm font-semibold text-slate-300 hover:text-white transition-colors px-4 py-2">
+                Quitar filtros
+            </button>
+            <button id="modal-analyze-btn" class="bg-primary text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-primary/20 flex items-center gap-2 active:scale-95 transition-transform cursor-pointer">
+                <i data-lucide="search" class="w-5 h-5"></i>
+                Analizar
+            </button>
+        </div>
+    </div>
+
+
+    <script type="module" src="/src/main.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+
+</html>

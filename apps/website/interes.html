@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="description"
+        content="Regístrate para acceder a la plataforma de inversión inmobiliaria en Emiratos más completa en español." />
+    <title>Early Access - Emiralia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@0.577.0"></script>
+    <style>
+        body { opacity: 0; }
+        body.styles-ready { opacity: 1; transition: opacity 0.1s ease-in; }
+    </style>
+</head>
+
+<body class="antialiased font-display leading-relaxed">
+
+    <!-- NAV -->
+    <nav id="main-nav"
+        class="fixed top-0 w-full z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-border-emphasis">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 shrink-0">
+                <i data-lucide="building-2" class="w-7 h-7 sm:w-8 sm:h-8 text-primary"></i>
+                <span
+                    class="text-lg sm:text-xl font-bold tracking-tight uppercase text-slate-900">EMIRA<span
+                        class="text-primary">LIA</span></span>
+            </a>
+
+            <div class="hidden lg:flex items-center gap-8 font-medium text-sm text-slate-900/80">
+                <a class="hover:text-primary transition-colors" href="/propiedades-v2.html">Propiedades</a>
+                <a class="hover:text-primary transition-colors" href="/invertir.html">Invertir</a>
+                <a class="hover:text-primary transition-colors" href="/ai-insights.html">AI Insights</a>
+                <a class="hover:text-primary transition-colors" href="/blog.html">Academia</a>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <a href="/"
+                    class="px-4 py-2 text-sm font-semibold hover:bg-section-bg:bg-slate-800 rounded-full transition-colors text-slate-900">
+                    Volver
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16 sm:pt-20 min-h-screen bg-gradient-to-b from-slate-50 to-white">
+
+        <!-- FORM SECTION -->
+        <section class="max-w-2xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    Early Access
+                </div>
+                <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
+                    Únete a Emiralia
+                </h1>
+                <p class="text-lg text-slate-600">
+                    Sé de los primeros en acceder a la plataforma más completa de inversión inmobiliaria en Emiratos.
+                </p>
+            </div>
+
+            <!-- FORM CARD -->
+            <div id="form-card" class="bg-white rounded-2xl p-8 sm:p-12 shadow-xl border border-border-color">
+
+                <form id="interest-form" class="space-y-6">
+
+                    <!-- Name -->
+                    <div>
+                        <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">
+                            Nombre completo *
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            required
+                            class="w-full px-4 py-3 bg-slate-50 border border-border-emphasis rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            placeholder="Juan Pérez"
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">
+                            Email *
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            class="w-full px-4 py-3 bg-slate-50 border border-border-emphasis rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            placeholder="juan@ejemplo.com"
+                        />
+                    </div>
+
+                    <!-- Country -->
+                    <div>
+                        <label for="country" class="block text-sm font-semibold text-slate-700 mb-2">
+                            País de residencia
+                        </label>
+                        <select
+                            id="country"
+                            name="country"
+                            class="w-full px-4 py-3 bg-slate-50 border border-border-emphasis rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        >
+                            <option value="">Selecciona un país</option>
+                            <option value="ES">España</option>
+                            <option value="MX">México</option>
+                            <option value="CO">Colombia</option>
+                            <option value="AR">Argentina</option>
+                            <option value="CL">Chile</option>
+                            <option value="PE">Perú</option>
+                            <option value="VE">Venezuela</option>
+                            <option value="EC">Ecuador</option>
+                            <option value="AE">Emiratos Árabes Unidos</option>
+                            <option value="US">Estados Unidos</option>
+                            <option value="OTHER">Otro</option>
+                        </select>
+                    </div>
+
+                    <!-- Interests -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">
+                            ¿Qué te interesa?
+                        </label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="interests" value="alto_rendimiento" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0" />
+                                <span class="text-slate-700 group-hover:text-primary transition-colors">Alto Rendimiento (ROI > 8%)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="interests" value="lujo_premium" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0" />
+                                <span class="text-slate-700 group-hover:text-primary transition-colors">Lujo Premium (Palm, Downtown)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="interests" value="off_plan" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0" />
+                                <span class="text-slate-700 group-hover:text-primary transition-colors">Desarrollo Off-Plan</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="interests" value="asesoria" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0" />
+                                <span class="text-slate-700 group-hover:text-primary transition-colors">Asesoría Personalizada</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    <div>
+                        <label for="message" class="block text-sm font-semibold text-slate-700 mb-2">
+                            Mensaje (opcional)
+                        </label>
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="4"
+                            class="w-full px-4 py-3 bg-slate-50 border border-border-emphasis rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+                            placeholder="Cuéntanos más sobre tus objetivos de inversión..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Submit -->
+                    <button
+                        type="submit"
+                        id="submit-btn"
+                        class="w-full bg-primary hover:bg-primary/90 text-slate-900 px-8 py-4 rounded-full text-lg font-semibold shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span id="submit-text">Solicitar Acceso</span>
+                        <i data-lucide="loader" id="submit-loader" class="w-5 h-5 animate-spin mx-auto hidden"></i>
+                    </button>
+
+                    <p class="text-xs text-center text-slate-500">
+                        Al registrarte, aceptas nuestra política de privacidad. No compartiremos tu información.
+                    </p>
+
+                </form>
+
+            </div>
+
+            <!-- SUCCESS MESSAGE (hidden by default) -->
+            <div id="success-card" class="bg-white rounded-2xl p-8 sm:p-12 shadow-xl border border-border-color text-center hidden">
+                <div class="w-16 h-16 bg-success-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i data-lucide="check" class="w-11 h-11 text-success"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">
+                    ¡Gracias por tu interés!
+                </h2>
+                <p class="text-slate-600 mb-6">
+                    Te hemos enviado un email de confirmación. Nuestro equipo se pondrá en contacto contigo pronto.
+                </p>
+                <a href="/"
+                    class="inline-block bg-slate-100 hover:bg-slate-200:bg-slate-600 text-slate-900 px-6 py-3 rounded-full font-semibold transition-colors">
+                    Volver al inicio
+                </a>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-50 border-t border-border-emphasis py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="building-2" class="w-6 h-6 text-primary"></i>
+                <span class="text-lg font-bold uppercase text-slate-900">EMIRA<span class="text-primary">LIA</span></span>
+            </div>
+            <p class="text-sm text-slate-600">
+                © 2026 Emiralia. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="/src/interes.js"></script>
+</body>
+
+</html>

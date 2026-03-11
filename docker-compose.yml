@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: emiralia_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PG_DB:-emiralia}
+      POSTGRES_USER: ${PG_USER:-emiralia}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-changeme}
+    ports:
+      - "${PG_PORT:-5433}:5432"
+    volumes:
+      - emiralia_pgdata:/var/lib/postgresql/data
+      - ./tools/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./tools/db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+
+  redis:
+    image: redis:7-alpine
+    container_name: emiralia_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    container_name: emiralia_api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_USER=${PG_USER:-emiralia}
+      - PG_PASSWORD=${PG_PASSWORD:-changeme}
+      - PG_DB=${PG_DB:-emiralia}
+      - REDIS_HOST=redis
+    depends_on:
+      - postgres
+      - redis
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: ./apps/dashboard/Dockerfile
+    container_name: emiralia_dashboard
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+  adminer:
+    image: adminer:latest
+    container_name: emiralia_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  emiralia_pgdata:
+    name: emiralia_pgdata

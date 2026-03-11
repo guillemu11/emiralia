@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invest Emirates - Real Estate Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#FF385C", // Airbnb Red/Coral
+              "background-light": "#FFFFFF",
+              "background-dark": "#0F172A",
+              "gray-light": "#F7F7F7",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "12px",
+              "xl": "24px",
+              "2xl": "32px",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300">
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-icons-outlined text-primary text-3xl">domain</span>
+<span class="text-xl font-bold tracking-tight">EMIRATES<span class="text-primary">INVEST</span></span>
+</div>
+<div class="hidden md:flex items-center gap-8 font-medium text-sm">
+<a class="hover:text-primary transition-colors" href="#">Propiedades</a>
+<a class="hover:text-primary transition-colors" href="#">Invertir con IA</a>
+<a class="hover:text-primary transition-colors" href="#">Academia</a>
+<a class="hover:text-primary transition-colors" href="#">Market Data</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 text-sm font-semibold hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full">Login</button>
+<button class="bg-primary text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all active:scale-95">Empezar</button>
+</div>
+</div>
+</nav>
+<section class="pt-32 pb-20 hero-gradient min-h-[600px] flex flex-col items-center justify-center px-6 relative">
+<div class="max-w-4xl text-center mb-12">
+<h1 class="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">Invierte con datos. <br/><span class="opacity-90">No con intuición.</span></h1>
+<p class="text-xl text-white/90 max-w-2xl mx-auto drop-shadow-md">La primera plataforma en español que analiza el mercado inmobiliario de Emiratos en tiempo real.</p>
+</div>
+<div class="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-full shadow-2xl p-2 flex flex-col md:flex-row items-center gap-2 border border-gray-100 dark:border-slate-700">
+<div class="flex-1 grid grid-cols-2 md:grid-cols-4 w-full">
+<div class="px-6 py-3 border-r border-gray-100 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-l-full cursor-pointer transition-colors">
+<p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Ubicación</p>
+<p class="text-sm font-medium">Dubai Marina</p>
+</div>
+<div class="px-6 py-3 border-r border-gray-100 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+<p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Tipo</p>
+<p class="text-sm font-medium">Apartamento</p>
+</div>
+<div class="px-6 py-3 border-r border-gray-100 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+<p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Presupuesto</p>
+<p class="text-sm font-medium">Cualquiera</p>
+</div>
+<div class="px-6 py-3 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+<p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">ROI Mínimo</p>
+<p class="text-sm font-medium">8% +</p>
+</div>
+</div>
+<button class="bg-primary text-white p-4 rounded-full flex items-center justify-center gap-2 px-8 hover:brightness-110 transition-all shadow-lg shadow-primary/20">
+<span class="material-icons-outlined">search</span>
+<span class="font-bold">Analizar</span>
+</button>
+</div>
+</section>
+<section class="max-w-7xl mx-auto px-6 py-24">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="text-3xl font-bold mb-2">Oportunidades Alpha</h2>
+<p class="text-slate-500 dark:text-slate-400">Seleccionadas por nuestros algoritmos hoy.</p>
+</div>
+<a class="text-primary font-semibold flex items-center gap-1 hover:underline" href="#">
+                Ver todas <span class="material-icons-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="group cursor-pointer">
+<div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
+<img alt="Marina Gate" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi5qruiZ_IeI6FbyWGhNmaBEyvn-baQs2dzM4U72aO8nx-65URcG1It_keemWsUkA7ktJhOUhEMAr6vH74hTNl-a5U_0QMemcBXF4KBAr6-F87qhiPTxFSNhdgQ5XWShBvZ1e49QS09wx2M39ci6mKFWQsRSWRw8GLs5wQ6pC3UyA_N42syEYabvz4xRyI6jC1BWcqqkijwbTuktQuG_LkeTPT50Yk7GD8XinaGixWIMXh6JtEd-VfvPqQLCqvjDvUT814HRBVh3k"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-slate-800">DETECTADO POR IA</div>
+<button class="absolute top-4 right-4 text-white hover:scale-110 transition-transform">
+<span class="material-icons-outlined">favorite_border</span>
+</button>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">Marina Gate Residences</h3>
+<p class="font-bold text-lg">1.2M AED</p>
+</div>
+<p class="text-slate-500 text-sm mb-4">Dubai Marina, UAE</p>
+<div class="grid grid-cols-3 gap-2 py-3 border-t border-gray-100 dark:border-slate-800">
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">ROI EST.</p>
+<p class="font-bold text-primary">9.2%</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">VALORIZA.</p>
+<p class="font-bold">+15%</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">SCORE</p>
+<span class="inline-block px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-xs font-bold">94/100</span>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
+<img alt="Address Beach" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBsrV2F5TmFx5gTWEBTSAqNdQQahla7W1DP6SAIs_jL_f-F9eFe-3WHVwb8DDCOaJ7cMp_zLTzAf2zBze43ZHdVEwmC68XOSdW1GnBc6TA4WXEa-C2fXvr-2uLnLwIECvbLbmM7gZeZVEibyM3TekB89Ioot0u2NkHm8rEGzdtsvwdWDaGhxeiKPCd5LpnVVdVTRy5JYZD_cdHkhk1QYsAi8_zgqB2S6bEfzI7fqcgwXlR1Uv4_-KpuxFOCEGWgHsk07LQscVdgoE"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-slate-800">DISTRESSED DEAL</div>
+<button class="absolute top-4 right-4 text-white">
+<span class="material-icons-outlined">favorite_border</span>
+</button>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">Address Beach Resort</h3>
+<p class="font-bold text-lg">3.5M AED</p>
+</div>
+<p class="text-slate-500 text-sm mb-4">JBR, Dubai</p>
+<div class="grid grid-cols-3 gap-2 py-3 border-t border-gray-100 dark:border-slate-800">
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">ROI EST.</p>
+<p class="font-bold text-primary">11.4%</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">DESC.</p>
+<p class="font-bold text-red-500">-12%</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">SCORE</p>
+<span class="inline-block px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-xs font-bold">98/100</span>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
+<img alt="Emaar Beachfront" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHd_UBjIb_QSYejCULN2GKbVsvyCi0H9D2YIPO3XviACHZ3B7Tf8QaXMrDNW8DIZoHPxZgJbfX4GVcJlUwX_ddLfCqrwxAiRAKgC0DGMBSPOpM7bkANPMB7p346tO1zp_FnaIwcOywRXtuOJZWzinGtV9uaOdpXipUxw_8iWmNp7Xy240222s4ZeFIDObip847_aVcJKOHNsR3INolS5m9UmXi6fEX0ZJQb0t_QxkUyog-uFG2rObTDWFLHBvI43rAc_RHRMJx09M"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-slate-800">OFF-PLAN</div>
+<button class="absolute top-4 right-4 text-white">
+<span class="material-icons-outlined">favorite_border</span>
+</button>
+</div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">Emaar Beachfront</h3>
+<p class="font-bold text-lg">2.8M AED</p>
+</div>
+<p class="text-slate-500 text-sm mb-4">Dubai Harbour</p>
+<div class="grid grid-cols-3 gap-2 py-3 border-t border-gray-100 dark:border-slate-800">
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">ROI EST.</p>
+<p class="font-bold text-primary">8.8%</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">ENTREGA</p>
+<p class="font-bold">2026</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-slate-400 uppercase font-bold">SCORE</p>
+<span class="inline-block px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-xs font-bold">91/100</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-gray-light dark:bg-slate-800/50 py-24">
+<div class="max-w-7xl mx-auto px-6">
+<h2 class="text-3xl font-bold mb-12">Proyectos por Desarrollador</h2>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-6 text-2xl font-black italic">EMAAR</div>
+<h4 class="font-bold mb-2">Emaar Properties</h4>
+<div class="space-y-1 text-sm text-slate-500 dark:text-slate-400">
+<p class="flex justify-between"><span>Proyectos Activos</span> <span class="font-semibold text-slate-900 dark:text-white">42</span></p>
+<p class="flex justify-between"><span>Yield Promedio</span> <span class="font-semibold text-primary">6.8%</span></p>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-6 text-2xl font-black italic">NAK</div>
+<h4 class="font-bold mb-2">Nakheel</h4>
+<div class="space-y-1 text-sm text-slate-500 dark:text-slate-400">
+<p class="flex justify-between"><span>Proyectos Activos</span> <span class="font-semibold text-slate-900 dark:text-white">18</span></p>
+<p class="flex justify-between"><span>Yield Promedio</span> <span class="font-semibold text-primary">7.2%</span></p>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-6 text-2xl font-black italic">DAMAC</div>
+<h4 class="font-bold mb-2">Damac Properties</h4>
+<div class="space-y-1 text-sm text-slate-500 dark:text-slate-400">
+<p class="flex justify-between"><span>Proyectos Activos</span> <span class="font-semibold text-slate-900 dark:text-white">35</span></p>
+<p class="flex justify-between"><span>Yield Promedio</span> <span class="font-semibold text-primary">8.0%</span></p>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-6 text-2xl font-black italic">SOBHA</div>
+<h4 class="font-bold mb-2">Sobha Realty</h4>
+<div class="space-y-1 text-sm text-slate-500 dark:text-slate-400">
+<p class="flex justify-between"><span>Proyectos Activos</span> <span class="font-semibold text-slate-900 dark:text-white">12</span></p>
+<p class="flex justify-between"><span>Yield Promedio</span> <span class="font-semibold text-primary">7.5%</span></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="max-w-7xl mx-auto px-6 py-24">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<h2 class="text-4xl font-bold mb-4">Propiedades en Emiratos por zona</h2>
+<p class="text-slate-500 dark:text-slate-400">Explora el rendimiento en tiempo real de los barrios más demandados. Datos actualizados cada 15 minutos.</p>
+</div>
+<div class="relative w-full h-[600px] bg-slate-100 dark:bg-slate-800 rounded-3xl overflow-hidden shadow-inner border border-gray-200 dark:border-slate-700">
+<div class="absolute inset-0 opacity-40">
+<img alt="Map Texture" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8-z0MnESXUFRmIXh4BYP6erzkNNrtER6djiZbBbM1evMrvCmdB5jamMvp2RpSlrVazPgdb1YOqeUGmq4fcetDIBrGywdYxrFeBcuq8dOKuQNmPF1n4GmnLwJPn6YR-iLkSvhbCsEH9tYqx-vdxo57nLI2CdiOXfPlAfBzCnmj28j8LAcP37-cNeD7CSMZ7tKAjRcGwscosfsz3lkICSmrsHCxXxcqp_s1cvp9KbFUM0xq52AGUehGswYs0vsKxGOSeOcSMpO7-RI"/>
+</div>
+<div class="absolute top-8 left-8 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 max-w-xs">
+<h4 class="font-bold mb-4 flex items-center gap-2">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Legend
+                </h4>
+<div class="space-y-3 text-sm">
+<div class="flex items-center justify-between">
+<span class="text-slate-500">High Yield (&gt;7%)</span>
+<span class="w-4 h-4 bg-primary rounded-full"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-500">Medium (5-7%)</span>
+<span class="w-4 h-4 bg-orange-400 rounded-full"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-500">Stable Growth</span>
+<span class="w-4 h-4 bg-blue-500 rounded-full"></span>
+</div>
+</div>
+</div>
+<div class="absolute top-[40%] left-[30%] group cursor-pointer">
+<div class="bg-primary text-white font-bold px-3 py-1 rounded-full text-xs shadow-lg transform -translate-x-1/2 -translate-y-full mb-1 group-hover:scale-110 transition-transform">9.2% ROI</div>
+<div class="w-6 h-6 bg-primary border-4 border-white rounded-full shadow-lg group-hover:ring-8 group-hover:ring-primary/20 transition-all"></div>
+</div>
+<div class="absolute top-[60%] left-[65%] group cursor-pointer">
+<div class="bg-primary text-white font-bold px-3 py-1 rounded-full text-xs shadow-lg transform -translate-x-1/2 -translate-y-full mb-1 group-hover:scale-110 transition-transform">11.4% ROI</div>
+<div class="w-6 h-6 bg-primary border-4 border-white rounded-full shadow-lg group-hover:ring-8 group-hover:ring-primary/20 transition-all"></div>
+</div>
+</div>
+</section>
+<section class="bg-slate-900 text-white py-24 overflow-hidden relative">
+<div class="absolute top-0 right-0 w-1/2 h-full bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/3"></div>
+<div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
+<div>
+<h2 class="text-5xl font-bold mb-6">Proyecta tu libertad financiera.</h2>
+<p class="text-xl text-slate-400 mb-12">Construye tu cartera ideal y descubre el impacto de tus decisiones con datos reales del mercado.</p>
+<div class="space-y-8">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-icons-outlined">trending_up</span>
+</div>
+<div>
+<h4 class="font-bold text-lg mb-1">Proyecciones Basadas en IA</h4>
+<p class="text-slate-400 text-sm">Modelos predictivos que analizan más de 500 variables macroeconómicas.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-icons-outlined">tune</span>
+</div>
+<div>
+<h4 class="font-bold text-lg mb-1">Personalización Total</h4>
+<p class="text-slate-400 text-sm">Ajusta tu inversión inicial, horizonte temporal y perfil de riesgo.</p>
+</div>
+</div>
+</div>
+<button class="mt-12 bg-primary px-8 py-4 rounded-full font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-transform">Empezar simulación gratuita</button>
+</div>
+<div class="bg-slate-800/50 backdrop-blur-xl p-8 rounded-3xl border border-slate-700 shadow-2xl">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-bold">Simulated Portfolio</h3>
+<span class="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-full uppercase">Live Simulator</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-10">
+<div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+<p class="text-xs text-slate-500 uppercase font-bold mb-2">PROYECTED ROI</p>
+<p class="text-3xl font-bold text-green-400">12.4% <span class="text-sm font-normal text-slate-500">/yr</span></p>
+</div>
+<div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+<p class="text-xs text-slate-500 uppercase font-bold mb-2">MONTHLY CASHFLOW</p>
+<p class="text-3xl font-bold">$4,250 <span class="text-sm font-normal text-slate-500">USD</span></p>
+</div>
+</div>
+<div class="space-y-8">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-slate-400">Inversión Inicial</span>
+<span class="font-bold">$500,000</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer" type="range"/>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-slate-400">Horizonte Temporal</span>
+<span class="font-bold">15 Años</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer" type="range"/>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-slate-400">Perfil de Riesgo</span>
+<span class="font-bold">Moderado</span>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-2">
+<div class="h-2 rounded-full bg-slate-700"></div>
+<div class="h-2 rounded-full bg-primary"></div>
+<div class="h-2 rounded-full bg-slate-700"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="max-w-7xl mx-auto px-6 py-24 text-center">
+<div class="max-w-2xl mx-auto">
+<h2 class="text-4xl font-bold mb-6">Recibe análisis de mercado <br/><span class="text-primary">personalizados.</span></h2>
+<p class="text-slate-500 dark:text-slate-400 mb-10">Deja tus datos y un experto en datos te enviará un informe detallado basado en tus objetivos de inversión.</p>
+<div class="flex flex-col md:flex-row gap-3 p-2 bg-gray-100 dark:bg-slate-800 rounded-full">
+<input class="flex-1 bg-transparent border-none focus:ring-0 px-6 py-3 rounded-full text-lg" placeholder="tu@correo.com" type="email"/>
+<button class="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-transform">Suscribirme</button>
+</div>
+<p class="mt-4 text-sm text-slate-400 flex items-center justify-center gap-2">
+<span class="material-icons-outlined text-sm">lock</span> Datos encriptados y seguros
+            </p>
+</div>
+</section>
+<footer class="bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 py-16">
+<div class="max-w-7xl mx-auto px-6">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-16">
+<div class="col-span-2">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-icons-outlined text-primary text-3xl">domain</span>
+<span class="text-xl font-bold">EMIRATES<span class="text-primary">INVEST</span></span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 max-w-xs mb-6">
+                        Plataforma de inteligencia inmobiliaria para inversores institucionales y particulares en GCC.
+                    </p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-icons-outlined text-sm">public</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-icons-outlined text-sm">alternate_email</span>
+</a>
+</div>
+</div>
+<div>
+<h5 class="font-bold mb-6">Producto</h5>
+<ul class="space-y-4 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Market Scanner</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Calculadora ROI</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Heatmaps</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-bold mb-6">Compañía</h5>
+<ul class="space-y-4 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Sobre Nosotros</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Carreras</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-bold mb-6">Legal</h5>
+<ul class="space-y-4 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Privacidad</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Términos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Cookies</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-gray-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400">
+<p>© 2024 Emirates Invest Financial Technologies. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:underline" href="#">Privacy Policy</a>
+<a class="hover:underline" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+<button class="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-slate-800 rounded-full shadow-2xl border border-gray-100 dark:border-slate-700 flex items-center justify-center hover:scale-110 transition-transform z-50" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-icons-outlined dark:hidden">dark_mode</span>
+<span class="material-icons-outlined hidden dark:block text-yellow-400">light_mode</span>
+</button>
+
+</body></html>
