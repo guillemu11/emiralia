@@ -15,6 +15,7 @@ const pool = new Pool({
     database: process.env.PG_DB || 'emiralia',
     user: process.env.PG_USER || 'emiralia',
     password: process.env.PG_PASSWORD || 'changeme',
+    ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
 });
 
 /**

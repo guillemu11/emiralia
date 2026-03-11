@@ -26,6 +26,7 @@ const pool = new pg.Pool({
     password: process.env.PG_PASSWORD || 'changeme',
     database: process.env.PG_DB || 'emiralia',
     port: process.env.PG_PORT || 5432,
+    ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
 });
 
 // Redis Client
