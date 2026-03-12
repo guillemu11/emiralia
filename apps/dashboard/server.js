@@ -17,7 +17,7 @@ import { completeProject } from '../../tools/db/complete_project.js';
 
 const { Pool } = pg;
 const app = express();
-const port = process.env.DASHBOARD_PORT || 3001;
+const port = process.env.PORT || process.env.DASHBOARD_PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
