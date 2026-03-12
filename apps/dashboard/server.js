@@ -1931,8 +1931,12 @@ if (process.env.NODE_ENV === 'production') {
     // Serve static files from dist/
     app.use(express.static(path.join(__dirname, 'dist')));
 
-    // SPA catch-all: non-API routes serve index.html
-    app.get('/*', (req, res) => {
+    // SPA fallback: non-API routes serve index.html (Express 5 compatible)
+    app.use((req, res, next) => {
+        // Skip API routes
+        if (req.path.startsWith('/api/')) {
+            return next();
+        }
         res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
 }
