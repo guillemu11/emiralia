@@ -27,10 +27,16 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Copy root package.json (for tools/ dependencies)
+COPY --from=builder /app/package*.json ./
+
+# Install root dependencies (needed by tools/)
+RUN npm install --omit=dev
+
 # Copy dashboard package files
 COPY --from=builder /app/apps/dashboard/package*.json ./apps/dashboard/
 
-# Install production dependencies only
+# Install dashboard dependencies
 WORKDIR /app/apps/dashboard
 RUN npm install --omit=dev
 
