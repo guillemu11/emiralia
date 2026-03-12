@@ -5,14 +5,15 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files for all dependencies
-COPY package*.json ./
+# Copy dashboard package files
 COPY apps/dashboard/package*.json ./apps/dashboard/
 
-# Install dependencies
-RUN npm install --workspace=apps/dashboard
+# Install dashboard dependencies
+WORKDIR /app/apps/dashboard
+RUN npm install
 
 # Copy entire monorepo (needed for tools/ imports)
+WORKDIR /app
 COPY . .
 
 # Build React app
@@ -26,21 +27,19 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY --from=builder /app/package*.json ./
+# Copy dashboard package files
 COPY --from=builder /app/apps/dashboard/package*.json ./apps/dashboard/
 
 # Install production dependencies only
-RUN npm install --workspace=apps/dashboard --omit=dev
+WORKDIR /app/apps/dashboard
+RUN npm install --omit=dev
 
 # Copy built React app
-COPY --from=builder /app/apps/dashboard/dist ./apps/dashboard/dist
+COPY --from=builder /app/apps/dashboard/dist ./dist
 
 # Copy server and tools
-COPY --from=builder /app/apps/dashboard/server.js ./apps/dashboard/
-COPY --from=builder /app/tools ./tools
-
-WORKDIR /app/apps/dashboard
+COPY --from=builder /app/apps/dashboard/server.js ./
+COPY --from=builder /app/tools /app/tools
 
 ENV NODE_ENV=production
 EXPOSE 3001
