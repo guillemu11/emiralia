@@ -1943,11 +1943,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // ─── Start ───────────────────────────────────────────────────────────────────
 
-if (process.env.VERCEL) {
-    // En Vercel, exportar la app como serverless function
-    export default app;
-} else {
-    // En local, iniciar servidor
+// En local, iniciar servidor (en Vercel este listen es ignorado)
+if (!process.env.VERCEL) {
     app.listen(port, () => {
         console.log(`🚀 Dashboard server running on http://localhost:${port}`);
         console.log(`📊 API endpoints: http://localhost:${port}/api/*`);
@@ -1956,3 +1953,6 @@ if (process.env.VERCEL) {
         }
     });
 }
+
+// Exportar para Vercel serverless (siempre presente para evitar syntax error)
+export default app;
