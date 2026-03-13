@@ -139,6 +139,35 @@ Basandose en los patrones que YA funcionan bien en el sistema:
 - Recomendar reorganizacion si hay archivos en ubicaciones confusas
 - Identificar informacion faltante que haria mas eficiente la ejecucion
 
+#### 2f. Modular Architecture Check
+Verificar integridad de la arquitectura modular (post-refactor 1d105fe):
+
+**Archivos principales** - Deben existir:
+- [ ] `.claude/CLAUDE.md` (README ejecutivo, <100 líneas)
+- [ ] `.claude/AGENTS.md` (inventario de agentes)
+- [ ] `.claude/SKILLS.md` (catálogo de skills)
+- [ ] `.claude/TOOLS.md` (documentación de tools)
+- [ ] `.claude/WORKFLOWS.md` (SOPs cross-agente)
+- [ ] `.claude/RULES.md` (rules + convenciones)
+
+**Quick Reference en CLAUDE.md** - Debe tener tabla con links a los 6 archivos principales + BUSINESS_PLAN.md
+
+**Links bidireccionales**:
+- CLAUDE.md → links a AGENTS.md, SKILLS.md, TOOLS.md, WORKFLOWS.md, RULES.md, BUSINESS_PLAN.md
+- AGENTS.md → links a archivos en `agents/**/*.md`
+- WORKFLOWS.md → links a archivos en `workflows/*.md`
+- RULES.md → links a archivos en `rules/*.md`
+- Verificar que cada link apunta a un archivo que existe
+
+**Separación de concerns**:
+- CLAUDE.md NO debe contener inventarios detallados (delegar a archivos específicos)
+- AGENTS.md, SKILLS.md, TOOLS.md, WORKFLOWS.md, RULES.md deben estar actualizados con el estado real
+
+Clasificar:
+- **Critical**: Quick Reference faltante o links rotos a archivos principales
+- **Warning**: Links rotos a archivos secundarios (agents/, workflows/, rules/)
+- **Suggestion**: Inventarios desactualizados o información duplicada entre archivos
+
 ### Paso 3: Calcular score
 
 Score base: 100 puntos.

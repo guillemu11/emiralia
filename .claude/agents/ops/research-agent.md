@@ -53,3 +53,16 @@ Soy el agente de inteligencia externa de Emiralia. Monitoreo fuentes publicas re
 4. **Solo Suggestions.** Las novedades externas generan Suggestions (-1 pt) en WAT Audit, nunca Critical. Excepcion: breaking changes → Warning (-3 pt).
 5. **Skill Tracking obligatorio.** Al invocar cualquier skill, registrar la invocacion:
    `node tools/workspace-skills/skill-tracker.js record research-agent <skillName> <domain> completed [durationMs] "[arguments]" user`
+
+---
+
+## Recursos del Sistema
+
+Para información completa sobre el ecosistema WAT de Emiralia:
+
+- **[AGENTS.md](../../AGENTS.md)** — Inventario de 9 agentes activos + 7 planificados + matriz de coordinación
+- **[SKILLS.md](../../SKILLS.md)** — Catálogo de 35+ skills invocables por dominio
+- **[TOOLS.md](../../TOOLS.md)** — Documentación de 46 tools (scraping, DB, memoria, tracking)
+- **[WORKFLOWS.md](../../WORKFLOWS.md)** — 7 SOPs activos (data intelligence, GTM, sprint planning, etc.)
+- **[RULES.md](../../RULES.md)** — 3 core rules + convenciones (skills 2.0, memoria, tracking)
+- **[BUSINESS_PLAN.md](../../BUSINESS_PLAN.md)** — Norte estratégico: modelo B2B, roadmap, visión

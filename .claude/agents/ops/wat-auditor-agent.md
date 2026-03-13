@@ -128,3 +128,16 @@ Cada issue resta puntos segun severidad:
 1. **Skill Tracking obligatorio.** Al invocar cualquier skill (via `/nombre-skill`), registrar la invocacion:
    `node tools/workspace-skills/skill-tracker.js record wat-auditor <skillName> <domain> completed [durationMs] "[arguments]" user`
    Status opciones: `completed` | `failed` | `timeout`. Triggered_by opciones: `user` | `agent` | `workflow`.
+
+---
+
+## Recursos del Sistema
+
+Para información completa sobre el ecosistema WAT de Emiralia:
+
+- **[AGENTS.md](../../AGENTS.md)** — Inventario de 9 agentes activos + 7 planificados + matriz de coordinación
+- **[SKILLS.md](../../SKILLS.md)** — Catálogo de 35+ skills invocables por dominio
+- **[TOOLS.md](../../TOOLS.md)** — Documentación de 46 tools (scraping, DB, memoria, tracking)
+- **[WORKFLOWS.md](../../WORKFLOWS.md)** — 7 SOPs activos (data intelligence, GTM, sprint planning, etc.)
+- **[RULES.md](../../RULES.md)** — 3 core rules + convenciones (skills 2.0, memoria, tracking)
+- **[BUSINESS_PLAN.md](../../BUSINESS_PLAN.md)** — Norte estratégico: modelo B2B, roadmap, visión

@@ -97,3 +97,4 @@ docker-compose.yml   ← PostgreSQL + Adminer
 | **Ejecutar un workflow** | [WORKFLOWS.md](WORKFLOWS.md) | 7 SOPs activos (data intelligence, GTM planning, sprint planning, scraping, PM review, design loop) |
 | **Consultar rules** | [RULES.md](RULES.md) | 3 core rules (auto-dev-server, brand-guidelines, business-plan-alignment) + convenciones (skills 2.0, memoria, tracking, código) |
 | **Entender la visión** | [BUSINESS_PLAN.md](BUSINESS_PLAN.md) | Norte estratégico: modelo B2B, roadmap, estado actual vs visión |
+| **Ver cambios del sistema** | [CHANGELOG.md](CHANGELOG.md) | Historial de cambios estructurales (reorganización modular 2026-03-13) |

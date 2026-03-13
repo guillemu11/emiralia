@@ -78,3 +78,16 @@ precision inmobiliaria y naturalidad cultural. No traduzco mecanicamente — ada
 |------|-------------|
 | `document` | Fichas de propiedad traducidas, descripciones SEO, copies |
 | `table` | Lotes de traducciones (JSON/CSV) |
+
+---
+
+## Recursos del Sistema
+
+Para información completa sobre el ecosistema WAT de Emiralia:
+
+- **[AGENTS.md](../../AGENTS.md)** — Inventario de 9 agentes activos + 7 planificados + matriz de coordinación
+- **[SKILLS.md](../../SKILLS.md)** — Catálogo de 35+ skills invocables por dominio
+- **[TOOLS.md](../../TOOLS.md)** — Documentación de 46 tools (scraping, DB, memoria, tracking)
+- **[WORKFLOWS.md](../../WORKFLOWS.md)** — 7 SOPs activos (data intelligence, GTM, sprint planning, etc.)
+- **[RULES.md](../../RULES.md)** — 3 core rules + convenciones (skills 2.0, memoria, tracking)
+- **[BUSINESS_PLAN.md](../../BUSINESS_PLAN.md)** — Norte estratégico: modelo B2B, roadmap, visión
