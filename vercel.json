@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "apps/dashboard/server.js": {
+      "includeFiles": "tools/**"
+    }
+  },
   "builds": [
     {
       "src": "apps/dashboard/server.js",
