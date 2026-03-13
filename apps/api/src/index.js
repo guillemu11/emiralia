@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 // Load .env from project root (../../..) before any other imports execute
@@ -28,6 +29,57 @@ const pool = new pg.Pool({
     port: process.env.PG_PORT || 5432,
     ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
 });
+
+// ─── AUTO-INIT DATABASE (Railway auto-setup) ───────────────────────────────
+(async () => {
+    try {
+        // Check if tables exist
+        const tablesCheck = await pool.query(`
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.tables
+                WHERE table_schema = 'public' AND table_name = 'properties'
+            )
+        `);
+        const tablesExist = tablesCheck.rows[0].exists;
+
+        if (!tablesExist) {
+            console.log('[DB] Tables not found, auto-loading schema...');
+            const schemaPath = path.join(__dirname, '..', '..', '..', 'tools', 'db', 'schema.sql');
+
+            if (fs.existsSync(schemaPath)) {
+                const schema = fs.readFileSync(schemaPath, 'utf8');
+                await pool.query(schema);
+                console.log('[DB] ✅ Schema initialized successfully');
+            } else {
+                console.warn('[DB] ⚠️ Schema file not found at:', schemaPath);
+            }
+        } else {
+            console.log('[DB] ✅ Tables already exist');
+        }
+
+        // Check if we need seed data
+        const projectsCheck = await pool.query('SELECT COUNT(*) as count FROM projects');
+        const needsSeed = parseInt(projectsCheck.rows[0].count) === 0;
+
+        if (needsSeed) {
+            console.log('[DB] No projects found, loading seed data...');
+            const seedPath = path.join(__dirname, '..', '..', '..', 'tools', 'db', 'seed.sql');
+
+            if (fs.existsSync(seedPath)) {
+                const seed = fs.readFileSync(seedPath, 'utf8');
+                await pool.query(seed);
+                console.log('[DB] ✅ Seed data loaded successfully');
+            } else {
+                console.log('[DB] ℹ️ No seed file found (optional)');
+            }
+        } else {
+            console.log('[DB] ✅ Data already exists');
+        }
+    } catch (err) {
+        console.error('[DB] ❌ Auto-init error:', err.message);
+        // Don't exit - let the app continue in case tables already exist
+    }
+})();
 
 // Redis Client
 const redisClient = createClient({
