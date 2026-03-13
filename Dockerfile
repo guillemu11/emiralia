@@ -85,5 +85,23 @@ EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
 
+# ═══ TELEGRAM BOT ════════════════════════════════════════════════════════════
+FROM node:20-alpine AS telegram-bot
+
+WORKDIR /app
+
+# Copy root package files (bot dependencies are in root package.json)
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm ci --omit=dev
+
+# Copy bot and tools
+COPY tools/ ./tools/
+
+ENV NODE_ENV=production
+
+CMD ["node", "tools/telegram/bot.js"]
+
 # ═══ FINAL STAGE (select based on ARG) ════════════════════════════════════════
 FROM ${SERVICE} AS final
