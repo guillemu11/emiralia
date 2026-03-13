@@ -22,14 +22,21 @@ const port = process.env.PORT || process.env.DASHBOARD_PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-const pool = new Pool({
-    host: process.env.PG_HOST || 'localhost',
-    port: parseInt(process.env.PG_PORT || '5433', 10),
-    database: process.env.PG_DB || 'emiralia',
-    user: process.env.PG_USER || 'emiralia',
-    password: process.env.PG_PASSWORD || 'changeme',
-    ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
-});
+// Configuración de PostgreSQL: usar DATABASE_URL si está disponible (Railway, Heroku, etc.)
+// Si no, usar variables individuales (desarrollo local)
+const pool = process.env.DATABASE_URL
+    ? new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
+    })
+    : new Pool({
+        host: process.env.PG_HOST || 'localhost',
+        port: parseInt(process.env.PG_PORT || '5433', 10),
+        database: process.env.PG_DB || 'emiralia',
+        user: process.env.PG_USER || 'emiralia',
+        password: process.env.PG_PASSWORD || 'changeme',
+        ssl: { rejectUnauthorized: false }
+    });
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
