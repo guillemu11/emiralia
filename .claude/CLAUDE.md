@@ -6,127 +6,14 @@
 
 ## Framework WAT
 
-| Capa | Dónde | Qué hace |
-|------|-------|----------|
-| **Workflows** | `.claude/workflows/` | SOPs: objetivo, inputs, agentes, outputs, edge cases |
-| **Agents** | `.claude/agents/` | Roles especializados con skills y tools asignados |
-| **Tools** | `tools/` | Scripts deterministas: APIs, DB, transformaciones |
-| **Skills** | `.claude/skills/` | Capacidades invocables por agente o por `/comando` |
+| Capa | Dónde | Qué hace | Inventario |
+|------|-------|----------|------------|
+| **Workflows** | `.claude/workflows/` | SOPs: objetivo, inputs, agentes, outputs, edge cases | [WORKFLOWS.md](WORKFLOWS.md) |
+| **Agents** | `.claude/agents/` | Roles especializados con skills y tools asignados | [AGENTS.md](AGENTS.md) |
+| **Tools** | `tools/` | Scripts deterministas: APIs, DB, transformaciones | [TOOLS.md](TOOLS.md) |
+| **Skills** | `.claude/skills/` | Capacidades invocables por agente o por `/comando` | [SKILLS.md](SKILLS.md) |
 
 **Regla core:** Antes de construir algo nuevo, revisa `tools/` y `.claude/skills/`. Si algo falla: corrige el tool, verifica, actualiza el workflow.
-
----
-
-## Agentes de Emiralia
-
-### 🏛️ Internos (dentro de la plataforma)
-| Agente | Rol |
-|--------|-----|
-| **Content Agent** | Fichas de propiedades, blog, descripciones SEO en español |
-| **Translation Agent** | Árabe/inglés → español con precisión inmobiliaria |
-| **Frontend Agent** | UI/UX, creatividades, banners, mockups |
-| **Dev Agent** | Features, bugs, PRs en el codebase |
-| **Data Agent** | Extrae, limpia y normaliza datos de propiedades EAU |
-
-### 🔄 Mixtos (dentro y fuera)
-| Agente | Rol |
-|--------|-----|
-| **PM Agent** | Sprints, backlog, coordinación entre agentes |
-| **Marketing Agent** | Campañas, copies, canales, métricas |
-
-### 🔧 Operaciones (meta-sistema)
-| Agente | Rol |
-|--------|-----|
-| **WAT Auditor Agent** | Auditoría del sistema WAT: consistencia, completitud, gaps y mejoras |
-| **Research Agent** | Monitorea fuentes externas (Anthropic, GitHub, comunidad) y genera intelligence reports |
-
-### 📋 Planificados (Roadmap)
-> Agentes definidos conceptualmente pero sin implementación (.md, skills, tools). Se activarán según necesidad.
-
-| Agente | Rol | Prioridad |
-|--------|-----|-----------|
-| **SEO Agent** | Keywords, metadatos, arquitectura de enlaces | Media |
-| **Sales Agent** | Pipeline compradores hispanohablantes, leads | Alta |
-| **Customer Success Agent** | Onboarding, consultas, feedback | Media |
-| **Media Buyer Agent** | Inversión publicitaria Meta/Google/TikTok | Baja |
-| **Financial Agent** | Presupuestos, CAC, rentabilidad | Baja |
-| **Partnerships Agent** | Promotoras, agencias y brokers en EAU | Media |
-| **Legal & Compliance Agent** | Contratos, normativa EAU, compradores extranjeros | Baja |
-
----
-
-## Skills disponibles
-
-### Operacionales (`ops/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `skill-builder` | `/skill-builder` | — | Crear o auditar skills siguiendo best practices |
-| `wat-audit` | `/wat-audit` | WAT Auditor | Auditoría del sistema WAT: consistencia, gaps, mejoras estructurales |
-| `activity-tracking` | `/activity-tracking` | Transversal | Registrar progreso y hitos de cualquier agente |
-| `research-monitor` | `/research-monitor` | Research Agent | Monitoreo semanal de fuentes externas (Anthropic, GitHub, Reddit) |
-| `eod-report` | `/eod-report` | Transversal | Generar reporte end-of-day con actividades del día |
-| `weekly-brainstorm` | `/weekly-brainstorm` | Transversal | Brainstorm semanal de ideas y mejoras |
-| `dev-server` | `/dev-server` | Dev Agent | Levantar servidor de desarrollo automáticamente |
-
-### Contenido & Traducción (`content/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `traducir` | `/traducir` | Translation Agent | Traducir contenido inmobiliario EN↔ES con variante regional (es-ES, es-MX, es-CO) |
-
-### Diseño (`design/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `ui-ux-pro-max` | `/ui-ux-pro-max` | Frontend Agent | Inteligencia de diseño (67 estilos, 96 paletas, tipografía) |
-| `screenshot-loop` | `/screenshot-loop` | Frontend Agent | Iteración de diseño visual basada en capturas y brand guidelines |
-
-### Estrategia de Producto (`producto/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `estrategia-producto` | `/estrategia-producto` | PM Agent | Product Strategy Canvas de 9 secciones para Emiralia |
-| `propuesta-valor` | `/propuesta-valor` | PM Agent | Propuesta de valor JTBD de 6 partes |
-| `perfil-cliente-ideal` | `/perfil-cliente-ideal` | PM Agent | Arquetipos ICP de inversores hispanohablantes |
-| `analisis-competidores` | `/analisis-competidores` | PM Agent | Matriz competitiva vs PropertyFinder, Bayut, Houza |
-| `tamanio-mercado` | `/tamanio-mercado` | PM Agent | TAM/SAM/SOM del mercado PropTech hispano en EAU |
-
-### Go-to-Market & Crecimiento (`gtm/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `estrategia-gtm` | `/estrategia-gtm` | PM Agent | Plan GTM con canales, roadmap y presupuesto |
-| `segmento-entrada` | `/segmento-entrada` | PM Agent | Selección de beachhead: España vs LatAm vs Expats |
-| `loops-crecimiento` | `/loops-crecimiento` | PM Agent | Diseño de growth loops sostenibles |
-| `mapa-viaje-cliente` | `/mapa-viaje-cliente` | PM Agent | Customer journey de 8 etapas del comprador en EAU |
-| `ideas-posicionamiento` | `/ideas-posicionamiento` | Marketing Agent | Territorios de posicionamiento diferencial |
-
-### Ejecución (`ejecucion/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `crear-prd` | `/crear-prd` | PM Agent | PRD de 8 secciones para features de Emiralia |
-| `priorizar-features` | `/priorizar-features` | PM Agent | Priorización con RICE, MoSCoW, Impact/Esfuerzo |
-| `historias-usuario` | `/historias-usuario` | PM Agent | User stories + Job stories con contexto EAU |
-| `pre-mortem` | `/pre-mortem` | PM Agent | Análisis de riesgos Tigers/Paper Tigers/Elephants |
-| `planificar-sprint` | `/planificar-sprint` | PM Agent | Sprint semanal para equipo de agentes IA |
-| `pm-challenge` | `/pm-challenge` | PM Agent | Review, challenge y convertir ideas en planes ejecutables |
-| `cerrar-proyecto` | `/cerrar-proyecto` | PM Agent | Cierre automatizado: resumen, tasks Done, audit log |
-| `pm-context-audit` | `/pm-context-audit` | PM Agent | Auditar completitud, consistencia y frescura del contexto del PM Agent |
-
-### Marketing (`marketing/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `metricas-norte` | `/metricas-norte` | Marketing Agent | North Star Metric + input metrics |
-| `ideas-marketing` | `/ideas-marketing` | Marketing Agent | Ideas creativas de campañas cost-effective |
-| `battlecard-competitivo` | `/battlecard-competitivo` | Marketing Agent | Battlecards de ventas vs competidores |
-
-### Data & Analytics (`data/`)
-| Skill | Comando | Agente | Cuándo usarlo |
-|-------|---------|--------|---------------|
-| `propertyfinder-scraper` | `/propertyfinder-scraper` | Data Agent | Extraer propiedades de PropertyFinder.ae vía Apify |
-| `consultas-sql` | `/consultas-sql` | Data Agent | Queries SQL desde lenguaje natural (read-only) |
-| `analisis-cohortes` | `/analisis-cohortes` | Data Agent | Análisis por comunidad, precio, temporal |
-| `detectar-duplicados` | `/detectar-duplicados` | Data Agent | Detección cross-broker de propiedades duplicadas |
-| `analisis-ab` | `/analisis-ab` | PM Agent | Análisis de tests A/B con significancia estadística |
-| `analisis-sentimiento` | `/analisis-sentimiento` | PM Agent | Sentimiento y JTBD desde feedback de usuarios |
-| `skill-stats` | `/skill-stats` | Data Agent | Estadísticas de uso de skills: adopción, frecuencia, tendencias |
-| `panicselling-scraper` | `/panicselling-scraper` | Data Agent | Extraer price drops de propiedades de lujo desde panicselling.xyz |
 
 ---
 
@@ -161,62 +48,6 @@ node tools/db/wat-memory.js check <agentId> <key>  # consulta puntual
 3. **Scope `shared`** para todo lo que otros agentes necesiten saber. Scope `private` para estado interno.
 4. **Al crear un agente nuevo**, registrarlo en la tabla `agents` y añadir las dos tools de memoria + sus claves recomendadas en el `.md`.
 
-### Plantilla para agentes nuevos
-Al crear un nuevo agente en `.claude/agents/`, incluir siempre:
-```markdown
-## Tools disponibles
-- `tools/db/memory.js` — Leer y escribir memoria persistente del agente.
-- `tools/db/wat-memory.js` — Consultar el estado compartido de otros agentes.
-
-## Claves de memoria recomendadas
-| Key | Scope | Descripción |
-|-----|-------|-------------|
-| `last_task_completed` | shared | Última tarea completada |
-| `last_task_at` | shared | Timestamp de la última acción |
-```
-Y registrar el agente en DB:
-```bash
-node -e "
-import pool from './tools/db/pool.js';
-await pool.query(\`INSERT INTO agents (id, name, role, department) VALUES ('nuevo-agent','Nombre','Rol','dept') ON CONFLICT (id) DO NOTHING\`);
-await pool.end();
-" --input-type=module
-```
-
----
-
-## Convenciones Skills 2.0
-
-Los skills de Emiralia usan las capacidades avanzadas de Claude Code Skills:
-
-| Feature | Frontmatter | Efecto |
-|---------|-------------|--------|
-| `context: fork` | `context: fork` | Ejecuta el skill en contexto aislado (no contamina la conversación principal) |
-| `model` | `model: haiku/sonnet/opus` | Selecciona el modelo óptimo por costo/calidad |
-| `allowed-tools` | `allowed-tools: [Bash, Read, ...]` | Restringe qué tools puede usar el skill |
-| `!backticks` | `!` seguido de backtick en el body | Inyecta output dinámico de comandos antes de la ejecución |
-
-**Guías de asignación de modelo:**
-- `haiku` → Tasks ligeras: tracking, queries SQL, monitoreo
-- `sonnet` → Tasks analíticas: auditorías, análisis, scraping
-- `opus` → Tasks estratégicas: PRDs, decisiones de producto
-
----
-
-## Reglas de contexto (aplican a todos los agentes)
-
-1. **Español primero.** Todo output de cara al usuario en español de calidad, sensible culturalmente para España y Latinoamérica.
-2. **Precisión inmobiliaria.** Precio, m², ubicación, developer y estatus de entrega se verifican antes de publicar. Un error en precio es crítico.
-3. **Privacidad.** Datos de leads y compradores con máxima confidencialidad. Nunca se loguean datos personales.
-4. **EAU-first.** Consejos legales, fiscales o de inversión reflejan normativa de Emiratos, no del país del comprador.
-5. **Escalabilidad por diseño.** Cada tool y workflow diseñado para miles de propiedades y leads desde el inicio.
-6. **Tracking obligatorio.** Toda tool nueva en `tools/` debe incluir una llamada `trackSkill()` al inicio de su ejecucion. Verificar cobertura con `node tools/workspace-skills/skill-coverage-checker.js`.
-
-```javascript
-import { trackSkill } from '../workspace-skills/skill-tracker.js';
-trackSkill('<agentId>', '<tool-name>', '<domain>', 'completed').catch(() => {});
-```
-
 ---
 
 ## Outputs
@@ -238,12 +69,31 @@ trackSkill('<agentId>', '<tool-name>', '<domain>', 'completed').catch(() => {});
 
 ```
 .claude/
-  CLAUDE.md          ← este fichero
+  CLAUDE.md          ← este fichero (README ejecutivo)
+  AGENTS.md          ← inventario de 9 agentes activos + 7 planificados
+  SKILLS.md          ← catálogo de 35+ skills invocables
+  TOOLS.md           ← documentación de 46 tools
+  WORKFLOWS.md       ← 7 workflows activos + 4 planificados
+  RULES.md           ← rules de sistema + convenciones
   BUSINESS_PLAN.md   ← norte estratégico (visión, modelo B2B, roadmap)
-  agents/            ← definiciones de agentes
-  skills/            ← skills invocables
-  workflows/         ← SOPs cross-agent
+  agents/            ← definiciones de agentes por categoría
+  skills/            ← skills por dominio (ops, content, design, producto, gtm, ejecucion, marketing, data)
+  workflows/         ← SOPs detallados
+  rules/             ← rules de sistema (auto-dev-server, brand-guidelines, business-plan-alignment)
 tools/               ← scripts ejecutables (Node.js)
 .env                 ← API keys (NUNCA en otro sitio)
 docker-compose.yml   ← PostgreSQL + Adminer
 ```
+
+---
+
+## Quick Reference
+
+| ¿Qué necesitas? | Archivo | Descripción |
+|----------------|---------|-------------|
+| **Ver agentes disponibles** | [AGENTS.md](AGENTS.md) | 9 agentes activos (content, translation, frontend, dev, data, pm, marketing, research, wat-auditor) + 7 planificados |
+| **Invocar un skill** | [SKILLS.md](SKILLS.md) | 35+ skills organizados por dominio (usa `/comando` en Claude Code) |
+| **Usar un tool** | [TOOLS.md](TOOLS.md) | 46 tools documentados (scraping, DB, memoria, tracking, traducción, PM, research) |
+| **Ejecutar un workflow** | [WORKFLOWS.md](WORKFLOWS.md) | 7 SOPs activos (data intelligence, GTM planning, sprint planning, scraping, PM review, design loop) |
+| **Consultar rules** | [RULES.md](RULES.md) | 3 core rules (auto-dev-server, brand-guidelines, business-plan-alignment) + convenciones (skills 2.0, memoria, tracking, código) |
+| **Entender la visión** | [BUSINESS_PLAN.md](BUSINESS_PLAN.md) | Norte estratégico: modelo B2B, roadmap, estado actual vs visión |
