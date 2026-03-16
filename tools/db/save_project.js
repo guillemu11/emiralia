@@ -34,18 +34,41 @@ async function fixSequences(client) {
 }
 
 /**
+ * Execute an INSERT with automatic retry on duplicate key (23505).
+ * Uses SAVEPOINT so the enclosing transaction stays alive on failure.
+ */
+async function insertWithRetry(client, query, params, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            await client.query('SAVEPOINT insert_retry');
+            const result = await client.query(query, params);
+            await client.query('RELEASE SAVEPOINT insert_retry');
+            return result;
+        } catch (err) {
+            await client.query('ROLLBACK TO SAVEPOINT insert_retry');
+            if (err.code === '23505' && i < retries - 1) {
+                await fixSequences(client);
+                continue;
+            }
+            throw err;
+        }
+    }
+}
+
+/**
  * Guarda un proyecto completo con sus fases y tareas.
  * @param {Object} data - JSON estructurado del PM Agent
  * @returns {number} ID del proyecto creado
  */
-export async function saveProject(data, _retry = false) {
+export async function saveProject(data) {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
         await fixSequences(client);
 
         // 1. Insertar Proyecto
-        const projectRes = await client.query(
+        const projectRes = await insertWithRetry(
+            client,
             `INSERT INTO projects (name, problem, solution, success_metrics, blocks, department, sub_area, pain_points, requirements, risks, estimated_budget, estimated_timeline, future_improvements, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
        RETURNING id`,
@@ -71,7 +94,8 @@ export async function saveProject(data, _retry = false) {
         // 2. Insertar Fases y Tareas
         if (data.phases && Array.isArray(data.phases)) {
             for (const phase of data.phases) {
-                const phaseRes = await client.query(
+                const phaseRes = await insertWithRetry(
+                    client,
                     `INSERT INTO phases (project_id, phase_number, name, objective)
            VALUES ($1, $2, $3, $4)
            RETURNING id`,
@@ -83,7 +107,8 @@ export async function saveProject(data, _retry = false) {
                     for (const func of phase.functionalities) {
                         if (func.tasks && Array.isArray(func.tasks)) {
                             for (const task of func.tasks) {
-                                await client.query(
+                                await insertWithRetry(
+                                    client,
                                     `INSERT INTO tasks (phase_id, description, agent, effort, status, dependencies, type, priority)
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
                                     [
@@ -108,11 +133,6 @@ export async function saveProject(data, _retry = false) {
         return projectId;
     } catch (err) {
         await client.query('ROLLBACK');
-        // Retry once on duplicate key — sequence was stale despite fixSequences
-        if (!_retry && err.code === '23505') {
-            client.release();
-            return saveProject(data, true);
-        }
         throw err;
     } finally {
         client.release();
@@ -129,9 +149,9 @@ export async function updateProject(projectId, data) {
 
         // 1. Actualizar Proyecto base
         await client.query(
-            `UPDATE projects 
-       SET name = $1, problem = $2, solution = $3, success_metrics = $4, blocks = $5, department = $6, sub_area = $7, 
-           pain_points = $8, requirements = $9, risks = $10, estimated_budget = $11, estimated_timeline = $12, 
+            `UPDATE projects
+       SET name = $1, problem = $2, solution = $3, success_metrics = $4, blocks = $5, department = $6, sub_area = $7,
+           pain_points = $8, requirements = $9, risks = $10, estimated_budget = $11, estimated_timeline = $12,
            future_improvements = $13, updated_at = NOW()
        WHERE id = $14`,
             [
@@ -153,15 +173,14 @@ export async function updateProject(projectId, data) {
         );
 
         // 2. Limpiar fases y tareas antiguas para re-insertar
-        // (En un sistema real querríamos ser más granulares, pero para el prototipo 
-        // de PM Agent, el bot genera el breakdown entero de nuevo).
         await client.query('DELETE FROM phases WHERE project_id = $1', [projectId]);
         await fixSequences(client);
 
         // 3. Re-insertar Fases y Tareas
         if (data.phases && Array.isArray(data.phases)) {
             for (const phase of data.phases) {
-                const phaseRes = await client.query(
+                const phaseRes = await insertWithRetry(
+                    client,
                     `INSERT INTO phases (project_id, phase_number, name, objective)
            VALUES ($1, $2, $3, $4)
            RETURNING id`,
@@ -173,7 +192,8 @@ export async function updateProject(projectId, data) {
                     for (const func of phase.functionalities) {
                         if (func.tasks && Array.isArray(func.tasks)) {
                             for (const task of func.tasks) {
-                                await client.query(
+                                await insertWithRetry(
+                                    client,
                                     `INSERT INTO tasks (phase_id, description, agent, effort, status, dependencies, type, priority)
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
                                     [
@@ -225,7 +245,8 @@ export async function addTaskToProject(projectId, taskData) {
         let phaseId;
         if (phaseRes.rows.length === 0) {
             // Si no hay fases, crear una fase "Backlog"
-            const newPhase = await client.query(
+            const newPhase = await insertWithRetry(
+                client,
                 `INSERT INTO phases (project_id, phase_number, name, objective)
                  VALUES ($1, 0, 'Backlog', 'Tareas inyectadas vía /task') RETURNING id`,
                 [projectId]
@@ -235,7 +256,8 @@ export async function addTaskToProject(projectId, taskData) {
             phaseId = phaseRes.rows[0].id;
         }
 
-        const result = await client.query(
+        const result = await insertWithRetry(
+            client,
             `INSERT INTO tasks (phase_id, description, agent, effort, status, type, priority, dependencies)
              VALUES ($1, $2, $3, $4, 'Todo', $5, $6, '[]') RETURNING *`,
             [
