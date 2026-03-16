@@ -1,11 +1,14 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "tools/telegram/Dockerfile"
+dockerfilePath = "Dockerfile"
+
+[build.buildArgs]
+SERVICE = "telegram-bot"
 
 [deploy]
 startCommand = "node tools/telegram/bot.js"
 restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 5
+restartPolicyMaxRetries = 10
 
 [[deploy.healthcheck]]
 # Telegram bots usan long polling, no HTTP
