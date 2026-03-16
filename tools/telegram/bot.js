@@ -564,16 +564,20 @@ bot.command('admin_fix_sequences', async (ctx) => {
 
         const client = await pool.connect();
         try {
-            // Fix projects sequence
-            const projectsResult = await client.query(`
-                SELECT setval('projects_id_seq',
-                    (SELECT COALESCE(MAX(id), 0) + 1 FROM projects),
-                    false
-                )
-            `);
-            const newProjectsSeq = projectsResult.rows[0].setval;
+            const tables = ['projects', 'phases', 'tasks'];
+            const results = [];
 
-            await ctx.reply(`✅ projects_id_seq → ${newProjectsSeq}\n\nYa puedes crear proyectos sin error.`);
+            for (const table of tables) {
+                const res = await client.query(`
+                    SELECT setval('${table}_id_seq',
+                        (SELECT COALESCE(MAX(id), 0) + 1 FROM ${table}),
+                        false
+                    )
+                `);
+                results.push(`${table}_id_seq → ${res.rows[0].setval}`);
+            }
+
+            await ctx.reply(`✅ Secuencias reseteadas:\n${results.join('\n')}\n\nYa puedes crear proyectos sin error.`);
         } finally {
             client.release();
         }

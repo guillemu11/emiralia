@@ -28,6 +28,11 @@ export async function saveProject(data) {
     try {
         await client.query('BEGIN');
 
+        // Fix sequences to avoid duplicate key errors
+        await client.query(`SELECT setval('projects_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM projects), false)`);
+        await client.query(`SELECT setval('phases_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM phases), false)`);
+        await client.query(`SELECT setval('tasks_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM tasks), false)`);
+
         // 1. Insertar Proyecto
         const projectRes = await client.query(
             `INSERT INTO projects (name, problem, solution, success_metrics, blocks, department, sub_area, pain_points, requirements, risks, estimated_budget, estimated_timeline, future_improvements, status)
