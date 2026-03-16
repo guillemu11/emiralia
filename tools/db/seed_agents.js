@@ -76,6 +76,26 @@ const agents = [
         skills: ['research-monitor'],
         tools: ['memory', 'wat-memory'],
     },
+    {
+        id: 'marketing-agent',
+        name: 'Marketing Agent',
+        role: 'Campañas, copies, canales de adquisición, métricas de crecimiento',
+        department: 'marketing',
+        avatar: '📣',
+        status: 'active',
+        skills: ['estrategia-gtm', 'segmento-entrada', 'priorizar-features', 'competitor-analysis', 'channel-research', 'activity-tracking'],
+        tools: ['memory', 'wat-memory'],
+    },
+    {
+        id: 'wat-auditor-agent',
+        name: 'WAT Auditor Agent',
+        role: 'Audita el sistema WAT completo (CLAUDE.md, agentes, skills, workflows)',
+        department: 'ops',
+        avatar: '🔬',
+        status: 'active',
+        skills: ['wat-audit'],
+        tools: ['memory', 'wat-memory'],
+    },
 ];
 
 const REAL_IDS = agents.map(a => a.id);

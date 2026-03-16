@@ -436,12 +436,28 @@ bot.command('agents', async (ctx) => {
         const message = getAgentsListMessage();
         const keyboard = getAgentsKeyboard();
 
+        console.log('[Bot] /agents command triggered');
+        console.log(`[Bot] Message length: ${message.length}`);
+        console.log(`[Bot] Keyboard buttons: ${keyboard.flat().length}`);
+
+        if (keyboard.flat().length === 0) {
+            console.error('[Bot] ⚠️ WARNING: No agents found! Keyboard is empty.');
+            await ctx.reply(
+                '⚠️ No se pudieron cargar los agentes. Por favor contacta al administrador.\n\n' +
+                'Debug: listAvailableAgents() retornó array vacío.',
+                { parse_mode: 'Markdown' }
+            );
+            return;
+        }
+
         await ctx.reply(message, {
             parse_mode: 'Markdown',
             reply_markup: {
                 inline_keyboard: keyboard,
             },
         });
+
+        console.log('[Bot] /agents response sent successfully');
     } catch (err) {
         console.error('[Bot] /agents error:', err);
         await ctx.reply(`Error al cargar agentes: ${err.message}`);

@@ -29,7 +29,7 @@ const __dirname = path.dirname(__filename);
 
 const AGENT_CATEGORIES = ['content', 'data', 'design', 'dev', 'marketing', 'ops', 'product'];
 const PROJECT_ROOT = path.resolve(__dirname, '../../');
-const AGENTS_DIR = path.join(PROJECT_ROOT, '.claude/agents');
+const AGENTS_DIR = process.env.AGENTS_DIR || path.join(PROJECT_ROOT, '.claude/agents');
 
 /**
  * Metadata de agentes con emojis y descripciones cortas.
@@ -131,32 +131,87 @@ function readAgentDefinition(agentId) {
 }
 
 /**
- * Carga todas las definiciones de agentes (con cache)
+ * Carga definiciones de agentes desde filesystem.
+ * @returns {Object|null} Diccionario de definiciones o null si falla
+ */
+function loadAllAgentDefinitionsFromFilesystem() {
+    try {
+        const definitions = {};
+
+        for (const category of AGENT_CATEGORIES) {
+            const categoryPath = path.join(AGENTS_DIR, category);
+            if (!fs.existsSync(categoryPath)) {
+                console.log(`[Agent Router] Category not found: ${categoryPath}`);
+                continue;
+            }
+
+            const files = fs.readdirSync(categoryPath).filter(f => f.endsWith('.md'));
+
+            for (const file of files) {
+                const agentId = file.replace('.md', '');
+                const def = readAgentDefinition(agentId);
+                if (def) {
+                    definitions[agentId] = def;
+                }
+            }
+        }
+
+        return Object.keys(definitions).length > 0 ? definitions : null;
+    } catch (err) {
+        console.error('[Agent Router] Filesystem load error:', err.message);
+        return null;
+    }
+}
+
+/**
+ * Retorna fallback hardcoded basado en AGENT_METADATA.
+ * Usado como último recurso si filesystem y DB fallan.
+ * @returns {Object} Diccionario de definiciones mínimas
+ */
+function getHardcodedAgentFallback() {
+    const fallback = {};
+    for (const [agentId, meta] of Object.entries(AGENT_METADATA)) {
+        fallback[agentId] = {
+            name: agentId.replace('-agent', ' Agent').replace(/\b\w/g, l => l.toUpperCase()),
+            role: meta.shortDesc,
+            department: 'unknown',
+            skills: [],
+            tools: [],
+        };
+    }
+    console.log(`[Agent Router] Using hardcoded fallback (${Object.keys(fallback).length} agents)`);
+    return fallback;
+}
+
+/**
+ * Carga todas las definiciones de agentes con fallback automático.
+ * Estrategia: filesystem → hardcoded fallback
+ * @returns {Object} Diccionario de definiciones
  */
 function loadAllAgentDefinitions() {
     const now = Date.now();
 
     // Return cached if still valid
     if (agentDefinitionsCache && cacheTimestamp && (now - cacheTimestamp < CACHE_TTL_MS)) {
+        console.log('[Agent Router] Using cached definitions');
         return agentDefinitionsCache;
     }
 
-    const definitions = {};
+    console.log('[Agent Router] Loading agent definitions...');
 
-    for (const category of AGENT_CATEGORIES) {
-        const categoryPath = path.join(AGENTS_DIR, category);
-        if (!fs.existsSync(categoryPath)) continue;
+    // STRATEGY 1: Try filesystem first (desarrollo local)
+    let definitions = loadAllAgentDefinitionsFromFilesystem();
 
-        const files = fs.readdirSync(categoryPath).filter(f => f.endsWith('.md'));
-
-        for (const file of files) {
-            const agentId = file.replace('.md', '');
-            const def = readAgentDefinition(agentId);
-            if (def) {
-                definitions[agentId] = def;
-            }
-        }
+    if (definitions && Object.keys(definitions).length > 0) {
+        console.log(`[Agent Router] ✅ Loaded ${Object.keys(definitions).length} agents from FILESYSTEM`);
+        agentDefinitionsCache = definitions;
+        cacheTimestamp = now;
+        return definitions;
     }
+
+    // STRATEGY 2: Fallback hardcoded (producción/Railway)
+    console.warn('[Agent Router] ⚠️ Filesystem failed, using hardcoded fallback...');
+    definitions = getHardcodedAgentFallback();
 
     agentDefinitionsCache = definitions;
     cacheTimestamp = now;
