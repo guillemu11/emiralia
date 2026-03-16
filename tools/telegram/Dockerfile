@@ -11,10 +11,8 @@ WORKDIR /app
 # Copy dependencies from builder
 COPY --from=builder /app/node_modules ./node_modules
 
-# Copy bot code
-COPY tools/telegram/ ./tools/telegram/
-COPY tools/db/ ./tools/db/
-COPY tools/pm-agent/ ./tools/pm-agent/
+# Copy ALL tools (bot + all dependencies)
+COPY tools/ ./tools/
 COPY package*.json ./
 
 # Health check (polling bot no tiene HTTP endpoint, verificar proceso)
