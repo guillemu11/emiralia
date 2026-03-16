@@ -51,3 +51,33 @@ apps/api/api.log
 # Testing
 coverage/
 .nyc_output/
+
+# ============================================================
+# Archivos temporales de deployment/migraciones
+# (prevenir acumulación futura en root)
+# ============================================================
+
+# SQL exports (solo permitir en scripts/migrations/archive/)
+/*.sql
+*_export.sql
+*_chunked.sql
+*_clean.sql
+
+# Scripts de deployment en root (deben estar en scripts/)
+/railway-*.sh
+/railway-*.js
+/import-*.js
+/import-*.sh
+
+# Variables de entorno de deployment (NO commitear)
+.env.vercel
+.env.railway
+*.env.local
+
+# PIDs de procesos
+*.pid
+
+# Logs de importación/migración
+import-*.log
+migration-*.log
+deploy-*.log
