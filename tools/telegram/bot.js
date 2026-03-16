@@ -34,6 +34,7 @@ import {
     getAgentsListMessage,
     getAgentsKeyboard,
 } from './agent-router.js';
+import { upsertUser } from '../db/telegram_user_queries.js';
 import pg from 'pg';
 
 const { Pool } = pg;
@@ -64,6 +65,34 @@ bot.use(session({
         inboxItemId: null,
     }),
 }));
+
+// ─── Auto-Register User Middleware ───────────────────────────────────────────
+
+/**
+ * Middleware que registra automáticamente al usuario en telegram_users
+ * en cada interacción (mensaje, comando, callback).
+ *
+ * Esto garantiza que el usuario siempre exista en DB antes de ejecutar
+ * cualquier operación que requiera su registro (ej: setActiveAgent).
+ */
+bot.use(async (ctx, next) => {
+    if (ctx.from) {
+        try {
+            await upsertUser({
+                user_id: ctx.from.id,
+                username: ctx.from.username,
+                first_name: ctx.from.first_name,
+                last_name: ctx.from.last_name,
+                language_code: ctx.from.language_code || 'es',
+            });
+            console.log(`[Middleware] User ${ctx.from.id} registered/updated`);
+        } catch (err) {
+            console.error('[Middleware] Error upserting user:', err.message);
+            // No bloquear el flujo, continuar de todas formas
+        }
+    }
+    await next();
+});
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
