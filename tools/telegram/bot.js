@@ -384,6 +384,7 @@ function resetSession(ctx) {
 // ─── Comandos ────────────────────────────────────────────────────────────────
 
 bot.command('start', async (ctx) => {
+    console.log('[Handler] /start invoked by user:', ctx.from?.id);
     await ctx.reply(
         `*PM Agent de Emiralia*\n\n` +
         `Transformo ideas en planes ejecutables.\n\n` +
@@ -391,6 +392,7 @@ bot.command('start', async (ctx) => {
         `/list — Ver proyectos\n` +
         `/task [ID] [desc] — Inyectar ticket\n` +
         `/skill\\_ranking — Ranking de uso de skills\n` +
+        `/admin\\_fix\\_sequences — Arreglar secuencias BD\n` +
         `/cancel — Cancelar sesion\n\n` +
         `Tambien acepto notas de voz 🎙`,
         { parse_mode: 'Markdown' }
@@ -556,6 +558,30 @@ bot.command('cancel', async (ctx) => {
     await ctx.reply('Sesion cancelada. Usa /idea cuando quieras.');
 });
 
+bot.command('admin_fix_sequences', async (ctx) => {
+    try {
+        await ctx.reply('🔧 Reseteando secuencias de base de datos...');
+
+        const client = await pool.connect();
+        try {
+            // Fix projects sequence
+            const projectsResult = await client.query(`
+                SELECT setval('projects_id_seq',
+                    (SELECT COALESCE(MAX(id), 0) + 1 FROM projects),
+                    false
+                )
+            `);
+            const newProjectsSeq = projectsResult.rows[0].setval;
+
+            await ctx.reply(`✅ projects_id_seq → ${newProjectsSeq}\n\nYa puedes crear proyectos sin error.`);
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        await ctx.reply(`❌ Error: ${error.message}`);
+    }
+});
+
 // ─── Inline Keyboard Actions ────────────────────────────────────────────────
 
 bot.action('action_borrador', async (ctx) => {
@@ -625,6 +651,12 @@ bot.action(/^edit_(\d+)$/, async (ctx) => {
 // ─── Mensajes de texto ──────────────────────────────────────────────────────
 
 bot.on('text', async (ctx) => {
+    console.log('[Handler] Text message received:', {
+        from: ctx.from?.id,
+        text: ctx.message.text.substring(0, 50),
+        phase: ctx.session.phase
+    });
+
     if (!ctx.session.phase) {
         await ctx.reply(
             'Usa /idea para compartir una propuesta, o /start para ver comandos.',
@@ -659,13 +691,35 @@ bot.on('voice', async (ctx) => {
 console.log('╔══════════════════════════════════════════════════════╗');
 console.log('║  Emiralia — PM Agent Bot (v2)                        ║');
 console.log('╚══════════════════════════════════════════════════════╝');
-console.log('Bot iniciado. Esperando mensajes en Telegram...\n');
 
 bot.catch((err, ctx) => {
-    console.error(`Error for ${ctx.updateType}:`, err.message);
+    console.error('[Bot Error]', {
+        type: ctx.updateType,
+        error: err.message,
+        stack: err.stack
+    });
 });
 
-bot.launch();
+// Enhanced launch con verificación de DB
+(async () => {
+    try {
+        console.log('[Bot] Testing database connection...');
+        await pool.query('SELECT NOW()');
+        console.log('[Bot] ✅ Database connection OK');
+
+        console.log('[Bot] Launching bot with long polling...');
+        await bot.launch();
+
+        console.log('[Bot] ✅ Bot is listening for updates');
+        console.log('[Bot] Try /start in Telegram\n');
+    } catch (err) {
+        console.error('[Bot] ❌ Failed to launch:', {
+            error: err.message,
+            stack: err.stack
+        });
+        process.exit(1);
+    }
+})();
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
