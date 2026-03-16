@@ -19,19 +19,30 @@ const pool = new Pool({
 });
 
 /**
+ * Reset all SERIAL sequences to MAX(id)+1 to prevent duplicate key errors.
+ * Safe to call multiple times — idempotent.
+ */
+async function fixSequences(client) {
+    for (const table of ['projects', 'phases', 'tasks']) {
+        await client.query(`
+            SELECT setval(pg_get_serial_sequence('${table}', 'id'),
+                COALESCE((SELECT MAX(id) FROM ${table}), 0) + 1,
+                false
+            )
+        `);
+    }
+}
+
+/**
  * Guarda un proyecto completo con sus fases y tareas.
  * @param {Object} data - JSON estructurado del PM Agent
  * @returns {number} ID del proyecto creado
  */
-export async function saveProject(data) {
+export async function saveProject(data, _retry = false) {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-
-        // Fix sequences to avoid duplicate key errors
-        await client.query(`SELECT setval('projects_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM projects), false)`);
-        await client.query(`SELECT setval('phases_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM phases), false)`);
-        await client.query(`SELECT setval('tasks_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM tasks), false)`);
+        await fixSequences(client);
 
         // 1. Insertar Proyecto
         const projectRes = await client.query(
@@ -70,13 +81,6 @@ export async function saveProject(data) {
 
                 if (phase.functionalities && Array.isArray(phase.functionalities)) {
                     for (const func of phase.functionalities) {
-                        // En el schema actual las tareas cuelgan de la fase directamente, 
-                        // pero el JSON del bot incluye "functionalities". 
-                        // Vamos a aplanar las tareas de las funcionalidades a la fase, 
-                        // o podríamos añadir una tabla functionalities. 
-                        // Por simplicidad para el "tipo Notion", aplanamos a la fase 
-                        // prefijando la funcionalidad en la descripción si es necesario.
-
                         if (func.tasks && Array.isArray(func.tasks)) {
                             for (const task of func.tasks) {
                                 await client.query(
@@ -104,6 +108,11 @@ export async function saveProject(data) {
         return projectId;
     } catch (err) {
         await client.query('ROLLBACK');
+        // Retry once on duplicate key — sequence was stale despite fixSequences
+        if (!_retry && err.code === '23505') {
+            client.release();
+            return saveProject(data, true);
+        }
         throw err;
     } finally {
         client.release();
@@ -147,6 +156,7 @@ export async function updateProject(projectId, data) {
         // (En un sistema real querríamos ser más granulares, pero para el prototipo 
         // de PM Agent, el bot genera el breakdown entero de nuevo).
         await client.query('DELETE FROM phases WHERE project_id = $1', [projectId]);
+        await fixSequences(client);
 
         // 3. Re-insertar Fases y Tareas
         if (data.phases && Array.isArray(data.phases)) {
@@ -204,6 +214,8 @@ export async function updateProject(projectId, data) {
 export async function addTaskToProject(projectId, taskData) {
     const client = await pool.connect();
     try {
+        await fixSequences(client);
+
         // Buscar la última fase del proyecto
         const phaseRes = await client.query(
             'SELECT id FROM phases WHERE project_id = $1 ORDER BY phase_number DESC LIMIT 1',
