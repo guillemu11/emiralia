@@ -1,0 +1,13 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "tools/telegram/Dockerfile"
+
+[deploy]
+startCommand = "node tools/telegram/bot.js"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+
+[[deploy.healthcheck]]
+# Telegram bots usan long polling, no HTTP
+# Railway verificará que el contenedor esté corriendo
+type = "PROCESS"
