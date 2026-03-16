@@ -1,0 +1,217 @@
+{
+  "$schema": "./tool-registry-schema.json",
+  "version": "1.0.0",
+  "lastUpdated": "2026-03-17",
+  "tools": {
+    "memory.set": {
+      "path": "../db/memory.js",
+      "export": "setMemory",
+      "type": "function",
+      "category": "database",
+      "timeout": 5000,
+      "description": "Write or update agent memory (key-value store)",
+      "args": ["agentId", "key", "value", "scope"],
+      "permissions": "*"
+    },
+    "memory.get": {
+      "path": "../db/memory.js",
+      "export": "getMemory",
+      "type": "function",
+      "category": "database",
+      "timeout": 3000,
+      "description": "Read agent memory by key",
+      "args": ["agentId", "key"],
+      "permissions": "*"
+    },
+    "memory.list": {
+      "path": "../db/memory.js",
+      "export": "listMemory",
+      "type": "function",
+      "category": "database",
+      "timeout": 3000,
+      "description": "List all memory keys for an agent",
+      "args": ["agentId"],
+      "permissions": "*"
+    },
+    "memory.shared": {
+      "path": "../db/memory.js",
+      "export": "getSharedMemory",
+      "type": "function",
+      "category": "database",
+      "timeout": 3000,
+      "description": "Get shared memory across all agents by key",
+      "args": ["key"],
+      "permissions": "*"
+    },
+    "query.properties": {
+      "path": "../db/query_properties.js",
+      "export": "queryDB",
+      "type": "function",
+      "category": "database",
+      "timeout": 30000,
+      "description": "Execute read-only SQL queries on properties database",
+      "args": ["sql", "params"],
+      "permissions": ["data-agent", "pm-agent", "marketing-agent"]
+    },
+    "skill.track": {
+      "path": "../workspace-skills/skill-tracker.js",
+      "export": "trackSkill",
+      "type": "function",
+      "category": "tracking",
+      "timeout": 5000,
+      "description": "Track skill invocation in raw_events",
+      "args": ["agentId", "skillName", "domain", "status", "durationMs", "args", "triggeredBy"],
+      "permissions": "*"
+    },
+    "activity.record": {
+      "path": "../workspace-skills/activity-harvester.js",
+      "export": "recordActivity",
+      "type": "function",
+      "category": "tracking",
+      "timeout": 5000,
+      "description": "Record agent activity in raw_events",
+      "args": ["agentId", "eventType", "content"],
+      "permissions": "*"
+    },
+    "wat-memory.system-state": {
+      "path": "../db/wat-memory.js",
+      "export": "getSystemState",
+      "type": "function",
+      "category": "coordination",
+      "timeout": 10000,
+      "description": "Get shared memory and recent events from all agents",
+      "args": [],
+      "permissions": ["pm-agent", "wat-auditor-agent"]
+    },
+    "wat-memory.agent-state": {
+      "path": "../db/wat-memory.js",
+      "export": "getAgentState",
+      "type": "function",
+      "category": "coordination",
+      "timeout": 5000,
+      "description": "Get complete state of a specific agent",
+      "args": ["agentId"],
+      "permissions": "*"
+    },
+    "project.save": {
+      "path": "../db/save_project.js",
+      "export": "saveProject",
+      "type": "function",
+      "category": "pm",
+      "timeout": 10000,
+      "description": "Create a new project in the database",
+      "args": ["data"],
+      "permissions": ["pm-agent"]
+    },
+    "project.update": {
+      "path": "../db/save_project.js",
+      "export": "updateProject",
+      "type": "function",
+      "category": "pm",
+      "timeout": 10000,
+      "description": "Update an existing project",
+      "args": ["projectId", "data"],
+      "permissions": ["pm-agent"]
+    },
+    "project.add-task": {
+      "path": "../db/save_project.js",
+      "export": "addTaskToProject",
+      "type": "function",
+      "category": "pm",
+      "timeout": 5000,
+      "description": "Add a task to a project",
+      "args": ["projectId", "taskData"],
+      "permissions": ["pm-agent"]
+    },
+    "project.complete": {
+      "path": "../db/complete_project.js",
+      "export": "completeProject",
+      "type": "function",
+      "category": "pm",
+      "timeout": 5000,
+      "description": "Mark a project as completed",
+      "args": ["projectId"],
+      "permissions": ["pm-agent"]
+    },
+    "translate.single": {
+      "path": "../translate/translate.js",
+      "export": "translate",
+      "type": "function",
+      "category": "content",
+      "timeout": 15000,
+      "description": "Translate text from one language to another",
+      "args": ["options"],
+      "permissions": ["translation-agent", "content-agent", "marketing-agent"]
+    },
+    "translate.batch": {
+      "path": "../translate/translate.js",
+      "export": "translateBatch",
+      "type": "function",
+      "category": "content",
+      "timeout": 60000,
+      "description": "Translate multiple items in batch",
+      "args": ["options"],
+      "permissions": ["translation-agent", "content-agent", "marketing-agent"]
+    },
+    "pm.chat": {
+      "path": "../pm-agent/core.js",
+      "export": "chatWithPMAgent",
+      "type": "function",
+      "category": "pm",
+      "timeout": 120000,
+      "description": "Chat with PM Agent (internal use for delegation)",
+      "args": ["messages", "options"],
+      "permissions": ["pm-agent"]
+    },
+    "pm.extract-json": {
+      "path": "../pm-agent/core.js",
+      "export": "extractJSON",
+      "type": "function",
+      "category": "pm",
+      "timeout": 1000,
+      "description": "Extract JSON from markdown code blocks",
+      "args": ["text"],
+      "permissions": "*"
+    },
+    "pm.generate-summary": {
+      "path": "../pm-agent/core.js",
+      "export": "generateSummary",
+      "type": "function",
+      "category": "pm",
+      "timeout": 30000,
+      "description": "Generate summary from conversation",
+      "args": ["conversation"],
+      "permissions": ["pm-agent"]
+    },
+    "pm.generate-project": {
+      "path": "../pm-agent/core.js",
+      "export": "generateProject",
+      "type": "function",
+      "category": "pm",
+      "timeout": 60000,
+      "description": "Generate project from title and summary",
+      "args": ["title", "summary", "projectContext"],
+      "permissions": ["pm-agent"]
+    },
+    "research.save": {
+      "path": "../db/save_research.js",
+      "export": "saveResearch",
+      "type": "function",
+      "category": "research",
+      "timeout": 5000,
+      "description": "Save research findings to database",
+      "args": ["data"],
+      "permissions": ["research-agent"]
+    },
+    "skill.query-usage": {
+      "path": "../db/query_skill_usage.js",
+      "export": "querySkillUsage",
+      "type": "function",
+      "category": "tracking",
+      "timeout": 5000,
+      "description": "Query skill usage statistics",
+      "args": ["filters"],
+      "permissions": ["pm-agent", "wat-auditor-agent"]
+    }
+  }
+}

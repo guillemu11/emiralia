@@ -25,6 +25,15 @@ import { buildLightContext } from '../pm-agent/context-builder.js';
 import { TELEGRAM_PROMPT_WRAPPER } from './telegram-prompt.js';
 import { getSkillRanking } from '../db/query_skill_usage.js';
 import { formatSkillRanking } from './skill-ranking-prompt.js';
+import {
+    listAvailableAgents,
+    selectAgent,
+    getCurrentAgent,
+    getAgentInfo,
+    getWhoAmIMessage,
+    getAgentsListMessage,
+    getAgentsKeyboard,
+} from './agent-router.js';
 import pg from 'pg';
 
 const { Pool } = pg;
@@ -385,16 +394,26 @@ function resetSession(ctx) {
 
 bot.command('start', async (ctx) => {
     console.log('[Handler] /start invoked by user:', ctx.from?.id);
+
+    const currentAgentId = await getCurrentAgent(ctx);
+    const agentInfo = getAgentInfo(currentAgentId);
+    const agentEmoji = agentInfo?.emoji || '🤖';
+    const agentName = agentInfo?.name || 'PM Agent';
+
     await ctx.reply(
-        `*PM Agent de Emiralia*\n\n` +
-        `Transformo ideas en planes ejecutables.\n\n` +
+        `${agentEmoji} *${agentName} de Emiralia*\n\n` +
+        `*Comandos disponibles:*\n\n` +
+        `🤖 *Multi-Agent*\n` +
+        `/agents — Ver y seleccionar agente\n` +
+        `/whoami — Ver agente activo actual\n\n` +
+        `💡 *PM Agent*\n` +
         `/idea — Nueva idea o proyecto\n` +
         `/list — Ver proyectos\n` +
-        `/task [ID] [desc] — Inyectar ticket\n` +
+        `/task [ID] [desc] — Inyectar ticket\n\n` +
+        `📊 *Utilidades*\n` +
         `/skill\\_ranking — Ranking de uso de skills\n` +
-        `/admin\\_fix\\_sequences — Arreglar secuencias BD\n` +
-        `/cancel — Cancelar sesion\n\n` +
-        `Tambien acepto notas de voz 🎙`,
+        `/cancel — Cancelar sesión\n\n` +
+        `También acepto notas de voz 🎙`,
         { parse_mode: 'Markdown' }
     );
 });
@@ -408,6 +427,62 @@ bot.command('skill_ranking', async (ctx) => {
         await replyChunked(ctx, message);
     } catch (err) {
         await safeDelete(ctx, thinking.message_id);
+        await ctx.reply(`Error: ${err.message}`);
+    }
+});
+
+bot.command('agents', async (ctx) => {
+    try {
+        const message = getAgentsListMessage();
+        const keyboard = getAgentsKeyboard();
+
+        await ctx.reply(message, {
+            parse_mode: 'Markdown',
+            reply_markup: {
+                inline_keyboard: keyboard,
+            },
+        });
+    } catch (err) {
+        console.error('[Bot] /agents error:', err);
+        await ctx.reply(`Error al cargar agentes: ${err.message}`);
+    }
+});
+
+bot.command('agent', async (ctx) => {
+    const args = ctx.message.text.split(' ');
+    const agentId = args[1];
+
+    if (!agentId) {
+        return ctx.reply(
+            'Indica el ID del agente, ej: `/agent data-agent`\n\nUsa /agents para ver la lista completa.',
+            { parse_mode: 'Markdown' }
+        );
+    }
+
+    const thinking = await ctx.reply('🔄 _Cambiando agente..._', { parse_mode: 'Markdown' });
+
+    try {
+        const result = await selectAgent(ctx, agentId);
+
+        await safeDelete(ctx, thinking.message_id);
+
+        if (result.success) {
+            await ctx.reply(result.message, { parse_mode: 'Markdown' });
+        } else {
+            await ctx.reply(result.message);
+        }
+    } catch (err) {
+        await safeDelete(ctx, thinking.message_id);
+        await ctx.reply(`Error: ${err.message}`);
+    }
+});
+
+bot.command('whoami', async (ctx) => {
+    try {
+        const message = await getWhoAmIMessage(ctx);
+        await ctx.reply(message, { parse_mode: 'Markdown' });
+    } catch (err) {
+        console.error('[Bot] /whoami error:', err);
         await ctx.reply(`Error: ${err.message}`);
     }
 });
@@ -649,6 +724,28 @@ bot.action(/^edit_(\d+)$/, async (ctx) => {
         );
     } catch (err) {
         await ctx.reply(`Error: ${err.message}`);
+    }
+});
+
+// Agent selection from /agents keyboard
+bot.action(/^select_agent:(.+)$/, async (ctx) => {
+    await ctx.answerCbQuery();
+    const agentId = ctx.match[1];
+
+    try {
+        const result = await selectAgent(ctx, agentId);
+
+        if (result.success) {
+            // Reset session when changing agents
+            resetSession(ctx);
+
+            await ctx.reply(result.message, { parse_mode: 'Markdown' });
+        } else {
+            await ctx.reply(result.message);
+        }
+    } catch (err) {
+        console.error('[Bot] select_agent error:', err);
+        await ctx.reply(`Error al cambiar agente: ${err.message}`);
     }
 });
 
