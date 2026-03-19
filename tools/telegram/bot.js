@@ -38,6 +38,8 @@ import { executeSkill } from './skill-executor.js';
 import { handleCRUD } from './crud-handler.js';
 import { requireAuthorization } from './auth-middleware.js';
 import { rateLimitMiddleware } from './rate-limiter.js';
+import { buildAgentContext } from '../core/context-builder.js';
+import { generateImageService, parseImageArgs } from '../images/generate-service.js';
 import {
     upsertUser,
     getUser,
@@ -342,6 +344,83 @@ async function chat(ctx, userText) {
         if (isProposal) {
             ctx.session.phase = 'proposed';
         }
+
+        return reply;
+    } catch (err) {
+        await safeDelete(ctx, msgId);
+        await ctx.reply(`Error: ${err.message}`);
+        throw err;
+    }
+}
+
+/**
+ * Chat with any agent using buildAgentContext + Claude API.
+ * Used for all agents EXCEPT pm-agent (which uses the legacy chat() flow).
+ */
+async function chatWithAgent(ctx, userText) {
+    const userId = ctx.from.id.toString();
+    const agentId = await getCurrentAgent(ctx);
+
+    ctx.session.messages.push({ role: 'user', content: userText });
+
+    const thinkingMsg = await ctx.reply('...');
+    const chatId = ctx.chat.id;
+    const msgId = thinkingMsg.message_id;
+
+    try {
+        // Build agent context (system prompt, memory, events)
+        const context = await buildAgentContext(agentId, { channel: 'telegram' });
+
+        // Prepare messages for Claude API (only role + content)
+        const apiMessages = ctx.session.messages.map(m => ({ role: m.role, content: m.content }));
+
+        // Stream response from Claude
+        let accumulated = '';
+        let lastEditAt = 0;
+        const EDIT_INTERVAL_MS = 1500;
+
+        const stream = await anthropic.messages.stream({
+            model: context.model || 'claude-sonnet-4-20250514',
+            max_tokens: 2048,
+            system: TELEGRAM_PROMPT_WRAPPER + '\n\n' + context.systemPrompt,
+            messages: apiMessages,
+        });
+
+        stream.on('text', (chunk) => {
+            accumulated += chunk;
+            const now = Date.now();
+            if (now - lastEditAt > EDIT_INTERVAL_MS && accumulated.length > 30) {
+                lastEditAt = now;
+                ctx.telegram.editMessageText(
+                    chatId, msgId, undefined,
+                    accumulated.substring(0, 4000) + ' ...',
+                ).catch(() => { /* ignore rate limit or unchanged text errors */ });
+            }
+        });
+
+        await stream.finalMessage();
+        const reply = accumulated;
+
+        ctx.session.messages.push({ role: 'assistant', content: reply });
+
+        // Persist conversation to DB (non-blocking)
+        try {
+            const newMessages = ctx.session.messages.slice(-2);
+            for (const msg of newMessages) {
+                await saveMessage(userId, agentId, 'telegram', msg.role, msg.content);
+            }
+            console.log(`[Bot] Persisted ${newMessages.length} messages for user ${userId} with ${agentId}`);
+
+            if (ctx.session.messages.length > 100) {
+                await trimConversation(userId, agentId, 'telegram', 50);
+                ctx.session.messages = ctx.session.messages.slice(-50);
+            }
+        } catch (dbErr) {
+            console.error('[Bot] Failed to persist conversation (non-blocking):', dbErr.message);
+        }
+
+        await safeDelete(ctx, msgId);
+        await replyChunked(ctx, reply);
 
         return reply;
     } catch (err) {
@@ -1189,38 +1268,119 @@ bot.action(/^select_agent:(.+)$/, async (ctx) => {
     }
 });
 
+// ─── Generacion de imagenes ─────────────────────────────────────────────────
+
+bot.command('generar_imagen', async (ctx) => {
+    const rawArgs = ctx.message.text.replace(/^\/generar_imagen\s*/, '');
+    await handleImageGeneration(ctx, rawArgs);
+});
+
+// Also catch /generar-imagen as text (Telegram converts hyphens to underscores in commands)
+// This is handled in the text handler below for messages starting with /generar-imagen
+
+/**
+ * Shared image generation handler for Telegram
+ */
+async function handleImageGeneration(ctx, rawArgs) {
+    const { prompt, size, quality } = parseImageArgs(rawArgs);
+
+    if (!prompt) {
+        await ctx.reply('Se requiere una descripcion.\n\nUso: /generar-imagen <descripcion> [--size=square] [--quality=standard]');
+        return;
+    }
+
+    const statusMsg = await ctx.reply('_Generando imagen..._', { parse_mode: 'Markdown' });
+
+    try {
+        const userId = ctx.from.id.toString();
+        const agentId = await getCurrentAgent(ctx);
+
+        const result = await generateImageService({
+            prompt,
+            size,
+            quality,
+            generatedBy: `telegram:${userId}`,
+            agentId,
+        });
+
+        await safeDelete(ctx, statusMsg.message_id);
+
+        // Send image to Telegram
+        await ctx.replyWithPhoto(result.url, {
+            caption: `*${result.filename}*\nTamano: ${result.size} | Calidad: ${result.quality}\nCosto: $${result.cost} USD\n\n_${result.revisedPrompt || result.prompt}_`,
+            parse_mode: 'Markdown',
+        });
+
+        // Persist to conversation so Dashboard can see it
+        const summary = `Imagen generada: ${result.filename}\nURL: ${result.url}\nTamano: ${result.size} (${result.quality})\nCosto: $${result.cost} USD\nPrompt: ${result.revisedPrompt || result.prompt}`;
+        await saveMessage(userId, agentId, 'telegram', 'user', `/generar-imagen ${rawArgs}`);
+        await saveMessage(userId, agentId, 'telegram', 'assistant', summary);
+
+        console.log(`[Bot] Image generated for user ${userId}: ${result.filename}`);
+    } catch (err) {
+        await safeDelete(ctx, statusMsg.message_id);
+        console.error('[Bot] Image generation error:', err);
+        await ctx.reply(`Error generando imagen: ${err.message}`);
+    }
+}
+
 // ─── Mensajes de texto ──────────────────────────────────────────────────────
 
 bot.on('text', async (ctx) => {
+    // Intercept /generar-imagen (with hyphen) since Telegram only registers underscore commands
+    if (ctx.message.text.startsWith('/generar-imagen')) {
+        const rawArgs = ctx.message.text.replace(/^\/generar-imagen\s*/, '');
+        await handleImageGeneration(ctx, rawArgs);
+        return;
+    }
+
+    const agentId = await getCurrentAgent(ctx);
+
     console.log('[Handler] Text message received:', {
         from: ctx.from?.id,
         text: ctx.message.text.substring(0, 50),
-        phase: ctx.session.phase
+        phase: ctx.session.phase,
+        agent: agentId
     });
 
-    if (!ctx.session.phase) {
-        await ctx.reply(
-            'Usa /idea para compartir una propuesta, o /start para ver comandos.',
-        );
+    // PM Agent keeps the legacy workflow (requires /idea to start)
+    if (agentId === 'pm-agent') {
+        if (!ctx.session.phase) {
+            await ctx.reply(
+                'Estas con el PM Agent. Usa /idea para compartir una propuesta, o /agents para cambiar de agente.',
+            );
+            return;
+        }
+        await chat(ctx, ctx.message.text);
         return;
     }
-    await chat(ctx, ctx.message.text);
+
+    // All other agents: free chat without phase gate
+    await chatWithAgent(ctx, ctx.message.text);
 });
 
 // ─── Mensajes de voz ────────────────────────────────────────────────────────
 
 bot.on('voice', async (ctx) => {
-    if (!ctx.session.phase) {
-        await ctx.reply('Usa /idea primero para iniciar una sesion.');
+    const agentId = await getCurrentAgent(ctx);
+
+    // PM Agent requires /idea phase
+    if (agentId === 'pm-agent' && !ctx.session.phase) {
+        await ctx.reply('Estas con el PM Agent. Usa /idea primero para iniciar una sesion.');
         return;
     }
 
-    const statusMsg = await ctx.reply('🎙️ _Transcribiendo..._', { parse_mode: 'Markdown' });
+    const statusMsg = await ctx.reply('_Transcribiendo..._', { parse_mode: 'Markdown' });
     try {
         const text = await transcribeAudio(ctx.message.voice.file_id, ctx);
         await safeDelete(ctx, statusMsg.message_id);
         await ctx.reply(`_"${text}"_`, { parse_mode: 'Markdown' });
-        await chat(ctx, text);
+
+        if (agentId === 'pm-agent') {
+            await chat(ctx, text);
+        } else {
+            await chatWithAgent(ctx, text);
+        }
     } catch (err) {
         await safeDelete(ctx, statusMsg.message_id);
         await ctx.reply(`Error al transcribir: ${err.message}`);

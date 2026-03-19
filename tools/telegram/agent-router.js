@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 
 const AGENT_CATEGORIES = ['content', 'data', 'design', 'dev', 'marketing', 'ops', 'product'];
 const PROJECT_ROOT = path.resolve(__dirname, '../../');
-const AGENTS_DIR = process.env.AGENTS_DIR || path.join(PROJECT_ROOT, 'claude/agents');
+const AGENTS_DIR = process.env.AGENTS_DIR || path.join(PROJECT_ROOT, '.claude/agents');
 
 /**
  * Metadata de agentes con emojis y descripciones cortas.

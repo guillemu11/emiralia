@@ -167,6 +167,12 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
         const isUser = msg.role === 'user';
         const hasImage = msg.image_url || msg.image;
         const imageUrl = msg.image_url || msg.image?.url;
+        const isTelegram = msg.channel === 'telegram';
+
+        // For telegram image URLs that are full DALL-E URLs (https://...)
+        const resolvedImageUrl = imageUrl?.startsWith('http')
+            ? imageUrl
+            : imageUrl ? `${API_URL.replace('/api', '')}${imageUrl}` : null;
 
         return (
             <div
@@ -186,14 +192,27 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
                         fontSize: '0.95rem',
                         lineHeight: '1.5',
                         whiteSpace: 'pre-wrap',
-                        wordBreak: 'break-word'
+                        wordBreak: 'break-word',
+                        border: isTelegram ? '2px solid #0088cc22' : 'none',
                     }}
                 >
+                    {/* Channel indicator */}
+                    {isTelegram && (
+                        <div style={{
+                            fontSize: '0.72rem',
+                            color: isUser ? '#93c5fd' : '#0088cc',
+                            marginBottom: '4px',
+                            fontWeight: 600,
+                        }}>
+                            via Telegram
+                        </div>
+                    )}
+
                     {/* Image display */}
-                    {hasImage && imageUrl && (
+                    {hasImage && resolvedImageUrl && (
                         <div style={{ marginBottom: msg.content ? '8px' : 0 }}>
                             <img
-                                src={`${API_URL.replace('/api', '')}${imageUrl}`}
+                                src={resolvedImageUrl}
                                 alt={msg.image?.revisedPrompt || 'Generated image'}
                                 style={{
                                     maxWidth: '100%',
@@ -257,6 +276,11 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
                     </h3>
                     <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748b' }}>
                         {messages.length} messages
+                        {messages.some(m => m.channel === 'telegram') && (
+                            <span style={{ marginLeft: '8px', color: '#0088cc' }}>
+                                (incl. Telegram)
+                            </span>
+                        )}
                     </p>
                 </div>
                 {onClose && (

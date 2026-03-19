@@ -1679,26 +1679,42 @@ app.post('/api/agents/:agentId/chat', async (req, res) => {
 });
 
 // ─── GET /api/agents/:agentId/conversation ────────────────────────────────────
-// Load conversation history for an agent
+// Load conversation history for an agent (merged from dashboard + telegram)
 app.get('/api/agents/:agentId/conversation', async (req, res) => {
     try {
         const { agentId } = req.params;
         const userId = req.query.userId || 'dashboard-user';
 
-        const conversation = await getConversation(userId, agentId, 'dashboard');
+        // Load dashboard conversation
+        const dashConv = await getConversation(userId, agentId, 'dashboard');
+        const dashMessages = dashConv?.messages || [];
 
-        if (!conversation) {
-            return res.json({ messages: [] });
+        // Load telegram conversation (using TELEGRAM_ADMIN_IDS as the telegram user)
+        const telegramUserId = (process.env.TELEGRAM_ADMIN_IDS || '').split(',')[0]?.trim();
+        let telegramMessages = [];
+        if (telegramUserId) {
+            const teleConv = await getConversation(telegramUserId, agentId, 'telegram');
+            telegramMessages = teleConv?.messages || [];
         }
 
-        // Return last 50 messages to avoid overwhelming the UI
-        const messages = conversation.messages.slice(-50);
+        // Tag each message with its channel
+        const taggedDash = dashMessages.map(m => ({ ...m, channel: 'dashboard' }));
+        const taggedTele = telegramMessages.map(m => ({ ...m, channel: 'telegram' }));
+
+        // Merge and sort by timestamp
+        const allMessages = [...taggedDash, ...taggedTele]
+            .sort((a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0));
+
+        // Return last 80 messages (more generous since merging two channels)
+        const messages = allMessages.slice(-80);
 
         res.json({
             messages,
-            agentId: conversation.agent_id,
-            createdAt: conversation.created_at,
-            lastMessageAt: conversation.last_message_at
+            agentId,
+            channels: {
+                dashboard: dashMessages.length,
+                telegram: telegramMessages.length
+            }
         });
     } catch (err) {
         console.error('[AgentChat] Error loading conversation:', err);
