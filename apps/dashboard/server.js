@@ -32,7 +32,12 @@ app.use(express.json());
  * If DASHBOARD_API_KEY is set, all /api/* endpoints require X-API-Key header.
  * If not set, logs warning and allows all requests (dev mode).
  */
-app.use('/api/*', (req, res, next) => {
+app.use((req, res, next) => {
+  // Only apply to /api/ routes
+  if (!req.path.startsWith('/api/')) {
+    return next();
+  }
+
   const apiKey = req.headers['x-api-key'];
   const validKey = process.env.DASHBOARD_API_KEY;
 
