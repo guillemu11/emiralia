@@ -24,6 +24,7 @@ import { buildAgentContext } from '../core/context-builder.js';
 import { getCurrentAgent } from './agent-router.js';
 import { logEvent, EVENT_TYPES } from '../core/event-logger.js';
 import { sanitizeInput } from './input-sanitizer.js';
+import { generateImageService, parseImageArgs } from '../images/generate-service.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,7 +35,7 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const SKILL_DOMAINS = ['ops', 'content', 'design', 'producto', 'gtm', 'ejecucion', 'marketing', 'data'];
-const SKILLS_BASE_DIR = path.join(process.cwd(), 'claude', 'skills');
+const SKILLS_BASE_DIR = path.join(process.cwd(), '.claude', 'skills');
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const EDIT_INTERVAL_MS = 1500; // Update streaming message every 1.5s
 
@@ -532,6 +533,63 @@ export async function executeSkill(ctx, skillName, args) {
     const validation = validateAgentAccess(agentId, skillDef);
     if (!validation.allowed) {
       return { success: false, message: validation.message };
+    }
+
+    // 3.5. Special case: generar-imagen — execute directly and send photo
+    if (skillDef.name === 'generar-imagen') {
+      console.log(`[SkillExecutor] generar-imagen: executing image generation directly`);
+
+      const statusMsg = await ctx.reply('Generando imagen...');
+
+      try {
+        const { prompt, size, quality } = parseImageArgs(sanitizedArgs);
+
+        if (!prompt) {
+          await ctx.telegram.deleteMessage(ctx.chat.id, statusMsg.message_id).catch(() => {});
+          const usage = 'Uso: /skill generar-imagen <descripcion> [--size=square|landscape|portrait|wide] [--quality=standard|hd]';
+          await ctx.reply(usage);
+          return { success: false, message: usage };
+        }
+
+        const result = await generateImageService({
+          prompt,
+          size,
+          quality,
+          generatedBy: `telegram:${ctx.from.id}`,
+          agentId,
+        });
+
+        // Delete status message
+        await ctx.telegram.deleteMessage(ctx.chat.id, statusMsg.message_id).catch(() => {});
+
+        // Send the actual photo
+        const caption = [
+          `Archivo: ${result.filename}`,
+          `Tamano: ${result.size} (${result.quality})`,
+          `Costo: $${result.cost} USD`,
+          result.revisedPrompt ? `\nPrompt: ${result.revisedPrompt.substring(0, 200)}` : '',
+        ].filter(Boolean).join('\n');
+
+        await ctx.replyWithPhoto(
+          { source: result.path },
+          { caption: caption.substring(0, 1024) } // Telegram caption limit
+        );
+
+        const duration = Date.now() - startTime;
+        await logSkillExecution(agentId, sanitizedSkillName, skillDef.domain, sanitizedArgs, result, duration, 'completed');
+
+        return { success: true, message: caption };
+
+      } catch (imgError) {
+        await ctx.telegram.deleteMessage(ctx.chat.id, statusMsg.message_id).catch(() => {});
+        const errMsg = `Error generando imagen: ${imgError.message}`;
+        await ctx.reply(errMsg);
+
+        const duration = Date.now() - startTime;
+        await logSkillExecution(agentId, sanitizedSkillName, skillDef.domain, sanitizedArgs, null, duration, 'failed');
+
+        return { success: false, message: errMsg };
+      }
     }
 
     // 4. Handle disable-model-invocation case

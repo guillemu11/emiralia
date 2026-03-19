@@ -15,6 +15,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [streaming, setStreaming] = useState(false);
+    const [generatingImage, setGeneratingImage] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const messagesEndRef = useRef(null);
@@ -27,7 +28,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages, streaming]);
+    }, [messages, streaming, generatingImage]);
 
     async function loadConversation() {
         setLoading(true);
@@ -53,6 +54,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
         setMessages(prev => [...prev, userMsg]);
         setInput('');
         setStreaming(true);
+        setGeneratingImage(false);
         setError(null);
 
         try {
@@ -72,6 +74,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
             let fullResponse = '';
+            let imageData = null;
 
             // Add placeholder assistant message
             setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
@@ -94,12 +97,37 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
                             setError(parsed.error);
                             continue;
                         }
+                        // Image generation started
+                        if (parsed.generating_image) {
+                            setGeneratingImage(true);
+                            continue;
+                        }
+                        // Image result received
+                        if (parsed.image) {
+                            imageData = parsed.image;
+                            setGeneratingImage(false);
+                            setMessages(prev => {
+                                const updated = [...prev];
+                                updated[updated.length - 1] = {
+                                    ...updated[updated.length - 1],
+                                    image_url: parsed.image.url,
+                                    image: parsed.image,
+                                };
+                                return updated;
+                            });
+                            continue;
+                        }
                         if (parsed.text) {
                             fullResponse += parsed.text;
                             const captured = fullResponse;
+                            const capturedImage = imageData;
                             setMessages(prev => {
                                 const updated = [...prev];
-                                updated[updated.length - 1] = { role: 'assistant', content: captured };
+                                updated[updated.length - 1] = {
+                                    role: 'assistant',
+                                    content: captured,
+                                    ...(capturedImage ? { image_url: capturedImage.url, image: capturedImage } : {}),
+                                };
                                 return updated;
                             });
                         }
@@ -121,6 +149,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
             });
         } finally {
             setStreaming(false);
+            setGeneratingImage(false);
         }
     }
 
@@ -129,6 +158,70 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
             e.preventDefault();
             sendMessage();
         }
+    }
+
+    /**
+     * Renders a single chat message, including inline images if present.
+     */
+    function renderMessage(msg, idx) {
+        const isUser = msg.role === 'user';
+        const hasImage = msg.image_url || msg.image;
+        const imageUrl = msg.image_url || msg.image?.url;
+
+        return (
+            <div
+                key={idx}
+                style={{
+                    display: 'flex',
+                    justifyContent: isUser ? 'flex-end' : 'flex-start'
+                }}
+            >
+                <div
+                    style={{
+                        maxWidth: '75%',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        background: isUser ? '#2563eb' : '#f1f5f9',
+                        color: isUser ? '#ffffff' : '#1e293b',
+                        fontSize: '0.95rem',
+                        lineHeight: '1.5',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word'
+                    }}
+                >
+                    {/* Image display */}
+                    {hasImage && imageUrl && (
+                        <div style={{ marginBottom: msg.content ? '8px' : 0 }}>
+                            <img
+                                src={`${API_URL.replace('/api', '')}${imageUrl}`}
+                                alt={msg.image?.revisedPrompt || 'Generated image'}
+                                style={{
+                                    maxWidth: '100%',
+                                    borderRadius: '8px',
+                                    display: 'block',
+                                }}
+                                loading="lazy"
+                            />
+                            {msg.image && (
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    marginTop: '6px',
+                                    fontSize: '0.78rem',
+                                    color: '#64748b',
+                                }}>
+                                    <span>{msg.image.filename}</span>
+                                    <span>${msg.image.cost} USD</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Text content */}
+                    {msg.content || (streaming && msg.role === 'assistant' && !hasImage ? '...' : '')}
+                </div>
+            </div>
+        );
     }
 
     if (loading) {
@@ -160,7 +253,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
             }}>
                 <div>
                     <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>
-                        💬 Chat with {agentId}
+                        Chat with {agentId}
                     </h3>
                     <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748b' }}>
                         {messages.length} messages
@@ -177,7 +270,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
                             color: '#64748b'
                         }}
                     >
-                        ×
+                        x
                     </button>
                 )}
             </div>
@@ -197,36 +290,43 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
                         padding: '48px 24px',
                         color: '#94a3b8'
                     }}>
-                        <p style={{ fontSize: '2rem', marginBottom: '8px' }}>💬</p>
+                        <p style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Chat</p>
                         <p>{t('agentChat.startConversation') || 'Start a conversation with this agent'}</p>
                     </div>
                 )}
 
-                {messages.map((msg, idx) => (
-                    <div
-                        key={idx}
-                        style={{
+                {messages.map((msg, idx) => renderMessage(msg, idx))}
+
+                {/* Image generating indicator */}
+                {generatingImage && (
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'flex-start'
+                    }}>
+                        <div style={{
+                            padding: '12px 16px',
+                            borderRadius: '12px',
+                            background: '#f1f5f9',
+                            color: '#64748b',
+                            fontSize: '0.95rem',
                             display: 'flex',
-                            justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start'
-                        }}
-                    >
-                        <div
-                            style={{
-                                maxWidth: '75%',
-                                padding: '12px 16px',
-                                borderRadius: '12px',
-                                background: msg.role === 'user' ? '#2563eb' : '#f1f5f9',
-                                color: msg.role === 'user' ? '#ffffff' : '#1e293b',
-                                fontSize: '0.95rem',
-                                lineHeight: '1.5',
-                                whiteSpace: 'pre-wrap',
-                                wordBreak: 'break-word'
-                            }}
-                        >
-                            {msg.content || (streaming && msg.role === 'assistant' ? '...' : '')}
+                            alignItems: 'center',
+                            gap: '8px',
+                        }}>
+                            <span style={{
+                                display: 'inline-block',
+                                width: '12px',
+                                height: '12px',
+                                borderRadius: '50%',
+                                border: '2px solid #2563eb',
+                                borderTopColor: 'transparent',
+                                animation: 'spin 0.8s linear infinite',
+                            }} />
+                            Generando imagen...
                         </div>
                     </div>
-                ))}
+                )}
+
                 <div ref={messagesEndRef} />
             </div>
 
@@ -241,7 +341,7 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
                     color: '#dc2626',
                     fontSize: '0.9rem'
                 }}>
-                    ⚠️ {error}
+                    {error}
                 </div>
             )}
 
@@ -298,6 +398,13 @@ export default function AgentChat({ agentId, userId = 'dashboard-user', onClose 
                     Press Enter to send, Shift+Enter for new line
                 </p>
             </div>
+
+            {/* Spinner keyframe animation */}
+            <style>{`
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `}</style>
         </div>
     );
 }

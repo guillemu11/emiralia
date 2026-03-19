@@ -4,7 +4,16 @@
  * API for Projects (original) + Workspace (agents, weeklies, dailys, collaboration, audit).
  */
 
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
+
+// Load .env from project root (not cwd, which may be apps/dashboard/)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
 import express from 'express';
 import cors from 'cors';
 import pg from 'pg';
@@ -17,6 +26,7 @@ import { logEvent, EVENT_TYPES } from '../../tools/core/event-logger.js';
 import Anthropic from '@anthropic-ai/sdk';
 import { generateEodReport } from '../../tools/workspace-skills/eod-generator.js';
 import { completeProject } from '../../tools/db/complete_project.js';
+import { generateImageService, parseImageArgs } from '../../tools/images/generate-service.js';
 
 const { Pool } = pg;
 const app = express();
@@ -24,6 +34,9 @@ const port = process.env.PORT || process.env.DASHBOARD_PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve generated images from website public directory
+app.use('/generated', express.static(path.resolve(__dirname, '../../apps/website/public/generated')));
 
 // ─── API Key Auth Middleware (Feature 11: Security & Auth) ──────────────────
 
@@ -66,7 +79,7 @@ const pool = process.env.DATABASE_URL
         database: process.env.PG_DB || 'emiralia',
         user: process.env.PG_USER || 'emiralia',
         password: process.env.PG_PASSWORD || 'changeme',
-        ssl: { rejectUnauthorized: false }
+        ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
     });
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -1511,6 +1524,80 @@ app.post('/api/agents/:agentId/chat', async (req, res) => {
             return res.status(404).json({ error: `Agent '${agentId}' not found` });
         }
 
+        // ── Image generation interception ──────────────────────────────
+        // If the message starts with /generar-imagen, handle it directly
+        // without sending to Claude API.
+        if (message.trim().startsWith('/generar-imagen')) {
+            const rawArgs = message.trim().replace(/^\/generar-imagen\s*/, '');
+            const { prompt: imgPrompt, size, quality } = parseImageArgs(rawArgs);
+
+            if (!imgPrompt) {
+                res.setHeader('Content-Type', 'text/event-stream');
+                res.setHeader('Cache-Control', 'no-cache');
+                res.setHeader('Connection', 'keep-alive');
+                res.flushHeaders();
+                res.write(`data: ${JSON.stringify({ error: 'Se requiere una descripcion. Uso: /generar-imagen <descripcion> [--size=square] [--quality=standard]' })}\n\n`);
+                res.write('data: [DONE]\n\n');
+                return res.end();
+            }
+
+            // SSE headers
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            res.setHeader('X-Agent-Id', agentId);
+            res.flushHeaders();
+
+            // Notify frontend that image generation is in progress
+            res.write(`data: ${JSON.stringify({ generating_image: true })}\n\n`);
+
+            try {
+                const result = await generateImageService({
+                    prompt: imgPrompt,
+                    size,
+                    quality,
+                    generatedBy: userId,
+                    agentId,
+                });
+
+                // Send image data as a special SSE event
+                res.write(`data: ${JSON.stringify({ image: { url: result.url, filename: result.filename, revisedPrompt: result.revisedPrompt, cost: result.cost, size: result.size, quality: result.quality } })}\n\n`);
+
+                // Also send a text summary for conversation history
+                const summary = `Imagen generada exitosamente\n\nArchivo: ${result.filename}\nURL: ${result.url}\nTamano: ${result.size} (${result.quality})\nCosto: $${result.cost} USD\n\nPrompt revisado: ${result.revisedPrompt || result.prompt}`;
+                res.write(`data: ${JSON.stringify({ text: summary })}\n\n`);
+
+                // Save conversation with image metadata
+                const conversation = await getConversation(userId, agentId, 'dashboard');
+                const prevMessages = conversation
+                    ? conversation.messages.map(m => ({ role: m.role, content: m.content, image_url: m.image_url, timestamp: m.timestamp }))
+                    : [];
+                const now = new Date().toISOString();
+                const updatedMessages = [
+                    ...prevMessages,
+                    { role: 'user', content: message, timestamp: now },
+                    { role: 'assistant', content: summary, image_url: result.url, timestamp: now },
+                ];
+                await saveConversation(userId, agentId, 'dashboard', updatedMessages);
+
+                await logEvent(agentId, EVENT_TYPES.SKILL_INVOCATION, {
+                    skill_name: 'generar-imagen',
+                    channel: 'dashboard',
+                    user_id: userId,
+                    image_url: result.url,
+                    cost: result.cost,
+                });
+            } catch (imgErr) {
+                console.error('[AgentChat] Image generation error:', imgErr);
+                res.write(`data: ${JSON.stringify({ error: `Error generando imagen: ${imgErr.message}` })}\n\n`);
+            }
+
+            res.write('data: [DONE]\n\n');
+            return res.end();
+        }
+
+        // ── Normal chat flow (Claude API) ────────────────────────────────
+
         // Load conversation history from agent_conversations
         const conversation = await getConversation(userId, agentId, 'dashboard');
         // Filter messages to only include role and content (Claude API format)
@@ -1865,12 +1952,6 @@ app.patch('/api/workflows/runs/:id', async (req, res) => {
 // SKILL USAGE TRACKER
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const SKILLS_DIR = path.resolve(__dirname, '../../.claude/skills');
 
 // ─── Skill Registry (filesystem read with cache) ─────────────────────────────
