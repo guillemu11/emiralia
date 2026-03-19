@@ -21,6 +21,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
 import { setActiveAgent, getActiveAgent } from '../db/telegram_user_queries.js';
+import pool from '../db/pool.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -164,31 +165,128 @@ function loadAllAgentDefinitionsFromFilesystem() {
 }
 
 /**
- * Retorna fallback hardcoded basado en AGENT_METADATA.
+ * Carga definiciones de agentes desde PostgreSQL.
+ * Source of truth en producción (Railway).
+ * @returns {Promise<Object|null>} Diccionario de definiciones o null si falla
+ */
+async function loadAllAgentDefinitionsFromDatabase() {
+    try {
+        const result = await pool.query(`
+            SELECT id, name, role, department, skills, tools, status, avatar
+            FROM agents
+            ORDER BY department, id
+        `);
+
+        if (result.rows.length === 0) {
+            console.warn('[Agent Router] Database query returned 0 agents');
+            return null;
+        }
+
+        const definitions = {};
+        for (const row of result.rows) {
+            definitions[row.id] = {
+                name: row.name,
+                role: row.role,
+                department: row.department,
+                skills: Array.isArray(row.skills) ? row.skills : [],
+                tools: Array.isArray(row.tools) ? row.tools : [],
+                status: row.status || 'idle',
+                avatar: row.avatar || '🤖',
+            };
+        }
+
+        console.log(`[Agent Router] ✅ Loaded ${Object.keys(definitions).length} agents from DATABASE`);
+        return definitions;
+
+    } catch (err) {
+        console.error('[Agent Router] Database load error:', err.message);
+        return null;
+    }
+}
+
+/**
+ * Retorna fallback hardcoded con datos reales (no vacíos).
  * Usado como último recurso si filesystem y DB fallan.
- * @returns {Object} Diccionario de definiciones mínimas
+ * @returns {Object} Diccionario de definiciones con skills/tools reales
  */
 function getHardcodedAgentFallback() {
-    const fallback = {};
-    for (const [agentId, meta] of Object.entries(AGENT_METADATA)) {
-        fallback[agentId] = {
-            name: agentId.replace('-agent', ' Agent').replace(/\b\w/g, l => l.toUpperCase()),
-            role: meta.shortDesc,
-            department: 'unknown',
-            skills: [],
-            tools: [],
-        };
-    }
-    console.log(`[Agent Router] Using hardcoded fallback (${Object.keys(fallback).length} agents)`);
+    const fallback = {
+        'content-agent': {
+            name: 'Content Agent',
+            role: 'Listings & Content Creation',
+            department: 'content',
+            skills: ['activity-tracking'],
+            tools: ['memory'],
+        },
+        'translation-agent': {
+            name: 'Translation Agent',
+            role: 'Español <> English',
+            department: 'content',
+            skills: ['traducir', 'activity-tracking'],
+            tools: ['translate', 'memory', 'wat-memory'],
+        },
+        'data-agent': {
+            name: 'Data Agent',
+            role: 'Scraping & Analytics',
+            department: 'data',
+            skills: ['propertyfinder-scraper', 'activity-tracking'],
+            tools: ['apify-propertyfinder', 'fetch-dataset', 'memory'],
+        },
+        'frontend-agent': {
+            name: 'Design Agent',
+            role: 'UI/UX & Design System',
+            department: 'design',
+            skills: ['ui-ux-pro-max', 'screenshot-loop', 'activity-tracking'],
+            tools: ['memory', 'wat-memory'],
+        },
+        'dev-agent': {
+            name: 'Dev Agent',
+            role: 'Backend & Features',
+            department: 'dev',
+            skills: ['dev-server', 'activity-tracking'],
+            tools: ['memory'],
+        },
+        'pm-agent': {
+            name: 'PM Agent',
+            role: 'Planning & Coordination',
+            department: 'product',
+            skills: ['eod-report', 'pm-challenge', 'pm-context-audit', 'activity-tracking'],
+            tools: ['weekly-generator', 'eod-generator', 'wat-memory', 'memory'],
+        },
+        'marketing-agent': {
+            name: 'Marketing Agent',
+            role: 'Campaigns & Growth',
+            department: 'marketing',
+            skills: ['estrategia-gtm', 'segmento-entrada', 'priorizar-features', 'competitor-analysis', 'channel-research', 'activity-tracking'],
+            tools: ['memory', 'wat-memory'],
+        },
+        'research-agent': {
+            name: 'Research Agent',
+            role: 'Intelligence & Monitoring',
+            department: 'ops',
+            skills: ['research-monitor'],
+            tools: ['memory', 'wat-memory'],
+        },
+        'wat-auditor-agent': {
+            name: 'WAT Auditor Agent',
+            role: 'System Audits & Improvements',
+            department: 'ops',
+            skills: ['wat-audit'],
+            tools: ['memory', 'wat-memory'],
+        },
+    };
+
+    const totalSkills = Object.values(fallback).reduce((sum, a) => sum + a.skills.length, 0);
+    console.log(`[Agent Router] Using hardcoded fallback (${Object.keys(fallback).length} agents, ${totalSkills} total skills)`);
     return fallback;
 }
 
 /**
  * Carga todas las definiciones de agentes con fallback automático.
- * Estrategia: filesystem → hardcoded fallback
- * @returns {Object} Diccionario de definiciones
+ * Estrategia: filesystem → database → hardcoded fallback
+ * @returns {Promise<Object>} Diccionario de definiciones
  */
-function loadAllAgentDefinitions() {
+async function loadAllAgentDefinitions() {
     const now = Date.now();
 
     // Return cached if still valid
@@ -199,7 +297,7 @@ function loadAllAgentDefinitions() {
 
     console.log('[Agent Router] Loading agent definitions...');
 
-    // STRATEGY 1: Try filesystem first (desarrollo local)
+    // STRATEGY 1: Try filesystem first (desarrollo local - más rápido)
     let definitions = loadAllAgentDefinitionsFromFilesystem();
 
     if (definitions && Object.keys(definitions).length > 0) {
@@ -209,8 +307,19 @@ function loadAllAgentDefinitions() {
         return definitions;
     }
 
-    // STRATEGY 2: Fallback hardcoded (producción/Railway)
-    console.warn('[Agent Router] ⚠️ Filesystem failed, using hardcoded fallback...');
+    // STRATEGY 2: Try database (producción/Railway - source of truth)
+    console.log('[Agent Router] ⚠️ Filesystem not available, trying DATABASE...');
+    definitions = await loadAllAgentDefinitionsFromDatabase();
+
+    if (definitions && Object.keys(definitions).length > 0) {
+        console.log(`[Agent Router] ✅ Loaded ${Object.keys(definitions).length} agents from DATABASE`);
+        agentDefinitionsCache = definitions;
+        cacheTimestamp = now;
+        return definitions;
+    }
+
+    // STRATEGY 3: Fallback hardcoded (disaster recovery)
+    console.warn('[Agent Router] ⚠️⚠️ Database failed, using hardcoded fallback...');
     definitions = getHardcodedAgentFallback();
 
     agentDefinitionsCache = definitions;
@@ -244,8 +353,8 @@ function formatSkillsList(skills, maxSkills = 5) {
  *
  * @returns {Array<Object>} Lista de agentes con { id, name, emoji, shortDesc, skills, tools }
  */
-export function listAvailableAgents() {
-    const definitions = loadAllAgentDefinitions();
+export async function listAvailableAgents() {
+    const definitions = await loadAllAgentDefinitions();
     const agents = [];
 
     for (const [agentId, def] of Object.entries(definitions)) {
@@ -277,8 +386,8 @@ export function listAvailableAgents() {
  * @param {string} agentId - ID del agente (ej: 'data-agent')
  * @returns {Object|null} Definición completa del agente o null si no existe
  */
-export function getAgentInfo(agentId) {
-    const definitions = loadAllAgentDefinitions();
+export async function getAgentInfo(agentId) {
+    const definitions = await loadAllAgentDefinitions();
     const def = definitions[agentId];
 
     if (!def) return null;
@@ -337,9 +446,9 @@ export async function selectAgent(ctx, agentId) {
     }
 
     // Verificar que el agente existe
-    const agentInfo = getAgentInfo(agentId);
+    const agentInfo = await getAgentInfo(agentId);
     if (!agentInfo) {
-        const available = listAvailableAgents().map(a => a.id).join(', ');
+        const available = (await listAvailableAgents()).map(a => a.id).join(', ');
         return {
             success: false,
             message: `❌ Agente "${agentId}" no existe.\n\nDisponibles: ${available}`,
@@ -394,7 +503,7 @@ export async function getWhoAmIMessage(ctx) {
     const username = ctx.from?.username || ctx.from?.first_name || 'Usuario';
 
     const agentId = await getCurrentAgent(ctx);
-    const agentInfo = getAgentInfo(agentId);
+    const agentInfo = await getAgentInfo(agentId);
 
     if (!agentInfo) {
         return `❌ Error: No se pudo cargar la información del agente activo (${agentId}).`;
@@ -426,8 +535,8 @@ export async function getWhoAmIMessage(ctx) {
  *
  * @returns {string} Mensaje formateado para Telegram
  */
-export function getAgentsListMessage() {
-    const agents = listAvailableAgents();
+export async function getAgentsListMessage() {
+    const agents = await listAvailableAgents();
 
     const header = [
         `🤖 *Agentes Disponibles*`,
@@ -455,8 +564,8 @@ export function getAgentsListMessage() {
  *
  * @returns {Array<Array<Object>>} Keyboard layout para Markup.inlineKeyboard()
  */
-export function getAgentsKeyboard() {
-    const agents = listAvailableAgents();
+export async function getAgentsKeyboard() {
+    const agents = await listAvailableAgents();
 
     // Group agents in rows of 2
     const keyboard = [];
@@ -489,38 +598,47 @@ export function getAgentsKeyboard() {
 const isMainModule = import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 
 if (isMainModule || process.argv[1]?.endsWith('agent-router.js')) {
-    console.log('╔══════════════════════════════════════════════════════╗');
-    console.log('║  Agent Router — Test Suite                          ║');
-    console.log('╚══════════════════════════════════════════════════════╝\n');
+    (async () => {
+        console.log('╔══════════════════════════════════════════════════════╗');
+        console.log('║  Agent Router — Test Suite                          ║');
+        console.log('╚══════════════════════════════════════════════════════╝\n');
 
-    console.log('📋 listAvailableAgents():');
-    const agents = listAvailableAgents();
-    console.log(`Found ${agents.length} agents:\n`);
-    agents.forEach(a => {
-        console.log(`${a.emoji} ${a.name} (${a.id})`);
-        console.log(`   ${a.shortDesc}`);
-        console.log(`   Skills: ${a.skills.length} | Tools: ${a.tools.length}`);
-        console.log('');
+        console.log('📋 listAvailableAgents():');
+        const agents = await listAvailableAgents();
+        console.log(`Found ${agents.length} agents:\n`);
+        agents.forEach(a => {
+            console.log(`${a.emoji} ${a.name} (${a.id})`);
+            console.log(`   ${a.shortDesc}`);
+            console.log(`   Skills: ${a.skills.length} | Tools: ${a.tools.length}`);
+            console.log('');
+        });
+
+        console.log('\n🔍 getAgentInfo("data-agent"):');
+        const dataAgent = await getAgentInfo('data-agent');
+        if (dataAgent) {
+            console.log(`${dataAgent.emoji} ${dataAgent.name}`);
+            console.log(`Role: ${dataAgent.role || 'N/A'}`);
+            console.log(`Department: ${dataAgent.department}`);
+            console.log(`Skills (${dataAgent.skills.length}): ${dataAgent.skills.join(', ')}`);
+            console.log(`Tools (${dataAgent.tools.length}): ${dataAgent.tools.slice(0, 3).join(', ')}${dataAgent.tools.length > 3 ? '...' : ''}`);
+        } else {
+            console.log('❌ Agent not found');
+        }
+
+        console.log('\n📄 getAgentsListMessage():');
+        console.log(await getAgentsListMessage());
+
+        console.log('\n⌨️  getAgentsKeyboard():');
+        const keyboard = await getAgentsKeyboard();
+        console.log(JSON.stringify(keyboard, null, 2));
+
+        console.log('\n✅ Test suite completed\n');
+
+        // Cerrar pool de DB
+        await pool.end();
+        process.exit(0);
+    })().catch(err => {
+        console.error('❌ Test failed:', err);
+        process.exit(1);
     });
-
-    console.log('\n🔍 getAgentInfo("data-agent"):');
-    const dataAgent = getAgentInfo('data-agent');
-    if (dataAgent) {
-        console.log(`${dataAgent.emoji} ${dataAgent.name}`);
-        console.log(`Role: ${dataAgent.role || 'N/A'}`);
-        console.log(`Department: ${dataAgent.department}`);
-        console.log(`Skills (${dataAgent.skills.length}): ${dataAgent.skills.join(', ')}`);
-        console.log(`Tools (${dataAgent.tools.length}): ${dataAgent.tools.slice(0, 3).join(', ')}${dataAgent.tools.length > 3 ? '...' : ''}`);
-    } else {
-        console.log('❌ Agent not found');
-    }
-
-    console.log('\n📄 getAgentsListMessage():');
-    console.log(getAgentsListMessage());
-
-    console.log('\n⌨️  getAgentsKeyboard():');
-    const keyboard = getAgentsKeyboard();
-    console.log(JSON.stringify(keyboard, null, 2));
-
-    console.log('\n✅ Test suite completed\n');
 }

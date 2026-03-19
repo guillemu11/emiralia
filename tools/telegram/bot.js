@@ -730,8 +730,8 @@ bot.command('skill_ranking', async (ctx) => {
 
 bot.command('agents', async (ctx) => {
     try {
-        const message = getAgentsListMessage();
-        const keyboard = getAgentsKeyboard();
+        const message = await getAgentsListMessage();
+        const keyboard = await getAgentsKeyboard();
 
         console.log('[Bot] /agents command triggered');
         console.log(`[Bot] Message length: ${message.length}`);
