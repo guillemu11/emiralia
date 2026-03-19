@@ -1519,7 +1519,7 @@ app.post('/api/agents/:agentId/chat', async (req, res) => {
         messages.push({ role: 'user', content: message });
 
         // Build agent context (includes system prompt, memory, recent events)
-        const context = await buildAgentContext(agentId, 'dashboard');
+        const context = await buildAgentContext(agentId, { channel: 'dashboard' });
 
         // SSE headers
         res.setHeader('Content-Type', 'text/event-stream');
