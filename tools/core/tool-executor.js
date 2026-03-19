@@ -16,6 +16,7 @@ import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import pool from '../db/pool.js';
+import { logEvent, EVENT_TYPES } from './event-logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -113,25 +114,14 @@ async function executeWithTimeout(fn, args, timeoutMs) {
 }
 
 /**
- * Log tool execution event to raw_events
+ * Log tool execution event to raw_events (uses centralized event-logger)
  */
 async function logToolExecution(agentId, toolName, status, metadata = {}) {
-  try {
-    await pool.query(`
-      INSERT INTO raw_events (agent_id, event_type, content)
-      VALUES ($1, $2, $3)
-    `, [
-      agentId,
-      'tool_execution',
-      {
-        tool_name: toolName,
-        status, // 'started', 'completed', 'failed', 'timeout'
-        ...metadata
-      }
-    ]);
-  } catch (err) {
-    console.error('[ToolExecutor] Failed to log event (non-blocking):', err.message);
-  }
+  await logEvent(agentId, EVENT_TYPES.TOOL_EXECUTION, {
+    tool_name: toolName,
+    status, // 'started', 'completed', 'failed', 'timeout'
+    ...metadata
+  });
 }
 
 /**

@@ -10,13 +10,13 @@ SOPs (Standard Operating Procedures) que coordinan múltiples agentes y tools.
 
 | Workflow | Objetivo | Agentes | Inputs | Outputs | Trigger | File |
 |----------|----------|---------|--------|---------|---------|------|
-| **Data Intelligence** | Pipeline end-to-end: scrape → clean → analyze → insights | Data Agent, Content Agent | Location, property type, filters | Properties DB + analytics report | Manual o scheduled (diario) | [data-intelligence.md](workflows/data-intelligence.md) |
-| **GTM Planning** | Planificar estrategia Go-to-Market completa | PM Agent, Marketing Agent | Target segment, budget, timeline | GTM plan + roadmap + canales | Manual (quarterly) | [gtm-planning.md](workflows/gtm-planning.md) |
-| **Marketing Planning** | Diseñar campaña de marketing end-to-end | Marketing Agent, PM Agent | Campaign goal, budget, audience | Campaign plan + copies + métricas | Manual (mensual) | [marketing-planning.md](workflows/marketing-planning.md) |
-| **PM Review** | Review de propuestas con PM Agent + challenge + plan ejecutable | PM Agent | Idea o propuesta | PRD + tasks + estimaciones | Manual (on-demand) | [pm-review.md](workflows/pm-review.md) |
-| **Scrape PropertyFinder** | Scraping automatizado de PropertyFinder.ae vía Apify | Data Agent | Location, property type | Properties JSON + DB insert | Scheduled (diario 3am) | [scrape_propertyfinder.md](workflows/scrape_propertyfinder.md) |
-| **Screenshot Design Loop** | Iteración de diseño: screenshot → feedback → edit → repeat | Frontend Agent | Screenshot + feedback | Updated HTML + screenshot | Manual (on-demand) | [screenshot_design_loop.md](workflows/screenshot_design_loop.md) |
-| **Sprint Planning** | Planificar sprint semanal para equipo de agentes | PM Agent, Dev Agent, Data Agent, Frontend Agent | Backlog + prioridades | Sprint plan + tasks asignadas | Scheduled (lunes 9am) | [sprint-planning.md](workflows/sprint-planning.md) |
+| **[[data-intelligence\|Data Intelligence]]** | Pipeline end-to-end: scrape → clean → analyze → insights | [[data-agent]], [[content-agent]] | Location, property type, filters | Properties DB + analytics report | Manual o scheduled (diario) | [data-intelligence.md](workflows/data-intelligence.md) |
+| **[[gtm-planning\|GTM Planning]]** | Planificar estrategia Go-to-Market completa | [[pm-agent]], [[marketing-agent]] | Target segment, budget, timeline | GTM plan + roadmap + canales | Manual (quarterly) | [gtm-planning.md](workflows/gtm-planning.md) |
+| **[[marketing-planning\|Marketing Planning]]** | Diseñar campaña de marketing end-to-end | [[marketing-agent]], [[pm-agent]] | Campaign goal, budget, audience | Campaign plan + copies + métricas | Manual (mensual) | [marketing-planning.md](workflows/marketing-planning.md) |
+| **[[pm-review\|PM Review]]** | Review de propuestas con PM Agent + challenge + plan ejecutable | [[pm-agent]] | Idea o propuesta | PRD + tasks + estimaciones | Manual (on-demand) | [pm-review.md](workflows/pm-review.md) |
+| **[[scrape_propertyfinder\|Scrape PropertyFinder]]** | Scraping automatizado de PropertyFinder.ae vía [[apify]] | [[data-agent]] | Location, property type | Properties JSON + DB insert | Scheduled (diario 3am) | [scrape_propertyfinder.md](workflows/scrape_propertyfinder.md) |
+| **[[screenshot_design_loop\|Screenshot Design Loop]]** | Iteración de diseño: screenshot → feedback → edit → repeat | [[frontend-agent]] | Screenshot + feedback | Updated HTML + screenshot | Manual (on-demand) | [screenshot_design_loop.md](workflows/screenshot_design_loop.md) |
+| **[[sprint-planning\|Sprint Planning]]** | Planificar sprint semanal para equipo de agentes | [[pm-agent]], [[dev-agent]], [[data-agent]], [[frontend-agent]] | Backlog + prioridades | Sprint plan + tasks asignadas | Scheduled (lunes 9am) | [sprint-planning.md](workflows/sprint-planning.md) |
 
 ---
 
@@ -95,16 +95,16 @@ Conexiones entre workflows y agentes.
 
 ## Memoria Compartida entre Workflows
 
-Workflows coordinan vía **WAT Memory** (PostgreSQL).
+Workflows coordinan vía **WAT Memory** ([[postgresql]]).
 
 | Workflow A | Workflow B | Key Compartida | Propósito |
 |------------|------------|----------------|-----------|
-| Scrape PropertyFinder | Data Intelligence | `last_scrape_run`, `properties_count` | Saber cuándo scrape completó |
-| Data Intelligence | Marketing Planning | `property_stats`, `market_trends` | Alimentar decisiones de campaña |
-| PM Review | Sprint Planning | `prd_approved`, `tasks_ready` | Pasar de planning a ejecución |
-| Sprint Planning | Screenshot Loop | `sprint_tasks`, `designs_pending` | Coordinar diseño con sprint |
-| GTM Planning | Marketing Planning | `target_segments`, `budget_allocated` | Alinear campañas con GTM |
-| Data Intelligence | Content Publishing | `translations_queue`, `content_ready` | Pipeline de contenido |
+| [[scrape_propertyfinder]] | [[data-intelligence]] | `last_scrape_run`, `properties_count` | Saber cuándo scrape completó |
+| [[data-intelligence]] | [[marketing-planning]] | `property_stats`, `market_trends` | Alimentar decisiones de campaña |
+| [[pm-review]] | [[sprint-planning]] | `prd_approved`, `tasks_ready` | Pasar de planning a ejecución |
+| [[sprint-planning]] | [[screenshot_design_loop]] | `sprint_tasks`, `designs_pending` | Coordinar diseño con sprint |
+| [[gtm-planning]] | [[marketing-planning]] | `target_segments`, `budget_allocated` | Alinear campañas con GTM |
+| [[data-intelligence]] | Content Publishing | `translations_queue`, `content_ready` | Pipeline de contenido |
 
 ---
 

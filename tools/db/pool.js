@@ -7,7 +7,13 @@
 
 import pg from 'pg';
 import dotenv from 'dotenv';
-dotenv.config();
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Resolve path to project root .env
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rootEnvPath = path.resolve(__dirname, '../../.env');
+dotenv.config({ path: rootEnvPath });
 
 const pool = new pg.Pool({
     host: process.env.PG_HOST || 'localhost',

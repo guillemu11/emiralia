@@ -7,20 +7,7 @@
  *   import { getConversation, saveConversation, ... } from './conversation_queries.js';
  */
 
-import pg from 'pg';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const { Pool } = pg;
-
-const pool = new Pool({
-  host: process.env.PG_HOST || 'localhost',
-  port: parseInt(process.env.PG_PORT || '5433'),
-  database: process.env.PG_DB || 'emiralia',
-  user: process.env.PG_USER || 'emiralia',
-  password: process.env.PG_PASSWORD || 'changeme'
-});
+import pool from './pool.js';
 
 /**
  * Obtiene una conversación específica

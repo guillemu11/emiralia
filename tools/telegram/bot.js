@@ -34,18 +34,25 @@ import {
     getAgentsListMessage,
     getAgentsKeyboard,
 } from './agent-router.js';
-import { upsertUser } from '../db/telegram_user_queries.js';
-import pg from 'pg';
-
-const { Pool } = pg;
-const pool = new Pool({
-    host: process.env.PG_HOST || 'localhost',
-    port: parseInt(process.env.PG_PORT || '5433', 10),
-    database: process.env.PG_DB || 'emiralia',
-    user: process.env.PG_USER || 'emiralia',
-    password: process.env.PG_PASSWORD || 'changeme',
-    ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
-});
+import { executeSkill } from './skill-executor.js';
+import { handleCRUD } from './crud-handler.js';
+import { requireAuthorization } from './auth-middleware.js';
+import { rateLimitMiddleware } from './rate-limiter.js';
+import {
+    upsertUser,
+    getUser,
+    setAuthorization,
+    listAuthorizedUsers,
+    getUserStats,
+} from '../db/telegram_user_queries.js';
+import pool from '../db/pool.js';
+import {
+    getConversation,
+    saveMessage,
+    saveConversation,
+    trimConversation,
+    deleteConversation
+} from '../db/conversation_queries.js';
 
 // ─── Clientes ────────────────────────────────────────────────────────────────
 
@@ -74,10 +81,21 @@ bot.use(session({
  *
  * Esto garantiza que el usuario siempre exista en DB antes de ejecutar
  * cualquier operación que requiera su registro (ej: setActiveAgent).
+ *
+ * También auto-autoriza como admin si el user_id está en TELEGRAM_ADMIN_IDS.
  */
 bot.use(async (ctx, next) => {
     if (ctx.from) {
         try {
+            // Parse admin IDs from env
+            const adminIds = (process.env.TELEGRAM_ADMIN_IDS || '')
+                .split(',')
+                .map(id => parseInt(id.trim()))
+                .filter(id => !isNaN(id));
+
+            const isAdmin = adminIds.includes(ctx.from.id);
+
+            // Register/update user
             await upsertUser({
                 user_id: ctx.from.id,
                 username: ctx.from.username,
@@ -86,6 +104,15 @@ bot.use(async (ctx, next) => {
                 language_code: ctx.from.language_code || 'es',
             });
             console.log(`[Middleware] User ${ctx.from.id} registered/updated`);
+
+            // Auto-authorize admins on first interaction
+            if (isAdmin) {
+                const user = await getUser(ctx.from.id);
+                if (!user.is_authorized) {
+                    await setAuthorization(ctx.from.id, true, 'admin');
+                    console.log(`[Middleware] Auto-authorized admin: ${ctx.from.id}`);
+                }
+            }
         } catch (err) {
             console.error('[Middleware] Error upserting user:', err.message);
             // No bloquear el flujo, continuar de todas formas
@@ -93,6 +120,67 @@ bot.use(async (ctx, next) => {
     }
     await next();
 });
+
+// ─── Load Conversation History Middleware ────────────────────────────────────
+
+/**
+ * Middleware que carga la conversación previa del agente activo
+ * si existe en DB. Si la sesión está vacía, recupera el historial.
+ *
+ * Solo carga si:
+ * - ctx.session.messages está vacío
+ * - El usuario tiene un agente activo
+ */
+bot.use(async (ctx, next) => {
+    // Solo cargar si no hay mensajes en sesión y es un mensaje de texto
+    if (ctx.message?.text && ctx.session.messages.length === 0) {
+        try {
+            const userId = ctx.from.id.toString();
+            const agentId = await getCurrentAgent(ctx);
+
+            const conversation = await getConversation(userId, agentId, 'telegram');
+
+            if (conversation && conversation.messages && conversation.messages.length > 0) {
+                // Limitar a últimos 50 mensajes para evitar token overflow
+                ctx.session.messages = conversation.messages.slice(-50);
+                console.log(`[Bot] Loaded ${ctx.session.messages.length} previous messages for user ${userId} with ${agentId}`);
+            }
+        } catch (err) {
+            console.error('[Bot] Error loading conversation (non-blocking):', err.message);
+            // No bloquear el flujo, continuar con sesión vacía
+        }
+    }
+    await next();
+});
+
+// ─── Authorization Middleware ────────────────────────────────────────────────
+
+/**
+ * Middleware que bloquea usuarios no autorizados de ejecutar comandos.
+ * Exenta /start y /help para permitir interacción inicial.
+ *
+ * Feature 11: Security & Auth (Agent Command Center)
+ */
+bot.use(async (ctx, next) => {
+    const exemptCommands = ['/start', '/help'];
+    const command = ctx.message?.text?.split(' ')[0];
+
+    if (exemptCommands.includes(command)) {
+        return next();
+    }
+
+    return requireAuthorization(ctx, next);
+});
+
+// ─── Rate Limiting Middleware ────────────────────────────────────────────────
+
+/**
+ * Middleware que limita mensajes a 10 por minuto por usuario.
+ * Previene spam y abuso del bot.
+ *
+ * Feature 11: Security & Auth (Agent Command Center)
+ */
+bot.use(rateLimitMiddleware);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -208,6 +296,30 @@ async function chat(ctx, userText) {
         const reply = accumulated;
 
         ctx.session.messages.push({ role: 'assistant', content: reply });
+
+        // Persist conversation to DB (non-blocking)
+        try {
+            const userId = ctx.from.id.toString();
+            const agentId = await getCurrentAgent(ctx);
+
+            // Guardar solo los últimos 2 mensajes (user + assistant)
+            const newMessages = ctx.session.messages.slice(-2);
+            for (const msg of newMessages) {
+                await saveMessage(userId, agentId, 'telegram', msg.role, msg.content);
+            }
+
+            console.log(`[Bot] Persisted ${newMessages.length} messages for user ${userId}`);
+
+            // Auto-trim si > 100 mensajes
+            if (ctx.session.messages.length > 100) {
+                await trimConversation(userId, agentId, 'telegram', 50);
+                ctx.session.messages = ctx.session.messages.slice(-50);
+                console.log(`[Bot] Trimmed to 50 messages`);
+            }
+        } catch (dbErr) {
+            console.error('[Bot] Failed to persist conversation (non-blocking):', dbErr.message);
+            // Don't throw - conversation continues in memory
+        }
 
         // Detect if reply contains a proposal
         const isProposal = /propuesta|confirmamos|crear.el.borrador|listo para crear/i.test(reply);
@@ -434,17 +546,173 @@ bot.command('start', async (ctx) => {
         `*Comandos disponibles:*\n\n` +
         `🤖 *Multi-Agent*\n` +
         `/agents — Ver y seleccionar agente\n` +
-        `/whoami — Ver agente activo actual\n\n` +
+        `/whoami — Ver agente activo actual\n` +
+        `/skill <nombre> [args] — Ejecutar un skill\n\n` +
         `💡 *PM Agent*\n` +
         `/idea — Nueva idea o proyecto\n` +
         `/list — Ver proyectos\n` +
         `/task [ID] [desc] — Inyectar ticket\n\n` +
+        `📝 *CRUD Operations*\n` +
+        `/create <tipo> key=value — Crear recurso\n` +
+        `/read <tipo> <id> — Leer recurso\n` +
+        `/update <tipo> <id> key=value — Actualizar\n` +
+        `/delete <tipo> <id> — Borrar recurso\n` +
+        `/list <tipo> [filters] — Listar recursos\n\n` +
         `📊 *Utilidades*\n` +
         `/skill\\_ranking — Ranking de uso de skills\n` +
+        `/conversation\\_stats — Ver estadísticas del historial\n` +
+        `/clear\\_history — Borrar historial de conversación\n` +
         `/cancel — Cancelar sesión\n\n` +
+        `*Ejemplos de skills:*\n` +
+        `\`/skill consultas-sql city=Dubai\`\n` +
+        `\`/skill traducir text="Hello"\`\n\n` +
+        `*Ejemplos de CRUD:*\n` +
+        `\`/create tasks description="Test" status=pending\`\n` +
+        `\`/list projects status=active\`\n` +
+        `\`/update tasks 42 status=completed\`\n\n` +
         `También acepto notas de voz 🎙`,
         { parse_mode: 'Markdown' }
     );
+});
+
+// ─── Admin Commands (Authorization Management) ───────────────────────────────
+
+bot.command('authorize', async (ctx) => {
+    const adminId = ctx.from.id;
+
+    try {
+        const adminUser = await getUser(adminId);
+
+        // Only admins can authorize
+        if (!adminUser || adminUser.role !== 'admin') {
+            return ctx.reply('❌ Solo administradores pueden ejecutar este comando.');
+        }
+
+        const args = ctx.message.text.split(' ');
+        const targetUserId = args[1];
+        const role = args[2] || 'viewer';
+
+        if (!targetUserId) {
+            return ctx.reply(
+                'Uso: `/authorize <user_id> [role]`\n\n' +
+                'Roles disponibles: viewer, operator, admin\n' +
+                'Ejemplo: `/authorize 123456789 operator`',
+                { parse_mode: 'Markdown' }
+            );
+        }
+
+        const targetUser = await getUser(parseInt(targetUserId));
+
+        if (!targetUser) {
+            return ctx.reply(`❌ Usuario ${targetUserId} no encontrado. Debe interactuar con el bot primero.`);
+        }
+
+        const result = await setAuthorization(parseInt(targetUserId), true, role);
+
+        await ctx.reply(
+            `✅ Usuario autorizado:\n\n` +
+            `👤 ${result.first_name} (@${result.username || 'sin username'})\n` +
+            `🔑 Rol: ${result.role}\n` +
+            `📅 Autorizado: ${new Date().toLocaleString('es-ES')}`,
+            { parse_mode: 'Markdown' }
+        );
+
+        // Notify target user
+        try {
+            await ctx.telegram.sendMessage(
+                targetUserId,
+                `🎉 ¡Has sido autorizado para usar el bot!\n\nRol: ${role}\n\nUsa /start para comenzar.`
+            );
+        } catch (err) {
+            console.log(`[Bot] Could not notify user ${targetUserId}:`, err.message);
+        }
+
+    } catch (err) {
+        console.error('[Bot] /authorize error:', err);
+        await ctx.reply(`❌ Error: ${err.message}`);
+    }
+});
+
+bot.command('revoke', async (ctx) => {
+    const adminId = ctx.from.id;
+
+    try {
+        const adminUser = await getUser(adminId);
+
+        if (!adminUser || adminUser.role !== 'admin') {
+            return ctx.reply('❌ Solo administradores pueden ejecutar este comando.');
+        }
+
+        const args = ctx.message.text.split(' ');
+        const targetUserId = args[1];
+
+        if (!targetUserId) {
+            return ctx.reply('Uso: `/revoke <user_id>`', { parse_mode: 'Markdown' });
+        }
+
+        const result = await setAuthorization(parseInt(targetUserId), false, 'viewer');
+
+        await ctx.reply(
+            `✅ Acceso revocado:\n\n` +
+            `👤 ${result.first_name} (@${result.username || 'sin username'})\n` +
+            `📅 Revocado: ${new Date().toLocaleString('es-ES')}`,
+            { parse_mode: 'Markdown' }
+        );
+
+        // Notify target user
+        try {
+            await ctx.telegram.sendMessage(
+                targetUserId,
+                `⚠️ Tu acceso al bot ha sido revocado.\n\nContacta al administrador si necesitas acceso.`
+            );
+        } catch (err) {
+            console.log(`[Bot] Could not notify user ${targetUserId}:`, err.message);
+        }
+
+    } catch (err) {
+        console.error('[Bot] /revoke error:', err);
+        await ctx.reply(`❌ Error: ${err.message}`);
+    }
+});
+
+bot.command('list_users', async (ctx) => {
+    const adminId = ctx.from.id;
+
+    try {
+        const adminUser = await getUser(adminId);
+
+        if (!adminUser || adminUser.role !== 'admin') {
+            return ctx.reply('❌ Solo administradores pueden ejecutar este comando.');
+        }
+
+        const stats = await getUserStats();
+        const authorized = await listAuthorizedUsers();
+
+        let message = '📊 *Usuarios del Bot*\n\n';
+        message += `Total: ${stats.overall.total_users}\n`;
+        message += `Autorizados: ${stats.overall.authorized_users}\n`;
+        message += `No autorizados: ${stats.overall.unauthorized_users}\n\n`;
+        message += `Admins: ${stats.overall.admins}\n`;
+        message += `Operators: ${stats.overall.operators}\n`;
+        message += `Viewers: ${stats.overall.viewers}\n\n`;
+        message += `Activos (7 días): ${stats.overall.active_last_7_days}\n`;
+        message += `Activos (30 días): ${stats.overall.active_last_30_days}\n\n`;
+        message += '*Usuarios Autorizados:*\n\n';
+
+        for (const user of authorized.slice(0, 10)) {
+            message += `${user.user_id} - ${user.first_name} (@${user.username || 'sin username'}) - ${user.role}\n`;
+        }
+
+        if (authorized.length > 10) {
+            message += `\n_...y ${authorized.length - 10} más_`;
+        }
+
+        await ctx.reply(message, { parse_mode: 'Markdown' });
+
+    } catch (err) {
+        console.error('[Bot] /list_users error:', err);
+        await ctx.reply(`❌ Error: ${err.message}`);
+    }
 });
 
 bot.command('skill_ranking', async (ctx) => {
@@ -532,31 +800,145 @@ bot.command('whoami', async (ctx) => {
     }
 });
 
-bot.command('list', async (ctx) => {
-    try {
-        const result = await pool.query(
-            'SELECT id, name, department, sub_area FROM projects ORDER BY updated_at DESC LIMIT 10'
+bot.command('skill', async (ctx) => {
+    const args = ctx.message.text.split(/\s+/);
+    const skillName = args[1];
+    const skillArgs = args.slice(2).join(' ').trim();
+
+    if (!skillName) {
+        return ctx.reply(
+            'Uso: `/skill <nombre> [argumentos]`\n\n' +
+            'Ejemplo: `/skill consultas-sql city=Dubai`\n' +
+            'Ejemplo: `/skill traducir text="Hello" variant=es-MX`\n\n' +
+            'Usa /whoami para ver skills disponibles del agente activo.',
+            { parse_mode: 'Markdown' }
         );
-        if (result.rows.length === 0) {
-            return ctx.reply('No hay proyectos todavia. Usa /idea para empezar.');
+    }
+
+    const startTime = Date.now();
+
+    try {
+        console.log(`[Bot] /skill ${skillName} invoked with args: ${skillArgs || '(none)'}`);
+
+        const result = await executeSkill(ctx, skillName, skillArgs);
+
+        if (!result.success) {
+            return ctx.reply(result.message, { parse_mode: 'Markdown' });
         }
 
-        let listMsg = '📂 *Proyectos recientes:*\n\n';
-        const buttons = [];
+        // Success message already sent by executeSkill (streaming + chunks)
+        const duration = Date.now() - startTime;
+        console.log(`[Bot] Skill executed: ${skillName} in ${duration}ms`);
 
-        result.rows.forEach(p => {
-            listMsg += `• \`${p.id}\` *${p.name}*\n`;
-            buttons.push([Markup.button.callback(`✏️ Editar: ${p.name.substring(0, 30)}`, `edit_${p.id}`)]);
-        });
-
-        await ctx.reply(listMsg, {
-            parse_mode: 'Markdown',
-            ...Markup.inlineKeyboard(buttons),
-        });
     } catch (err) {
-        await ctx.reply(`Error al listar: ${err.message}`);
+        await handleSkillExecutionError(ctx, err, skillName);
     }
 });
+
+/**
+ * Error handler para ejecución de skills
+ */
+async function handleSkillExecutionError(ctx, error, skillName) {
+    const errorMessages = {
+        'ENOENT': `❌ Skill '${skillName}' no encontrado.`,
+        'EACCES': `❌ Permiso denegado para ejecutar '${skillName}'.`,
+        'ETIMEDOUT': `⏱️ Timeout: '${skillName}' tardó más de 30 segundos.`,
+        'ECONNREFUSED': `❌ Error de conexión con Claude API.`,
+    };
+
+    const message = errorMessages[error.code] || `❌ Error: ${error.message}`;
+
+    await ctx.reply(message);
+
+    console.error('[SkillExecutor] Error:', {
+        skill: skillName,
+        error: error.message,
+        code: error.code,
+        stack: error.stack,
+    });
+}
+
+// ─── CRUD Commands ───────────────────────────────────────────────────────────
+
+bot.command('create', async (ctx) => {
+    const text = ctx.message.text.replace('/create ', '');
+    await handleCRUD('create', null, text, ctx);
+});
+
+bot.command('read', async (ctx) => {
+    const text = ctx.message.text.replace('/read ', '');
+    await handleCRUD('read', null, text, ctx);
+});
+
+bot.command('update', async (ctx) => {
+    const text = ctx.message.text.replace('/update ', '');
+    await handleCRUD('update', null, text, ctx);
+});
+
+bot.command('delete', async (ctx) => {
+    const text = ctx.message.text.replace('/delete ', '');
+    await handleCRUD('delete', null, text, ctx);
+});
+
+bot.command('list', async (ctx) => {
+    const text = ctx.message.text.replace('/list ', '');
+
+    // If no args, default to listing projects (backward compatibility)
+    if (!text || text.trim() === '') {
+        await handleCRUD('list', null, 'projects', ctx);
+    } else {
+        await handleCRUD('list', null, text, ctx);
+    }
+});
+
+// ─── Conversation Management Commands ────────────────────────────────────────
+
+bot.command('clear_history', async (ctx) => {
+    try {
+        const userId = ctx.from.id.toString();
+        const agentId = await getCurrentAgent(ctx);
+
+        await deleteConversation(userId, agentId, 'telegram');
+        resetSession(ctx);
+
+        await ctx.reply('✅ Historial de conversación borrado. Empezamos desde cero.', {
+            parse_mode: 'Markdown'
+        });
+    } catch (err) {
+        await ctx.reply(`❌ Error al borrar historial: ${err.message}`);
+    }
+});
+
+bot.command('conversation_stats', async (ctx) => {
+    try {
+        const userId = ctx.from.id.toString();
+        const agentId = await getCurrentAgent(ctx);
+
+        const conversation = await getConversation(userId, agentId, 'telegram');
+
+        if (!conversation) {
+            return ctx.reply('No hay historial de conversación con este agente.');
+        }
+
+        const messageCount = conversation.messages.length;
+        const userMessages = conversation.messages.filter(m => m.role === 'user').length;
+        const assistantMessages = conversation.messages.filter(m => m.role === 'assistant').length;
+        const lastMessageDate = new Date(conversation.last_message_at).toLocaleString('es-ES');
+
+        await ctx.reply(
+            `📊 *Estadísticas de Conversación*\n\n` +
+            `📝 Total mensajes: ${messageCount}\n` +
+            `👤 Tus mensajes: ${userMessages}\n` +
+            `🤖 Respuestas del agente: ${assistantMessages}\n` +
+            `🕐 Último mensaje: ${lastMessageDate}`,
+            { parse_mode: 'Markdown' }
+        );
+    } catch (err) {
+        await ctx.reply(`❌ Error al obtener estadísticas: ${err.message}`);
+    }
+});
+
+// ─── Other Commands ───────────────────────────────────────────────────────────
 
 bot.command('edit', async (ctx) => {
     const args = ctx.message.text.split(' ');
@@ -781,7 +1163,20 @@ bot.action(/^select_agent:(.+)$/, async (ctx) => {
         const result = await selectAgent(ctx, agentId);
 
         if (result.success) {
-            // Reset session when changing agents
+            // Guardar conversación actual antes de cambiar
+            try {
+                const userId = ctx.from.id.toString();
+                const oldAgentId = await getCurrentAgent(ctx);
+
+                if (ctx.session.messages.length > 0) {
+                    await saveConversation(userId, oldAgentId, 'telegram', ctx.session.messages);
+                    console.log(`[Bot] Saved ${ctx.session.messages.length} messages for ${oldAgentId} before switching`);
+                }
+            } catch (err) {
+                console.error('[Bot] Error saving conversation on switch:', err.message);
+            }
+
+            // Reset session when changing agents (middleware will load new conversation on next message)
             resetSession(ctx);
 
             await ctx.reply(result.message, { parse_mode: 'Markdown' });

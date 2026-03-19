@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { API_URL } from '../api.js';
+import AgentChat from '../components/AgentChat.jsx';
 
 const themeMap = {
     data: 'theme-green',
@@ -155,6 +156,7 @@ export default function AgentDetail() {
     const recentEvents = agent.recent_events || [];
 
     const tabs = [
+        { id: 'chat', label: 'Chat', icon: '💬', count: 0 },
         { id: 'skills', label: 'Skills', icon: '🛠', count: skills.length },
         { id: 'tools', label: 'Tools', icon: '🔧', count: tools.length },
         { id: 'workflows', label: 'Workflows', icon: '📋', count: 0 },
@@ -214,6 +216,16 @@ export default function AgentDetail() {
 
             {/* Tab Content */}
             <section className="agent-tab-content">
+                {/* Chat Tab */}
+                {activeTab === 'chat' && (
+                    <div className="agent-chat-wrapper">
+                        <AgentChat
+                            agentId={agentId}
+                            userId="dashboard-user"
+                        />
+                    </div>
+                )}
+
                 {/* Skills Tab - string tags */}
                 {activeTab === 'skills' && (
                     <div className="agent-skills-list">

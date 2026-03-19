@@ -11,6 +11,9 @@ import pg from 'pg';
 import { chatWithPMAgent, extractJSON, generateSummary, generateProject } from '../../tools/pm-agent/core.js';
 import { saveProject } from '../../tools/db/save_project.js';
 import { buildProjectContext } from '../../tools/pm-agent/context-builder.js';
+import { buildAgentContext } from '../../tools/core/context-builder.js';
+import { getConversation, saveConversation } from '../../tools/db/conversation_queries.js';
+import { logEvent, EVENT_TYPES } from '../../tools/core/event-logger.js';
 import Anthropic from '@anthropic-ai/sdk';
 import { generateEodReport } from '../../tools/workspace-skills/eod-generator.js';
 import { completeProject } from '../../tools/db/complete_project.js';
@@ -21,6 +24,29 @@ const port = process.env.PORT || process.env.DASHBOARD_PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// ─── API Key Auth Middleware (Feature 11: Security & Auth) ──────────────────
+
+/**
+ * Simple API Key authentication for Dashboard endpoints.
+ * If DASHBOARD_API_KEY is set, all /api/* endpoints require X-API-Key header.
+ * If not set, logs warning and allows all requests (dev mode).
+ */
+app.use('/api/*', (req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+  const validKey = process.env.DASHBOARD_API_KEY;
+
+  if (!validKey) {
+    console.warn('[Dashboard] DASHBOARD_API_KEY not set - API is PUBLIC!');
+    return next(); // Allow in dev if not configured
+  }
+
+  if (apiKey !== validKey) {
+    return res.status(401).json({ error: 'Unauthorized - Invalid API key' });
+  }
+
+  next();
+});
 
 // Configuración de PostgreSQL: usar DATABASE_URL si está disponible (Railway, Heroku, etc.)
 // Si no, usar variables individuales (desarrollo local)
@@ -1458,6 +1484,126 @@ app.post('/api/chat/pm-agent', async (req, res) => {
         } else if (!res.headersSent) {
             res.status(500).json({ error: err.message });
         }
+    }
+});
+
+// ─── POST /api/agents/:agentId/chat ───────────────────────────────────────────
+// Generic multi-agent chat endpoint (supports all 9 agents)
+app.post('/api/agents/:agentId/chat', async (req, res) => {
+    try {
+        const { agentId } = req.params;
+        const { message, userId = 'dashboard-user' } = req.body;
+
+        if (!message) {
+            return res.status(400).json({ error: 'Message is required' });
+        }
+
+        // Validate agentId exists
+        const validAgents = ['pm-agent', 'data-agent', 'content-agent', 'translation-agent',
+                             'frontend-agent', 'dev-agent', 'marketing-agent', 'research-agent',
+                             'wat-auditor-agent'];
+        if (!validAgents.includes(agentId)) {
+            return res.status(404).json({ error: `Agent '${agentId}' not found` });
+        }
+
+        // Load conversation history from agent_conversations
+        const conversation = await getConversation(userId, agentId, 'dashboard');
+        const messages = conversation ? conversation.messages : [];
+
+        // Add user message
+        messages.push({ role: 'user', content: message });
+
+        // Build agent context (includes system prompt, memory, recent events)
+        const context = await buildAgentContext(agentId, 'dashboard');
+
+        // SSE headers
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Agent-Id', agentId);
+        res.flushHeaders();
+
+        // Call Claude API with streaming
+        let fullResponse = '';
+        const stream = await anthropic.messages.stream({
+            model: context.model || 'claude-sonnet-4-20250514',
+            max_tokens: 4096,
+            system: context.systemPrompt,
+            messages: messages,
+        });
+
+        stream.on('text', (text) => {
+            fullResponse += text;
+            res.write(`data: ${JSON.stringify({ text })}\n\n`);
+        });
+
+        let streamEnded = false;
+
+        stream.on('error', (err) => {
+            if (!streamEnded) {
+                streamEnded = true;
+                console.error('[AgentChat] Stream error:', err);
+                res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
+                res.write('data: [DONE]\n\n');
+                res.end();
+            }
+        });
+
+        await stream.finalMessage();
+
+        // Save conversation to agent_conversations
+        messages.push({ role: 'assistant', content: fullResponse });
+        await saveConversation(userId, agentId, 'dashboard', messages);
+
+        // Log event
+        await logEvent(agentId, EVENT_TYPES.MESSAGE_SENT, {
+            user_id: userId,
+            channel: 'dashboard',
+            message_preview: message.substring(0, 100)
+        });
+
+        if (!streamEnded) {
+            streamEnded = true;
+            res.write('data: [DONE]\n\n');
+            res.end();
+        }
+    } catch (err) {
+        console.error('[AgentChat] Error:', err);
+        if (res.headersSent && !res.writableEnded) {
+            res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
+            res.write('data: [DONE]\n\n');
+            res.end();
+        } else if (!res.headersSent) {
+            res.status(500).json({ error: err.message });
+        }
+    }
+});
+
+// ─── GET /api/agents/:agentId/conversation ────────────────────────────────────
+// Load conversation history for an agent
+app.get('/api/agents/:agentId/conversation', async (req, res) => {
+    try {
+        const { agentId } = req.params;
+        const userId = req.query.userId || 'dashboard-user';
+
+        const conversation = await getConversation(userId, agentId, 'dashboard');
+
+        if (!conversation) {
+            return res.json({ messages: [] });
+        }
+
+        // Return last 50 messages to avoid overwhelming the UI
+        const messages = conversation.messages.slice(-50);
+
+        res.json({
+            messages,
+            agentId: conversation.agent_id,
+            createdAt: conversation.created_at,
+            lastMessageAt: conversation.last_message_at
+        });
+    } catch (err) {
+        console.error('[AgentChat] Error loading conversation:', err);
+        res.status(500).json({ error: err.message });
     }
 });
 

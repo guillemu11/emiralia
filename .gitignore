@@ -45,8 +45,10 @@ logs/
 *.log
 apps/api/api.log
 
-# Claude Code
-.claude/projects/
+# Obsidian (config personal - NO commitear)
+.obsidian/
+
+# Nota: .obsidian-vault/ y claude/ SÍ se commitean (templates y docs compartidos)
 
 # Testing
 coverage/
