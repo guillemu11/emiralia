@@ -1513,7 +1513,10 @@ app.post('/api/agents/:agentId/chat', async (req, res) => {
 
         // Load conversation history from agent_conversations
         const conversation = await getConversation(userId, agentId, 'dashboard');
-        const messages = conversation ? conversation.messages : [];
+        // Filter messages to only include role and content (Claude API format)
+        const messages = conversation
+            ? conversation.messages.map(m => ({ role: m.role, content: m.content }))
+            : [];
 
         // Add user message
         messages.push({ role: 'user', content: message });
@@ -1557,8 +1560,12 @@ app.post('/api/agents/:agentId/chat', async (req, res) => {
         await stream.finalMessage();
 
         // Save conversation to agent_conversations
-        messages.push({ role: 'assistant', content: fullResponse });
-        await saveConversation(userId, agentId, 'dashboard', messages);
+        // Add timestamps for persistence (but not sent to Claude API)
+        const messagesWithTimestamps = [
+            ...messages.map(m => ({ ...m, timestamp: m.timestamp || new Date().toISOString() })),
+            { role: 'assistant', content: fullResponse, timestamp: new Date().toISOString() }
+        ];
+        await saveConversation(userId, agentId, 'dashboard', messagesWithTimestamps);
 
         // Log event
         await logEvent(agentId, EVENT_TYPES.MESSAGE_SENT, {
