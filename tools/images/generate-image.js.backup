@@ -1,0 +1,271 @@
+/**
+ * Nano Banana Pro — AI Image Generator for Marketing Content
+ *
+ * Uses Google Gemini Flash Image via OpenRouter to generate
+ * professional visual content for social media, web banners, and editorial.
+ */
+
+import axios from 'axios';
+import fs from 'fs/promises';
+import path from 'path';
+import crypto from 'crypto';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Load environment variables
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-3.1-flash-image-preview';
+const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+const GENERATED_IMAGES_DIR = process.env.GENERATED_IMAGES_DIR || 'apps/website/public/generated';
+
+// Supported image sizes
+const SIZES = {
+  square: '1080x1080',       // Instagram posts
+  landscape: '1200x630',     // Facebook, LinkedIn, web banners
+  portrait: '1080x1350',     // Instagram stories
+  wide: '1600x900'           // Hero images, headers
+};
+
+/**
+ * Generate AI image from text prompt
+ *
+ * @param {string} prompt - Text description of image to generate
+ * @param {Object} options - Generation options
+ * @param {string} options.size - Image size: square|landscape|portrait|wide
+ * @param {string} options.quality - Quality level (not used yet)
+ * @param {string} options.filename - Custom filename (optional)
+ * @returns {Promise<Object>} Generation result with path, URL, metadata
+ */
+export async function generateImage(prompt, options = {}) {
+  if (!OPENROUTER_API_KEY) {
+    throw new Error('OPENROUTER_API_KEY not configured in .env');
+  }
+
+  if (!prompt || typeof prompt !== 'string') {
+    throw new Error('Valid prompt is required');
+  }
+
+  const {
+    size = 'square',
+    quality = 'standard',
+    filename = null
+  } = options;
+
+  console.log(`[Nano Banana] Generating ${size} image...`);
+  console.log(`[Nano Banana] Prompt: "${prompt.substring(0, 100)}..."`);
+
+  try {
+    // Map sizes to aspect ratios for Gemini image config
+    const aspectRatios = {
+      square: '1:1',
+      landscape: '16:9',
+      portrait: '9:16',
+      wide: '16:9'
+    };
+
+    // Call OpenRouter API with image generation parameters
+    const response = await axios.post(
+      `${OPENROUTER_BASE_URL}/chat/completions`,
+      {
+        model: OPENROUTER_MODEL,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        // CRITICAL: Tell model to generate image, not just text
+        modalities: ["image", "text"],
+        // Gemini image generation parameters
+        image_config: {
+          aspect_ratio: aspectRatios[size] || '1:1'
+        },
+        max_tokens: 1024,
+        temperature: 0.7
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://emiralia.com',
+          'X-Title': 'Emiralia AI Content Generator'
+        },
+        timeout: 60000 // 60s timeout
+      }
+    );
+
+    // Debug: log response structure
+    console.log('[Nano Banana] Response status:', response.status);
+    console.log('[Nano Banana] Response data:', JSON.stringify(response.data, null, 2));
+
+    // Extract image data from response
+    const imageBuffer = await extractImageBuffer(response.data);
+
+    // Save to filesystem
+    const savedPath = await saveImage(imageBuffer, filename);
+    const publicUrl = `/generated/${path.basename(savedPath)}`;
+
+    console.log(`[Nano Banana] ✓ Image saved: ${savedPath}`);
+    console.log(`[Nano Banana] ✓ Public URL: ${publicUrl}`);
+
+    return {
+      success: true,
+      path: savedPath,
+      url: publicUrl,
+      filename: path.basename(savedPath),
+      prompt: prompt,
+      size: SIZES[size] || size,
+      model: OPENROUTER_MODEL,
+      generatedAt: new Date()
+    };
+
+  } catch (error) {
+    console.error('[Nano Banana] Generation failed:', error.message);
+
+    // Check for specific error types
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Generation timeout - try a simpler prompt');
+    }
+    if (error.response?.status === 401) {
+      throw new Error('Invalid API key');
+    }
+    if (error.response?.status === 429) {
+      throw new Error('Rate limit exceeded - try again later');
+    }
+
+    throw new Error(`Generation failed: ${error.message}`);
+  }
+}
+
+/**
+ * Extract image buffer from OpenRouter API response
+ *
+ * @param {Object} responseData - API response data
+ * @returns {Promise<Buffer>} Image as buffer
+ */
+async function extractImageBuffer(responseData) {
+  if (!responseData.choices || responseData.choices.length === 0) {
+    throw new Error('No image data in API response');
+  }
+
+  const message = responseData.choices[0]?.message;
+
+  // Check for image in message.parts (Gemini multimodal format)
+  if (message.parts && Array.isArray(message.parts)) {
+    for (const part of message.parts) {
+      // Look for inline_data with image
+      if (part.inline_data && part.inline_data.data) {
+        console.log('[Nano Banana] Extracting image from inline_data...');
+        return Buffer.from(part.inline_data.data, 'base64');
+      }
+      // Look for file_data with URI
+      if (part.file_data && part.file_data.file_uri) {
+        console.log('[Nano Banana] Downloading image from file_uri...');
+        const imageResponse = await axios.get(part.file_data.file_uri, {
+          responseType: 'arraybuffer',
+          timeout: 30000
+        });
+        return Buffer.from(imageResponse.data);
+      }
+    }
+  }
+
+  // Check traditional content field
+  const content = message?.content;
+
+  if (content && typeof content === 'string') {
+    // Check if content is base64 encoded image
+    if (content.startsWith('data:image')) {
+      const matches = content.match(/data:image\/\w+;base64,(.+)/);
+      if (matches && matches[1]) {
+        console.log('[Nano Banana] Extracting base64 image from content...');
+        return Buffer.from(matches[1], 'base64');
+      }
+    }
+
+    // Check if content contains an image URL
+    const urlMatch = content.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|webp)/i);
+    if (urlMatch) {
+      console.log('[Nano Banana] Downloading image from URL in content...');
+      const imageResponse = await axios.get(urlMatch[0], {
+        responseType: 'arraybuffer',
+        timeout: 30000
+      });
+      return Buffer.from(imageResponse.data);
+    }
+  }
+
+  // If we get here, log the full response for debugging
+  console.error('[Nano Banana] Could not find image in response. Full message:', JSON.stringify(message, null, 2));
+  throw new Error('Could not extract image from response. Check console for details.');
+}
+
+/**
+ * Save image buffer to filesystem
+ *
+ * @param {Buffer} imageBuffer - Image data as buffer
+ * @param {string|null} customFilename - Optional custom filename
+ * @returns {Promise<string>} Absolute path to saved file
+ */
+async function saveImage(imageBuffer, customFilename = null) {
+  // Ensure output directory exists
+  const outputDir = path.resolve(GENERATED_IMAGES_DIR);
+  await fs.mkdir(outputDir, { recursive: true });
+
+  // Generate unique filename if not provided
+  let filename;
+  if (customFilename) {
+    filename = customFilename;
+  } else {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+    const hash = crypto.createHash('md5').update(imageBuffer).digest('hex').substring(0, 8);
+    filename = `${timestamp}_${hash}.jpg`;
+  }
+
+  const filePath = path.join(outputDir, filename);
+
+  // Write file
+  await fs.writeFile(filePath, imageBuffer);
+
+  return filePath;
+}
+
+/**
+ * Get information about generated images directory
+ *
+ * @returns {Promise<Object>} Directory stats
+ */
+export async function getDirectoryStats() {
+  const outputDir = path.resolve(GENERATED_IMAGES_DIR);
+
+  try {
+    const files = await fs.readdir(outputDir);
+    const imageFiles = files.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f));
+
+    let totalSize = 0;
+    for (const file of imageFiles) {
+      const stats = await fs.stat(path.join(outputDir, file));
+      totalSize += stats.size;
+    }
+
+    return {
+      count: imageFiles.length,
+      totalSizeMB: (totalSize / (1024 * 1024)).toFixed(2),
+      avgSizeKB: imageFiles.length > 0
+        ? ((totalSize / imageFiles.length) / 1024).toFixed(2)
+        : 0,
+      directory: outputDir
+    };
+  } catch (error) {
+    return {
+      count: 0,
+      totalSizeMB: 0,
+      avgSizeKB: 0,
+      directory: outputDir,
+      error: error.message
+    };
+  }
+}

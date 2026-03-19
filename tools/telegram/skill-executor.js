@@ -473,7 +473,7 @@ function validateAgentAccess(agentId, skillDef) {
  * @param {string} status - 'completed' | 'failed' | 'timeout'
  */
 async function logSkillExecution(agentId, skillName, domain, args, result, duration, status) {
-  await logEvent(agentId, EVENT_TYPES.SKILL_INVOCATION, {
+  const metadata = {
     skill_name: skillName,
     domain,
     status,
@@ -481,7 +481,21 @@ async function logSkillExecution(agentId, skillName, domain, args, result, durat
     args,
     triggered_by: 'telegram',
     result_preview: typeof result === 'string' ? result.substring(0, 200) : undefined
-  });
+  };
+
+  // Agregar metadata específica de imagen para generar-imagen skill
+  if (skillName === 'generar-imagen' && status === 'completed') {
+    // Intentar extraer metadata de imagen del resultado
+    // El resultado puede contener la info en el texto de respuesta de Claude
+    const urlMatch = typeof result === 'string' && result.match(/\/generated\/([^\s]+\.jpg)/);
+    if (urlMatch) {
+      metadata.image_url = `/generated/${urlMatch[1]}`;
+      metadata.image_filename = urlMatch[1];
+      metadata.model = 'dall-e-3';
+    }
+  }
+
+  await logEvent(agentId, EVENT_TYPES.SKILL_INVOCATION, metadata);
   console.log(`[SkillExecutor] Logged skill execution: ${skillName} (${status}, ${duration}ms)`);
 }
 

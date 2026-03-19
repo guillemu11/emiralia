@@ -283,13 +283,41 @@ export default function AgentDetail() {
                 {activeTab === 'activity' && (
                     <div className="agent-activity-feed">
                         {recentEvents.length > 0 ? (
-                            recentEvents.map((event, i) => (
-                                <div key={event.id || i} className="activity-item animate-fade-in">
-                                    <div className="activity-time">{formatEventTime(event.timestamp, lang)}</div>
-                                    <div className={`activity-dot ${eventTypeToVisual(event.event_type)}`}></div>
-                                    <div className="activity-message">{formatEventContent(event)}</div>
-                                </div>
-                            ))
+                            recentEvents.map((event, i) => {
+                                // Detectar si el evento es generación de imagen
+                                const isImageGen = event.event_type === 'skill_invocation'
+                                                   && event.content?.skill_name === 'generar-imagen'
+                                                   && event.content?.image_url;
+
+                                return (
+                                    <div key={event.id || i} className="activity-item animate-fade-in">
+                                        <div className="activity-time">{formatEventTime(event.timestamp, lang)}</div>
+                                        <div className={`activity-dot ${eventTypeToVisual(event.event_type)}`}></div>
+                                        <div className="activity-message">
+                                            {formatEventContent(event)}
+                                            {/* Mostrar preview de imagen si está disponible */}
+                                            {isImageGen && (
+                                                <div style={{ marginTop: '8px' }}>
+                                                    <img
+                                                        src={event.content.image_url}
+                                                        alt="Generated image"
+                                                        style={{
+                                                            maxWidth: '200px',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid #e2e8f0',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                        onClick={() => window.open(event.content.image_url, '_blank')}
+                                                    />
+                                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
+                                                        {event.content.model} • {event.content.image_filename}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })
                         ) : (
                             <div className="empty-state">{t('agentDetail.noActivity')}</div>
                         )}

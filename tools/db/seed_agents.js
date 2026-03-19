@@ -13,7 +13,7 @@ const agents = [
         department: 'content',
         avatar: '✍️',
         status: 'active',
-        skills: ['activity-tracking'],
+        skills: ['activity-tracking', 'generar-imagen'],
         tools: ['memory'],
     },
     {
