@@ -34,7 +34,7 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const SKILL_DOMAINS = ['ops', 'content', 'design', 'producto', 'gtm', 'ejecucion', 'marketing', 'data'];
-const SKILLS_BASE_DIR = path.join(process.cwd(), '.claude', 'skills');
+const SKILLS_BASE_DIR = path.join(process.cwd(), 'claude', 'skills');
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const EDIT_INTERVAL_MS = 1500; // Update streaming message every 1.5s
 

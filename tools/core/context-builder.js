@@ -74,8 +74,8 @@ async function loadAgentDefinition(agentId) {
     return cached.data;
   }
 
-  // Buscar archivo del agente en .claude/agents/ (organizados por categoría)
-  const agentsBaseDir = path.join(process.cwd(), '.claude', 'agents');
+  // Buscar archivo del agente en claude/agents/ (organizados por categoría)
+  const agentsBaseDir = path.join(process.cwd(), 'claude', 'agents');
   const categories = ['content', 'data', 'design', 'dev', 'marketing', 'ops', 'product'];
 
   let agentContent = null;
