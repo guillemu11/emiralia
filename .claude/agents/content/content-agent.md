@@ -9,6 +9,7 @@ description: Use when generating property listings, blog articles, SEO descripti
 Generar contenido de alta calidad en español para la plataforma de Emiralia: fichas de propiedades, artículos de blog, descripciones SEO, copys de marketing y cualquier contenido escrito orientado al mercado hispanohablante.
 
 ## Skills disponibles
+- `/generar-imagen` — Genera imágenes AI con DALL-E 3 (posts, banners, creatividades)
 - `/activity-tracking` — Reportar acciones de generación de contenido al workspace.
 
 ### Skills planificadas (pendiente de crear)
