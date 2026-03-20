@@ -296,7 +296,15 @@ async function chat(ctx, userText) {
         });
 
         await stream.finalMessage();
-        const reply = accumulated;
+
+        // Clean XML artifacts from Claude response
+        const reply = accumulated
+            .replace(/<tool_?calls>[\s\S]*?<\/tool_?calls>/gi, '')
+            .replace(/<tool_?result>[\s\S]*?<\/tool_?result>/gi, '')
+            .replace(/<invoke[\s\S]*?<\/invoke>/gi, '')
+            .replace(/<[\s\S]*?<\/antml:[^>]+>/gi, '')
+            .replace(/<\/?(tool_?calls|tool_?result|invoke|antml:\w+)[^>]*>/gi, '')
+            .trim();
 
         ctx.session.messages.push({ role: 'assistant', content: reply });
 
@@ -403,9 +411,12 @@ async function chatWithAgent(ctx, userText) {
 
         // Clean tool_calls XML that Claude sometimes generates as text
         const reply = accumulated
-            .replace(/<tool_calls>[\s\S]*?<\/tool_calls>/g, '')
-            .replace(/<tool_result>[\s\S]*?<\/tool_result>/g, '')
-            .replace(/<invoke[\s\S]*?<\/invoke>/g, '')
+            .replace(/<tool_?calls>[\s\S]*?<\/tool_?calls>/gi, '')
+            .replace(/<tool_?result>[\s\S]*?<\/tool_?result>/gi, '')
+            .replace(/<invoke[\s\S]*?<\/invoke>/gi, '')
+            .replace(/<[\s\S]*?<\/antml:[^>]+>/gi, '')
+            // Catch standalone opening/closing XML tags from Claude artifacts
+            .replace(/<\/?(tool_?calls|tool_?result|invoke|antml:\w+)[^>]*>/gi, '')
             .trim();
 
         ctx.session.messages.push({ role: 'assistant', content: reply });
@@ -1286,6 +1297,21 @@ bot.command('generar_imagen', async (ctx) => {
 // This is handled in the text handler below for messages starting with /generar-imagen
 
 /**
+ * Detects if a user message is requesting image generation via natural language.
+ * Used to route content-agent chat messages to handleImageGeneration instead of chatWithAgent.
+ */
+function isImageGenerationRequest(text) {
+    const patterns = [
+        /\b(genera|generar|crea|crear|haz|hacer|dise[ñn]a|dise[ñn]ar)\b.*\b(imagen|foto|visual|banner|creatividad|ilustraci[oó]n)\b/i,
+        /\b(quiero|necesito|dame)\b.*\b(imagen|foto|visual|banner)\b/i,
+        /\b(imagen|foto|visual|banner)\b.*\b(de un|de una|del|de los|de las|para)\b/i,
+        /\bgenerate.*image\b/i,
+        /\bcreate.*image\b/i,
+    ];
+    return patterns.some(p => p.test(text));
+}
+
+/**
  * Shared image generation handler for Telegram
  */
 async function handleImageGeneration(ctx, rawArgs) {
@@ -1363,6 +1389,12 @@ bot.on('text', async (ctx) => {
             return;
         }
         await chat(ctx, ctx.message.text);
+        return;
+    }
+
+    // Intercept image generation intent in natural language for content-agent
+    if (agentId === 'content-agent' && isImageGenerationRequest(ctx.message.text)) {
+        await handleImageGeneration(ctx, ctx.message.text);
         return;
     }
 
