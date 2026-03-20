@@ -13,6 +13,7 @@ COPY --from=builder /app/node_modules ./node_modules
 
 # Copy ALL tools (bot + all dependencies)
 COPY tools/ ./tools/
+COPY .claude/ ./.claude/
 COPY package*.json ./
 
 # Health check (polling bot no tiene HTTP endpoint, verificar proceso)

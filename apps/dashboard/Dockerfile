@@ -46,6 +46,7 @@ COPY --from=builder /app/apps/dashboard/dist ./dist
 # Copy server and tools
 COPY --from=builder /app/apps/dashboard/server.js ./
 COPY --from=builder /app/tools /app/tools
+COPY --from=builder /app/.claude /app/.claude
 
 ENV NODE_ENV=production
 EXPOSE 3001
