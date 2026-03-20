@@ -16,6 +16,7 @@
  */
 
 import 'dotenv/config';
+import fs from 'fs/promises';
 import { Telegraf, session, Markup } from 'telegraf';
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
@@ -399,7 +400,13 @@ async function chatWithAgent(ctx, userText) {
         });
 
         await stream.finalMessage();
-        const reply = accumulated;
+
+        // Clean tool_calls XML that Claude sometimes generates as text
+        const reply = accumulated
+            .replace(/<tool_calls>[\s\S]*?<\/tool_calls>/g, '')
+            .replace(/<tool_result>[\s\S]*?<\/tool_result>/g, '')
+            .replace(/<invoke[\s\S]*?<\/invoke>/g, '')
+            .trim();
 
         ctx.session.messages.push({ role: 'assistant', content: reply });
 
@@ -1305,11 +1312,15 @@ async function handleImageGeneration(ctx, rawArgs) {
 
         await safeDelete(ctx, statusMsg.message_id);
 
-        // Send image to Telegram
-        await ctx.replyWithPhoto(result.url, {
-            caption: `*${result.filename}*\nTamano: ${result.size} | Calidad: ${result.quality}\nCosto: $${result.cost} USD\n\n_${result.revisedPrompt || result.prompt}_`,
-            parse_mode: 'Markdown',
-        });
+        // Send image to Telegram as buffer (result.url is a local path, not a public URL)
+        const imgBuffer = await fs.readFile(result.path);
+        await ctx.replyWithPhoto(
+            { source: imgBuffer, filename: result.filename },
+            {
+                caption: `*${result.filename}*\nTamano: ${result.size} | Calidad: ${result.quality}\nCosto: $${result.cost} USD\n\n_${result.revisedPrompt || result.prompt}_`,
+                parse_mode: 'Markdown',
+            }
+        );
 
         // Persist to conversation so Dashboard can see it
         const summary = `Imagen generada: ${result.filename}\nURL: ${result.url}\nTamano: ${result.size} (${result.quality})\nCosto: $${result.cost} USD\nPrompt: ${result.revisedPrompt || result.prompt}`;

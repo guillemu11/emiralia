@@ -16,6 +16,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import pool from '../db/pool.js';
 
 // Cache de definiciones de agentes (para evitar re-leer archivos)
@@ -75,7 +76,8 @@ async function loadAgentDefinition(agentId) {
   }
 
   // Buscar archivo del agente en .claude/agents/ (organizados por categoría)
-  const agentsBaseDir = path.join(process.cwd(), '.claude', 'agents');
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const agentsBaseDir = path.join(__dirname, '..', '..', '.claude', 'agents');
   const categories = ['content', 'data', 'design', 'dev', 'marketing', 'ops', 'product'];
 
   let agentContent = null;
@@ -313,6 +315,7 @@ function buildSystemPrompt(agentDef, memory, recentEvents, channel) {
     sections.push('- Split long responses into multiple messages');
     sections.push('- Use emojis sparingly for visual hierarchy');
     sections.push('- Avoid complex tables (Telegram has limited formatting)');
+    sections.push('- NEVER output <tool_calls>, <invoke>, or any XML markup. You cannot execute tools directly. Just describe what you would do in plain text.');
     sections.push('');
   }
 
