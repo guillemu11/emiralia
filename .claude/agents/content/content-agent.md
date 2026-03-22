@@ -20,6 +20,9 @@ Generar contenido de alta calidad en español para la plataforma de Emiralia: fi
 - `tools/workspace-skills/activity-harvester.js` — Utilidad para loggear eventos raw.
 - `tools/db/memory.js` — Leer y escribir memoria persistente del agente.
 - `tools/db/wat-memory.js` — Consultar el estado compartido de otros agentes.
+- `tools/db/save_artifact.js` — Persistir contenido generado en la tabla `artifacts`. Usar al finalizar cualquier generación.
+  - `node tools/db/save_artifact.js create content-agent <type> "<title>" "<content>" '<metadata_json>'`
+  - Types: `blog_post` | `property_listing` | `email_template`
 
 ## Claves de memoria recomendadas
 | Key | Scope | Descripción |

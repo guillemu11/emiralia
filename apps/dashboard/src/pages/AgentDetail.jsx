@@ -3,6 +3,33 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { API_URL } from '../api.js';
 import AgentChat from '../components/AgentChat.jsx';
+import ContentWorkspace from '../components/workspace/ContentWorkspace.jsx';
+import SocialWorkspace from '../components/workspace/SocialWorkspace.jsx';
+import MarketingWorkspace from '../components/workspace/MarketingWorkspace.jsx';
+import AnalyticsWorkspace from '../components/workspace/AnalyticsWorkspace.jsx';
+import LegalWorkspace from '../components/workspace/LegalWorkspace.jsx';
+import DataWorkspace from '../components/workspace/DataWorkspace.jsx';
+import DesignWorkspace from '../components/workspace/DesignWorkspace.jsx';
+import SeoWorkspace from '../components/workspace/SeoWorkspace.jsx';
+import DevWorkspace from '../components/workspace/DevWorkspace.jsx';
+import ResearchWorkspace from '../components/workspace/ResearchWorkspace.jsx';
+import WatAuditorWorkspace from '../components/workspace/WatAuditorWorkspace.jsx';
+import PmWorkspace from '../components/workspace/PmWorkspace.jsx';
+
+const workspaceMap = {
+    'content-agent':      ContentWorkspace,
+    'social-media-agent': SocialWorkspace,
+    'marketing-agent':    MarketingWorkspace,
+    'analytics-agent':    AnalyticsWorkspace,
+    'legal-agent':        LegalWorkspace,
+    'data-agent':         DataWorkspace,
+    'frontend-agent':     DesignWorkspace,
+    'seo-agent':          SeoWorkspace,
+    'dev-agent':          DevWorkspace,
+    'research-agent':     ResearchWorkspace,
+    'wat-auditor-agent':  WatAuditorWorkspace,
+    'pm-agent':           PmWorkspace,
+};
 
 const themeMap = {
     data: 'theme-green',
@@ -59,7 +86,7 @@ export default function AgentDetail() {
         focused: { emoji: '🎯', label: t('mood.focused') },
     };
 
-    const [activeTab, setActiveTab] = useState('skills');
+    const [activeTab, setActiveTab] = useState('workspace');
     const [agent, setAgent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -155,7 +182,10 @@ export default function AgentDetail() {
     const eodReports = agent.eod_reports || [];
     const recentEvents = agent.recent_events || [];
 
+    const WorkspaceComponent = workspaceMap[agentId];
+
     const tabs = [
+        ...(WorkspaceComponent ? [{ id: 'workspace', label: 'Workspace', icon: '◈', count: 0 }] : []),
         { id: 'chat', label: 'Chat', icon: '💬', count: 0 },
         { id: 'skills', label: 'Skills', icon: '🛠', count: skills.length },
         { id: 'tools', label: 'Tools', icon: '🔧', count: tools.length },
@@ -216,6 +246,11 @@ export default function AgentDetail() {
 
             {/* Tab Content */}
             <section className="agent-tab-content">
+                {/* Workspace Tab */}
+                {activeTab === 'workspace' && WorkspaceComponent && (
+                    <WorkspaceComponent agentId={agentId} agent={agent} />
+                )}
+
                 {/* Chat Tab */}
                 {activeTab === 'chat' && (
                     <div className="agent-chat-wrapper">

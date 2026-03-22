@@ -8,13 +8,13 @@
 ### 2. Agrega estas Variables de Entorno:
 
 ```
-PG_HOST=db.lizjfuoreixzxdzzxfyk.supabase.co
-PG_PORT=5432
-PG_DB=postgres
+PG_HOST=mainline.proxy.rlwy.net
+PG_PORT=17638
+PG_DB=railway
 PG_USER=postgres
-PG_PASSWORD=Postgresdatabase
-PG_SSL=true
-ANTHROPIC_API_KEY=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
+PG_PASSWORD=[ver Railway dashboard → emiralia → Variables]
+PG_SSL=false
+ANTHROPIC_API_KEY=[ver .env local — NUNCA hardcodear en docs]
 ```
 
 **IMPORTANTE:** Aplica las variables para **Production, Preview y Development**

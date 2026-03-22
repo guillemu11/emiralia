@@ -8,6 +8,8 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+import net from 'net';
+import { spawn } from 'child_process';
 
 // Load .env from project root (not cwd, which may be apps/dashboard/)
 const __filename = fileURLToPath(import.meta.url);
@@ -87,11 +89,25 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // ─── Helper: Audit Log ──────────────────────────────────────────────────────
 
 async function logAudit(eventType, department, title, details, agentId = null) {
-    await pool.query(
-        `INSERT INTO audit_log (event_type, department, agent_id, title, details)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [eventType, department, agentId, title, details]
-    );
+    try {
+        await pool.query(
+            `INSERT INTO audit_log (event_type, department, agent_id, title, details)
+             VALUES ($1, $2, $3, $4, $5)`,
+            [eventType, department, agentId, title, details]
+        );
+    } catch (err) {
+        if (err.code === '23505') {
+            // Sequence desync — fix and retry once
+            await pool.query(`SELECT setval(pg_get_serial_sequence('audit_log', 'id'), COALESCE((SELECT MAX(id) FROM audit_log), 0) + 1, false)`);
+            await pool.query(
+                `INSERT INTO audit_log (event_type, department, agent_id, title, details)
+                 VALUES ($1, $2, $3, $4, $5)`,
+                [eventType, department, agentId, title, details]
+            );
+        } else {
+            throw err;
+        }
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -2582,6 +2598,634 @@ ${urls}
     } catch (err) {
         console.error('[sitemap] Error:', err.message);
         res.status(500).send('Error generating sitemap');
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ARTIFACTS (Project 039 — Agent Workspaces)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// GET /api/artifacts — lista con filtros opcionales
+app.get('/api/artifacts', async (req, res) => {
+    try {
+        const { agent_id, type, status, limit = 50, offset = 0 } = req.query;
+        let query = 'SELECT * FROM artifacts WHERE 1=1';
+        const params = [];
+        if (agent_id) { params.push(agent_id); query += ` AND agent_id = $${params.length}`; }
+        if (type)     { params.push(type);     query += ` AND type = $${params.length}`; }
+        if (status)   { params.push(status);   query += ` AND status = $${params.length}`; }
+        params.push(parseInt(limit));  query += ` ORDER BY created_at DESC LIMIT $${params.length}`;
+        params.push(parseInt(offset)); query += ` OFFSET $${params.length}`;
+        const result = await pool.query(query, params);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/artifacts/stats — contadores por status y tipo para un agente (dinámico)
+app.get('/api/artifacts/stats', async (req, res) => {
+    try {
+        const { agent_id } = req.query;
+        if (!agent_id) return res.status(400).json({ error: 'agent_id requerido' });
+
+        const [statusResult, typeResult] = await Promise.all([
+            pool.query(
+                `SELECT
+                   COUNT(*)::int AS total,
+                   COUNT(*) FILTER (WHERE status = 'draft')::int          AS draft,
+                   COUNT(*) FILTER (WHERE status = 'pending_review')::int AS pending_review,
+                   COUNT(*) FILTER (WHERE status = 'approved')::int       AS approved,
+                   COUNT(*) FILTER (WHERE status = 'rejected')::int       AS rejected,
+                   COUNT(*) FILTER (WHERE status = 'published')::int      AS published
+                 FROM artifacts WHERE agent_id = $1`,
+                [agent_id]
+            ),
+            pool.query(
+                `SELECT type, COUNT(*)::int AS count FROM artifacts WHERE agent_id = $1 GROUP BY type`,
+                [agent_id]
+            ),
+        ]);
+
+        const row = statusResult.rows[0];
+        const by_type = {};
+        for (const r of typeResult.rows) by_type[r.type] = r.count;
+
+        res.json({
+            total: row.total,
+            by_status: {
+                draft: row.draft,
+                pending_review: row.pending_review,
+                approved: row.approved,
+                rejected: row.rejected,
+                published: row.published,
+            },
+            by_type,
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/artifacts/:id/publications — publicaciones de un artefacto
+app.get('/api/artifacts/:id/publications', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM artifact_publications WHERE artifact_id = $1 ORDER BY created_at DESC',
+            [req.params.id]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/artifacts — crear artefacto
+app.post('/api/artifacts', async (req, res) => {
+    try {
+        const { agent_id, type, title, content = '', metadata = {} } = req.body;
+        if (!type) return res.status(400).json({ error: 'type requerido' });
+        const result = await pool.query(
+            `INSERT INTO artifacts (agent_id, type, title, content, metadata, status)
+             VALUES ($1, $2, $3, $4, $5, 'draft') RETURNING *`,
+            [agent_id || null, type, title || '', content, JSON.stringify(metadata)]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// PATCH /api/artifacts/:id — actualizar título/contenido/metadata
+app.patch('/api/artifacts/:id', async (req, res) => {
+    try {
+        const { title, content, metadata } = req.body;
+        const sets = [];
+        const params = [];
+        if (title !== undefined)    { params.push(title);                   sets.push(`title = $${params.length}`); }
+        if (content !== undefined)  { params.push(content);                 sets.push(`content = $${params.length}`); }
+        if (metadata !== undefined) { params.push(JSON.stringify(metadata)); sets.push(`metadata = $${params.length}`); }
+        if (sets.length === 0) return res.status(400).json({ error: 'Nada que actualizar' });
+        sets.push('updated_at = NOW()');
+        params.push(req.params.id);
+        const result = await pool.query(
+            `UPDATE artifacts SET ${sets.join(', ')} WHERE id = $${params.length} RETURNING *`,
+            params
+        );
+        if (!result.rows[0]) return res.status(404).json({ error: 'Artefacto no encontrado' });
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// PATCH /api/artifacts/:id/status — cambiar estado + audit log
+app.patch('/api/artifacts/:id/status', async (req, res) => {
+    try {
+        const { status, rejection_reason } = req.body;
+        const valid = ['draft', 'pending_review', 'approved', 'rejected', 'published'];
+        if (!valid.includes(status)) return res.status(400).json({ error: `Status inválido: ${status}` });
+        const result = await pool.query(
+            `UPDATE artifacts
+             SET status = $1, rejection_reason = $2, updated_at = NOW()
+             WHERE id = $3 RETURNING *`,
+            [status, rejection_reason || null, req.params.id]
+        );
+        if (!result.rows[0]) return res.status(404).json({ error: 'Artefacto no encontrado' });
+        const artifact = result.rows[0];
+        await logAudit('artifact_status', 'content', `"${artifact.title}" → ${status}`, rejection_reason || null, artifact.agent_id);
+        res.json(artifact);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// DELETE /api/artifacts/:id
+app.delete('/api/artifacts/:id', async (req, res) => {
+    try {
+        const result = await pool.query('DELETE FROM artifacts WHERE id = $1 RETURNING id', [req.params.id]);
+        if (!result.rows[0]) return res.status(404).json({ error: 'Artefacto no encontrado' });
+        res.json({ success: true, id: req.params.id });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/artifacts/:id/publish — registrar intención de publicación en un canal
+app.post('/api/artifacts/:id/publish', async (req, res) => {
+    try {
+        const { destination } = req.body;
+        if (!destination) return res.status(400).json({ error: 'destination requerido' });
+        const result = await pool.query(
+            `INSERT INTO artifact_publications (artifact_id, destination, status)
+             VALUES ($1, $2, 'pending') RETURNING *`,
+            [req.params.id, destination]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/artifacts/:id/handoff — cross-agent handoff + entrada en inbox
+app.post('/api/artifacts/:id/handoff', async (req, res) => {
+    try {
+        const { to_agent_id, instruction } = req.body;
+        if (!to_agent_id) return res.status(400).json({ error: 'to_agent_id requerido' });
+
+        // Obtener from_agent_id del artefacto
+        const artRes = await pool.query('SELECT agent_id, title FROM artifacts WHERE id = $1', [req.params.id]);
+        if (!artRes.rows[0]) return res.status(404).json({ error: 'Artefacto no encontrado' });
+        const { agent_id: from_agent_id, title } = artRes.rows[0];
+
+        // Insertar handoff
+        const handoffRes = await pool.query(
+            `INSERT INTO artifact_handoffs (artifact_id, from_agent_id, to_agent_id, instruction, status)
+             VALUES ($1, $2, $3, $4, 'pending') RETURNING *`,
+            [req.params.id, from_agent_id, to_agent_id, instruction || null]
+        );
+
+        // Notificar al agente destino via inbox_items
+        await pool.query(
+            `INSERT INTO inbox_items (title, description, source, department, status)
+             VALUES ($1, $2, 'agent_handoff', $3, 'chat')`,
+            [
+                `Handoff: ${title || 'Artefacto sin título'}`,
+                instruction || `Handoff de ${from_agent_id}`,
+                to_agent_id
+            ]
+        );
+
+        res.status(201).json(handoffRes.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DATA AGENT — Pipeline Control API
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// In-process job tracker (resets on server restart — acceptable for MVP)
+const runningJobs = {};
+
+// Helper: upsert a key in agent_memory
+async function setAgentMemory(agentId, key, value) {
+    await pool.query(
+        `INSERT INTO agent_memory (agent_id, key, value, scope)
+         VALUES ($1, $2, $3, 'shared')
+         ON CONFLICT (agent_id, key) DO UPDATE SET value = $3, updated_at = NOW()`,
+        [agentId, key, JSON.stringify(value)]
+    );
+}
+
+// GET /api/data/jobs — estado de todos los scraping jobs
+app.get('/api/data/jobs', async (req, res) => {
+    try {
+        const pfCount = await pool.query('SELECT COUNT(*) FROM properties');
+        const psCount = await pool.query('SELECT COUNT(*) FROM price_drops');
+
+        const memResult = await pool.query(
+            `SELECT key, value FROM agent_memory WHERE agent_id = 'data-agent' AND scope = 'shared'`
+        );
+        const mem = {};
+        memResult.rows.forEach(r => { mem[r.key] = r.value; });
+
+        const jobs = [
+            {
+                source:      'propertyfinder',
+                label:       'PropertyFinder',
+                icon:        '🏠',
+                status:      runningJobs['propertyfinder']?.status || mem['pf_last_run_status'] || 'idle',
+                last_run_at: mem['last_scrape_at'] || null,
+                total:       parseInt(pfCount.rows[0].count),
+                last_count:  mem['pf_last_count'] || null,
+            },
+            {
+                source:      'panicselling',
+                label:       'PanicSelling',
+                icon:        '📉',
+                status:      runningJobs['panicselling']?.status || mem['ps_last_run_status'] || 'idle',
+                last_run_at: mem['ps_last_scrape_at'] || null,
+                total:       parseInt(psCount.rows[0].count),
+                last_count:  mem['ps_last_count'] || null,
+            },
+            {
+                source:      'bayut',
+                label:       'Bayut',
+                icon:        '🔍',
+                status:      'coming_soon',
+                last_run_at: null,
+                total:       0,
+                last_count:  null,
+            },
+        ];
+
+        res.json(jobs);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/data/jobs/:source/run — lanzar scraping job
+app.post('/api/data/jobs/:source/run', async (req, res) => {
+    const { source } = req.params;
+    const { mode = 'incremental' } = req.body;
+
+    if (!['propertyfinder', 'panicselling'].includes(source)) {
+        return res.status(400).json({ error: 'Source no soportado' });
+    }
+    if (runningJobs[source]?.status === 'running') {
+        return res.status(409).json({ error: 'Job ya en ejecución' });
+    }
+
+    const scriptMap = {
+        propertyfinder: 'tools/apify_propertyfinder.js',
+        panicselling:   'tools/apify_panicselling.js',
+    };
+    const args = (source === 'propertyfinder' && mode === 'incremental') ? ['--incremental'] : [];
+    const scriptPath = path.resolve(__dirname, '../../', scriptMap[source]);
+    const memKey = source === 'propertyfinder' ? 'pf' : 'ps';
+
+    const jobId = `${source}-${Date.now()}`;
+    runningJobs[source] = { status: 'running', started_at: new Date().toISOString(), jobId };
+
+    try {
+        await setAgentMemory('data-agent', `${memKey}_last_run_status`, 'running');
+    } catch { /* non-critical */ }
+
+    const child = spawn('node', [scriptPath, ...args], {
+        cwd: path.resolve(__dirname, '../../'),
+        env: { ...process.env },
+    });
+
+    let output = '';
+    child.stdout.on('data', d => { output += d.toString(); });
+    child.stderr.on('data', d => { output += d.toString(); });
+
+    child.on('close', async (code) => {
+        const newStatus = code === 0 ? 'done' : 'error';
+        runningJobs[source] = {
+            ...runningJobs[source],
+            status:       newStatus,
+            completed_at: new Date().toISOString(),
+            output:       output.slice(-2000),
+        };
+        try {
+            await setAgentMemory('data-agent', `${memKey}_last_run_status`, newStatus);
+            const atKey = source === 'propertyfinder' ? 'last_scrape_at' : 'ps_last_scrape_at';
+            await setAgentMemory('data-agent', atKey, new Date().toISOString());
+        } catch { /* non-critical */ }
+    });
+
+    res.status(202).json({ jobId, status: 'running' });
+});
+
+// GET /api/data/jobs/:source/status — estado de un job específico
+app.get('/api/data/jobs/:source/status', async (req, res) => {
+    const { source } = req.params;
+    const job = runningJobs[source];
+    if (job) return res.json(job);
+
+    const memKey = source === 'propertyfinder' ? 'pf' : 'ps';
+    try {
+        const result = await pool.query(
+            `SELECT value FROM agent_memory WHERE agent_id = 'data-agent' AND key = $1`,
+            [`${memKey}_last_run_status`]
+        );
+        res.json({ source, status: result.rows[0]?.value || 'idle', jobId: null });
+    } catch (err) {
+        res.json({ source, status: 'idle', jobId: null });
+    }
+});
+
+// GET /api/data/quality — métricas de calidad del dataset
+app.get('/api/data/quality', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                COUNT(*)                                                                     AS total,
+                COUNT(title)                                                                 AS has_title,
+                COUNT(description)                                                           AS has_description,
+                COUNT(*) FILTER (WHERE images IS NOT NULL AND jsonb_array_length(images) > 0) AS has_images,
+                COUNT(latitude)                                                              AS has_coordinates,
+                COUNT(price_aed)                                                             AS has_price,
+                COUNT(agent_name)                                                            AS has_agent
+            FROM properties
+        `);
+
+        const row   = result.rows[0];
+        const total = Math.max(parseInt(row.total), 1);
+
+        const fields = [
+            { field: 'title',       label: 'Título',      count: parseInt(row.has_title),       pct: Math.round(parseInt(row.has_title)       / total * 100) },
+            { field: 'description', label: 'Descripción', count: parseInt(row.has_description), pct: Math.round(parseInt(row.has_description) / total * 100) },
+            { field: 'images',      label: 'Imágenes',    count: parseInt(row.has_images),      pct: Math.round(parseInt(row.has_images)      / total * 100) },
+            { field: 'coordinates', label: 'Coordenadas', count: parseInt(row.has_coordinates), pct: Math.round(parseInt(row.has_coordinates) / total * 100) },
+            { field: 'price',       label: 'Precio',      count: parseInt(row.has_price),       pct: Math.round(parseInt(row.has_price)       / total * 100) },
+            { field: 'agent',       label: 'Agente',      count: parseInt(row.has_agent),       pct: Math.round(parseInt(row.has_agent)       / total * 100) },
+        ];
+
+        const score_global = Math.round(fields.reduce((s, f) => s + f.pct, 0) / fields.length);
+        res.json({ total: parseInt(row.total), score_global, fields });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/data/dedup — stats de deduplicación
+app.get('/api/data/dedup', async (req, res) => {
+    try {
+        const statsResult = await pool.query(`
+            SELECT
+                COUNT(*)                                                              AS total,
+                COUNT(*) FILTER (WHERE duplicate_of IS NOT NULL)                     AS total_duplicates,
+                COUNT(DISTINCT duplicate_group) FILTER (WHERE duplicate_group IS NOT NULL) AS total_groups
+            FROM properties
+        `);
+
+        const memResult = await pool.query(
+            `SELECT key, value FROM agent_memory
+             WHERE agent_id = 'data-agent'
+               AND key IN ('last_dedup_at', 'last_dedup_by_tier', 'last_dedup_groups_found')`
+        );
+        const mem = {};
+        memResult.rows.forEach(r => { mem[r.key] = r.value; });
+
+        const row = statsResult.rows[0];
+        res.json({
+            total:            parseInt(row.total),
+            total_duplicates: parseInt(row.total_duplicates),
+            total_groups:     parseInt(row.total_groups),
+            last_run_at:      mem['last_dedup_at'] || null,
+            tiers:            mem['last_dedup_by_tier'] || { tier1: 0, tier2: 0, tier3: 0 },
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/data/dedup/run — ejecutar deduplicación
+app.post('/api/data/dedup/run', async (req, res) => {
+    const { mode = 'dry-run', tier = 'all' } = req.body;
+
+    if (runningJobs['dedup']?.status === 'running') {
+        return res.status(409).json({ error: 'Deduplicación ya en ejecución' });
+    }
+
+    const scriptPath = path.resolve(__dirname, '../../tools/db/detect_duplicates.js');
+    const args = ['--tier', tier, mode === 'mark' ? '--mark' : '--dry-run'];
+    const jobId = `dedup-${Date.now()}`;
+
+    runningJobs['dedup'] = { status: 'running', started_at: new Date().toISOString(), jobId };
+
+    const child = spawn('node', [scriptPath, ...args], {
+        cwd: path.resolve(__dirname, '../../'),
+        env: { ...process.env },
+    });
+
+    let output = '';
+    child.stdout.on('data', d => { output += d.toString(); });
+    child.stderr.on('data', d => { output += d.toString(); });
+
+    child.on('close', async (code) => {
+        runningJobs['dedup'] = {
+            ...runningJobs['dedup'],
+            status:       code === 0 ? 'done' : 'error',
+            completed_at: new Date().toISOString(),
+            output:       output.slice(-2000),
+        };
+        if (code === 0) {
+            try {
+                await setAgentMemory('data-agent', 'last_dedup_at', new Date().toISOString());
+            } catch { /* non-critical */ }
+        }
+    });
+
+    res.status(202).json({ jobId, status: 'running' });
+});
+
+// GET /api/data/dedup/status — estado del job de deduplicación
+app.get('/api/data/dedup/status', async (req, res) => {
+    res.json(runningJobs['dedup'] || { status: 'idle' });
+});
+
+// GET /api/data/properties — dataset table con filtros
+app.get('/api/data/properties', async (req, res) => {
+    try {
+        const { zona, tipo, bedrooms, min_price, max_price, limit = 50, offset = 0 } = req.query;
+
+        const conditions = ['duplicate_of IS NULL'];
+        const params     = [];
+
+        if (zona) {
+            params.push(`%${zona}%`);
+            const p = params.length;
+            conditions.push(`(community ILIKE $${p} OR community_name ILIKE $${p} OR display_address ILIKE $${p})`);
+        }
+        if (tipo) {
+            params.push(tipo);
+            conditions.push(`property_type = $${params.length}`);
+        }
+        if (bedrooms) {
+            params.push(parseInt(bedrooms));
+            conditions.push(`bedrooms_value = $${params.length}`);
+        }
+        if (min_price) {
+            params.push(parseInt(min_price));
+            conditions.push(`price_aed >= $${params.length}`);
+        }
+        if (max_price) {
+            params.push(parseInt(max_price));
+            conditions.push(`price_aed <= $${params.length}`);
+        }
+
+        const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
+        // Count params (without limit/offset)
+        const countParams = [...params];
+
+        params.push(parseInt(limit));
+        params.push(parseInt(offset));
+
+        const [dataResult, countResult] = await Promise.all([
+            pool.query(
+                `SELECT pf_id, title, display_address, community_name, property_type,
+                        bedrooms_value, price_aed, scraped_at, broker_name, is_off_plan
+                 FROM properties ${where}
+                 ORDER BY scraped_at DESC
+                 LIMIT $${params.length - 1} OFFSET $${params.length}`,
+                params
+            ),
+            pool.query(`SELECT COUNT(*) FROM properties ${where}`, countParams),
+        ]);
+
+        res.json({ total: parseInt(countResult.rows[0].count), items: dataResult.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DEV WORKSPACE — Engineering Hub API
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Helper: check if a TCP port is reachable
+function checkPort(port, host = 'localhost', timeoutMs = 500) {
+    return new Promise((resolve) => {
+        const start = Date.now();
+        const socket = new net.Socket();
+        socket.setTimeout(timeoutMs);
+        socket.once('connect', () => {
+            const latency_ms = Date.now() - start;
+            socket.destroy();
+            resolve({ status: 'up', latency_ms });
+        });
+        socket.once('timeout', () => { socket.destroy(); resolve({ status: 'down', latency_ms: null }); });
+        socket.once('error', () => { socket.destroy(); resolve({ status: 'down', latency_ms: null }); });
+        socket.connect(port, host);
+    });
+}
+
+// GET /api/dev/health — estado real de los servicios conocidos
+app.get('/api/dev/health', async (req, res) => {
+    try {
+        const SERVICES = [
+            { id: 'dashboard', label: 'Dashboard Server', port: 3001 },
+            { id: 'api',       label: 'API Server',       port: 3000 },
+            { id: 'postgres',  label: 'PostgreSQL',        port: 5432 },
+        ];
+
+        const results = await Promise.all(SERVICES.map(async (svc) => {
+            if (svc.id === 'postgres') {
+                // Use pool for postgres — most accurate
+                try {
+                    const t0 = Date.now();
+                    await pool.query('SELECT 1');
+                    return { ...svc, status: 'up', latency_ms: Date.now() - t0 };
+                } catch {
+                    return { ...svc, status: 'down', latency_ms: null };
+                }
+            }
+            const result = await checkPort(svc.port);
+            return { ...svc, ...result };
+        }));
+
+        res.json({ services: results, checked_at: new Date().toISOString() });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/dev/errors?hours=24 — errores recientes del audit_log
+app.get('/api/dev/errors', async (req, res) => {
+    try {
+        const hours = parseInt(req.query.hours) || 24;
+
+        const grouped = await pool.query(
+            `SELECT event_type,
+                    COUNT(*)::int AS count,
+                    MAX(date) AS last_seen
+             FROM audit_log
+             WHERE date > NOW() - INTERVAL '${hours} hours'
+               AND (event_type ILIKE '%error%' OR event_type = 'artifact_rejected')
+             GROUP BY event_type
+             ORDER BY count DESC`
+        );
+
+        const byType = await Promise.all(grouped.rows.map(async (row) => {
+            const recent = await pool.query(
+                `SELECT title, details, date
+                 FROM audit_log
+                 WHERE event_type = $1 AND date > NOW() - INTERVAL '${hours} hours'
+                 ORDER BY date DESC LIMIT 3`,
+                [row.event_type]
+            );
+            return { ...row, recent: recent.rows };
+        }));
+
+        const total = byType.reduce((acc, r) => acc + r.count, 0);
+        res.json({ total, by_type: byType, hours });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/dev/migrations — estado de los archivos de migración SQL
+app.get('/api/dev/migrations', async (req, res) => {
+    try {
+        const toolsDbPath = path.resolve(__dirname, '../../tools/db');
+        let files = [];
+        try {
+            files = fs.readdirSync(toolsDbPath).filter(f => f.startsWith('migration') && f.endsWith('.sql'));
+        } catch {
+            files = [];
+        }
+
+        const migrations = await Promise.all(files.map(async (file) => {
+            const content = fs.readFileSync(path.join(toolsDbPath, file), 'utf8');
+            // Extract table names from CREATE TABLE statements
+            const tableMatches = content.matchAll(/CREATE TABLE (?:IF NOT EXISTS )?["']?(\w+)["']?/gi);
+            const tables = [...new Set([...tableMatches].map(m => m[1].toLowerCase()))];
+
+            // Check which tables exist in postgres
+            const existChecks = await Promise.all(tables.map(async (tbl) => {
+                const r = await pool.query(`SELECT to_regclass('public.${tbl}') AS exists`);
+                return r.rows[0].exists !== null;
+            }));
+
+            const applied = tables.length === 0 ? false : existChecks.every(Boolean);
+            const appliedCount = existChecks.filter(Boolean).length;
+
+            return { file, applied, tables, applied_count: appliedCount, total_tables: tables.length };
+        }));
+
+        // Sort: applied first, then pending
+        migrations.sort((a, b) => (b.applied ? 1 : 0) - (a.applied ? 1 : 0));
+
+        res.json({ migrations });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
