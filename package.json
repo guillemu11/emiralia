@@ -20,15 +20,16 @@
         "dev:all": "concurrently -n server,dashboard,website -c blue,green,yellow \"npm run dashboard:server\" \"npm run dashboard:dev\" \"npm run website:dev\"",
         "deploy:railway:setup": "./scripts/deployment/railway/setup.sh",
         "deploy:railway": "./scripts/deployment/railway/auto-deploy.sh",
-        "migration:import-properties": "node scripts/migrations/data/import-properties.js",
         "migration:import-to-railway": "node scripts/migrations/data/import-to-railway.js",
-        "cleanup:temp": "rm -f *.log *.pid tmp_*.jpg"
+        "cleanup:temp": "rm -f *.log *.pid tmp_*.jpg",
+        "generate-image": "node tools/images/cli.js generate",
+        "list-images": "node tools/images/cli.js list",
+        "image-stats": "node tools/images/cli.js stats"
     },
     "dependencies": {
         "@anthropic-ai/sdk": "^0.78.0",
         "@notionhq/client": "^5.11.1",
-        "@supabase/supabase-js": "^2.99.1",
-        "axios": "^1.7.0",
+"axios": "^1.7.0",
         "dotenv": "^16.4.0",
         "gray-matter": "^4.0.3",
         "openai": "^6.25.0",

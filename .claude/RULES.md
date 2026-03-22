@@ -2,7 +2,7 @@
 
 Reglas de sistema, convenciones y estándares que aplican a todos los agentes.
 
-**Total: 3 core rules** | **4 secciones de convenciones** | Última actualización: 2026-03-13
+**Total: 4 core rules** | **4 secciones de convenciones** | Última actualización: 2026-03-22
 
 ---
 
@@ -15,6 +15,7 @@ Rules que se activan automáticamente en contextos específicos.
 | **Auto Dev Server** | Al crear/modificar página en `apps/website/` | Levantar `npm run dev` automáticamente sin esperar petición del usuario | Alta | [auto-dev-server.md](rules/auto-dev-server.md) |
 | **Brand Guidelines** | Al diseñar UI, landing pages, dashboards, marketing, banners | Aplicar sistema de diseño: 80/20 light/dark, color system de 12 tokens, componentes documentados | Crítica | [brand-guidelines.md](rules/brand-guidelines.md) |
 | **Business Plan Alignment** | Al proponer features, priorizar trabajo, evaluar partnerships, modificar datos | Consultar [BUSINESS_PLAN.md](BUSINESS_PLAN.md) sección "Estado Actual vs Vision" y validar alineación | Alta | [business-plan-alignment.md](rules/business-plan-alignment.md) |
+| **Agent Workflow** | Siempre — comportamiento base de todos los agentes | Self-Improvement Loop, Verification Before Done, Autonomous Bug Fixing, Demand Elegance | Alta | [agent-workflow.md](rules/agent-workflow.md) |
 
 ---
 

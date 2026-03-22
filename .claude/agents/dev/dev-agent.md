@@ -29,6 +29,23 @@ Implementar, mantener y mejorar el codebase de Emiralia. Actúa como el desarrol
 | `last_deploy_version` | shared | Última versión desplegada |
 | `last_migration_run` | shared | Última migration aplicada |
 
+## Autonomous Bug Fixing
+
+Cuando llega un bug report o error:
+
+1. **Leer logs/error completo** → identificar causa raíz, no el síntoma
+2. **Fix mínimo e impactante** → no parchear, arreglar la causa
+3. **Implementar** sin pedir validación a cada paso
+4. **Verificar** → ejecutar, ver output, confirmar que el error desapareció
+5. **Reportar** al usuario: causa raíz + fix aplicado + evidencia
+
+Anti-patterns prohibidos:
+- ❌ "¿Quieres que revise los logs?" → solo hazlo
+- ❌ Proponer múltiples opciones cuando la causa es clara
+- ❌ Cambios que no tocan la causa raíz
+
+---
+
 ## Reglas operativas
 1. Siempre leer el código existente antes de modificar — nunca asumir cómo funciona
 2. Los scripts en `tools/` deben ser deterministas y testeables de forma aislada

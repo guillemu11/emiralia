@@ -1,7 +1,7 @@
 /**
  * Shared Image Generation Service
  *
- * Wraps DALL-E 3 generation + DB tracking + agent memory update.
+ * Wraps KIE AI Nano Banana 2 generation + DB tracking + agent memory update.
  * Used by both Dashboard and Telegram channels.
  */
 
@@ -12,10 +12,10 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-// Cost per image by quality tier
+// Cost per image by quality tier (KIE AI Nano Banana 2 pricing)
 const COST_MAP = {
-  standard: 0.04,
-  hd: 0.08,
+  standard: 0.04, // 1K resolution
+  hd: 0.06,       // 2K resolution
 };
 
 /**
@@ -68,7 +68,7 @@ export async function generateImageService({ prompt, size = 'square', quality = 
     throw new Error('Prompt is required');
   }
 
-  // 1. Generate image via DALL-E 3
+  // 1. Generate image via KIE AI Nano Banana 2
   const result = await generateImage(prompt, { size, quality });
 
   // 2. Calculate cost

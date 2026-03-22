@@ -79,7 +79,7 @@ node tools/db/wat-memory.js check <agentId> <key>  # consulta puntual
   agents/            ← definiciones de agentes por categoría
   skills/            ← skills por dominio (ops, content, design, producto, gtm, ejecucion, marketing, data)
   workflows/         ← SOPs detallados
-  rules/             ← rules de sistema (auto-dev-server, brand-guidelines, business-plan-alignment)
+  rules/             ← rules de sistema (auto-dev-server, brand-guidelines, business-plan-alignment, agent-workflow)
 tools/               ← scripts ejecutables (Node.js)
 .env                 ← API keys (NUNCA en otro sitio)
 docker-compose.yml   ← PostgreSQL + Adminer
@@ -91,10 +91,60 @@ docker-compose.yml   ← PostgreSQL + Adminer
 
 | ¿Qué necesitas? | Archivo | Descripción |
 |----------------|---------|-------------|
-| **Ver agentes disponibles** | [AGENTS.md](AGENTS.md) | 9 agentes activos (content, translation, frontend, dev, data, pm, marketing, research, wat-auditor) + 7 planificados |
+| **Ver agentes disponibles** | [AGENTS.md](AGENTS.md) | 10 agentes activos (content, translation, frontend, dev, data, pm, marketing, research, wat-auditor, legal) + 6 planificados |
 | **Invocar un skill** | [SKILLS.md](SKILLS.md) | 35+ skills organizados por dominio (usa `/comando` en Claude Code) |
 | **Usar un tool** | [TOOLS.md](TOOLS.md) | 46 tools documentados (scraping, DB, memoria, tracking, traducción, PM, research) |
 | **Ejecutar un workflow** | [WORKFLOWS.md](WORKFLOWS.md) | 7 SOPs activos (data intelligence, GTM planning, sprint planning, scraping, PM review, design loop) |
 | **Consultar rules** | [RULES.md](RULES.md) | 3 core rules (auto-dev-server, brand-guidelines, business-plan-alignment) + convenciones (skills 2.0, memoria, tracking, código) |
 | **Entender la visión** | [BUSINESS_PLAN.md](BUSINESS_PLAN.md) | Norte estratégico: modelo B2B, roadmap, estado actual vs visión |
 | **Ver cambios del sistema** | [CHANGELOG.md](CHANGELOG.md) | Historial de cambios estructurales (reorganización modular 2026-03-13) |
+
+---
+
+## Protocolo de Entrada
+
+**Toda conversación nueva pasa por el PM Agent.** Antes de responder o ejecutar cualquier tarea, evaluar:
+
+| Tipo de petición | Acción |
+|-----------------|--------|
+| **Tarea simple** (un agente, < 1 día) | Delegar directamente al agente/skill más adecuado |
+| **Workflow existente** | Lanzar el SOP correspondiente (ver [WORKFLOWS.md](WORKFLOWS.md)) |
+| **Proyecto nuevo** (multi-agente, multi-fase) | Flujo de aprobación → `/proyecto-nuevo` → guardar en DB y dashboard |
+| **Bug / mejora puntual en proyecto existente** | `/task [ID]` → asignar ticket al agente idóneo |
+
+### Flujo de Proyectos
+
+```
+1. Usuario describe idea/necesidad
+2. PM evalúa → propuesta (problema, solución, coste, riesgo)
+3. Usuario aprueba con /ok
+4. PM ejecuta /proyecto-nuevo → crea MD en .claude/projects/ + guarda en DB
+5. Proyecto visible en dashboard (status: Planning)
+6. Al aprobar para ejecución → /proyecto-aprobar [ID] → status: In Progress
+7. Al terminar → status: Completed (via dashboard o update_project_status.js)
+```
+
+### Template estándar `.claude/projects/[ID]-[slug].md`
+
+```md
+---
+id: [ID]
+status: Planning | In Progress | Completed | Paused
+created: [fecha]
+agents: [lista de agentes involucrados]
+---
+# [Nombre del Proyecto]
+
+## Problema
+## Solución
+## Métricas de éxito
+## Fases y tareas
+## Post-MVP / Hoja de Ruta
+```
+
+### Agentes disponibles para asignación
+
+Ver tabla completa en [AGENTS.md](AGENTS.md). Resumen de coste relativo:
+- **Bajo coste**: Data Agent, Content Agent, SEO Agent
+- **Coste medio**: Design Agent, Marketing Agent
+- **Alto coste**: Dev Agent, Sales Agent (human-in-loop)

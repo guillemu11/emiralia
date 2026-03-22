@@ -17,6 +17,7 @@ Skills para gestión del sistema WAT y tracking de actividades.
 | `eod-report` | `/eod-report` | Transversal | haiku | shared | Generar reporte end-of-day con actividades del día |
 | `weekly-brainstorm` | `/weekly-brainstorm` | Transversal | sonnet | fork | Brainstorm semanal de ideas y mejoras |
 | `dev-server` | `/dev-server` | [[dev-agent]] | haiku | shared | Levantar servidor de desarrollo automáticamente |
+| `mcp-setup` | `/mcp-setup` | — | haiku | shared | Añadir, eliminar o auditar MCP servers (global o proyecto) |
 
 ---
 
@@ -98,6 +99,20 @@ Skills para campañas, métricas y battlecards competitivos.
 
 ---
 
+## Social Media (`social/`)
+
+Skills para guionización, producción y calendario de contenido IG & TikTok con avatares IA Fernando & Yolanda.
+
+| Skill | Comando | Agente | Model | Context | Cuándo usarlo |
+|-------|---------|--------|-------|---------|---------------|
+| `guionizar` | `/guionizar` | [[social-media-agent]] | sonnet | fork | Generar guion de vídeo para Fernando o Yolanda (hook + desarrollo + CTA + notas HeyGen) |
+| `brief-avatar` | `/brief-avatar` | [[social-media-agent]] | sonnet | fork | Producir paquete completo: guion + prompt KIE AI + caption + hashtags + config HeyGen |
+| `calendar-social` | `/calendar-social` | [[social-media-agent]] | sonnet | fork | Generar calendario editorial semanal con slots, avatares y pilares asignados |
+| `property-content` | `/property-content` | [[social-media-agent]] | sonnet | fork | Crear pieza de contenido completa desde un `property_id` con datos reales |
+| `actualizar-persona` | `/actualizar-persona` | [[social-media-agent]] | haiku | shared | Refinar la definición de persona de Fernando o Yolanda y persistir en memoria |
+
+---
+
 ## Data & Analytics (`data/`)
 
 Skills para scraping, análisis SQL, cohortes y detección de duplicados.
@@ -115,13 +130,25 @@ Skills para scraping, análisis SQL, cohortes y detección de duplicados.
 
 ---
 
+## SEO & AEO (`seo/`)
+
+Skills para posicionamiento orgánico y optimización para motores de IA.
+
+| Skill | Comando | Agente | Model | Context | Cuándo usarlo |
+|-------|---------|--------|-------|---------|---------------|
+| `seo-audit` | `/seo-audit` | [[seo-agent]] | sonnet | fork | Auditoría SEO completa: score por página, gaps, issues priorizados |
+| `generar-keywords` | `/generar-keywords` | [[seo-agent]] | sonnet | fork | Clusters de keywords por mercado (Dubai, Abu Dhabi, off-plan...) |
+| `meta-optimizer` | `/meta-optimizer` | [[seo-agent]] | sonnet | fork | Optimizar title + description de una página para máximo CTR |
+| `structured-data-generator` | `/structured-data-generator` | [[seo-agent]] | sonnet | fork | Generar JSON-LD schemas (Property, FAQPage, HowTo, Article, Organization) |
+
+---
+
 ## Skills en Desarrollo
 
 | Skill | Agente | ETA | Bloqueador |
 |-------|--------|-----|-----------|
 | `/lead-pipeline` | Sales Agent | Q1 2026 | Agente no implementado |
 | `/competitor-watch` | [[marketing-agent]] | Q2 2026 | Requiere web scraper de competidores |
-| `/seo-audit` | SEO Agent | Q2 2026 | Agente no implementado |
 | `/customer-onboarding` | Customer Success Agent | Q2 2026 | Agente no implementado |
 
 ---

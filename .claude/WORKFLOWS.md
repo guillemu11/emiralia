@@ -26,7 +26,7 @@ SOPs (Standard Operating Procedures) que coordinan múltiples agentes y tools.
 |----------|----------|-------------------|------------|-----|
 | **Lead Nurturing** | Pipeline automatizado: lead → qualification → follow-up → conversion | Sales Agent, Marketing Agent, Customer Success Agent | Sales Agent no implementado | Q1 2026 |
 | **Content Publishing** | Workflow completo: scrape → translate → review → publish | Data Agent, Translation Agent, Content Agent, PM Agent | Integración con CMS | Q2 2026 |
-| **SEO Optimization** | Auditoría SEO + optimización + tracking | SEO Agent, Frontend Agent, Marketing Agent | SEO Agent no implementado | Q2 2026 |
+| **[[seo-optimization\|SEO Optimization]]** | Auditoría SEO + optimización + tracking | [[seo-agent]], [[frontend-agent]], [[dev-agent]], [[content-agent]] | — | [seo-optimization.md](workflows/seo-optimization.md) |
 | **Developer Onboarding** | Onboarding B2B de developers en plataforma | Sales Agent, PM Agent, Frontend Agent | B2B portal no existe | Q2 2026 |
 
 ---

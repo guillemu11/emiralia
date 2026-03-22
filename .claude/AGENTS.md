@@ -15,6 +15,8 @@ Agentes que operan exclusivamente dentro del ecosistema Emiralia.
 | **[[frontend-agent\|Frontend Agent]]** | UI/UX, creatividades, banners, mockups | ✅ Activo | [[ui-ux-pro-max]], [[screenshot-loop]] | [frontend-agent.md](agents/design/frontend-agent.md) |
 | **[[dev-agent\|Dev Agent]]** | Features, bugs, PRs en el codebase | ✅ Activo | [[dev-server]] | [dev-agent.md](agents/dev/dev-agent.md) |
 | **[[data-agent\|Data Agent]]** | Extrae, limpia y normaliza datos de propiedades EAU | ✅ Activo | [[propertyfinder-scraper]], [[consultas-sql]], [[analisis-cohortes]], [[detectar-duplicados]], [[skill-stats]], [[panicselling-scraper]] | [data-agent.md](agents/data/data-agent.md) |
+| **[[analytics-agent\|Analytics Agent]]** | Business Intelligence: reportes de analytics para developers B2B, métricas de plataforma e inteligencia de mercado | 📋 Planificado | [[market-pulse]], [[developer-dashboard]], [[plataforma-kpis]] | [analytics-agent.md](agents/analytics/analytics-agent.md) |
+| **[[seo-agent\|SEO & AEO Agent]]** | SEO técnico, structured data JSON-LD, AEO para motores IA, bot-detection en property pages, sitemap dinámico | ✅ Activo | [[seo-audit]], [[generar-keywords]], [[meta-optimizer]], [[structured-data-generator]] | [seo-agent.md](agents/seo/seo-agent.md) |
 
 ---
 
@@ -26,6 +28,8 @@ Agentes que operan tanto en Emiralia como en sistemas externos.
 |--------|-----|--------|-------------------|------|
 | **[[pm-agent\|PM Agent]]** | Sprints, backlog, coordinación entre agentes | ✅ Activo | [[estrategia-producto]], [[propuesta-valor]], [[perfil-cliente-ideal]], [[analisis-competidores]], [[tamanio-mercado]], [[estrategia-gtm]], [[segmento-entrada]], [[loops-crecimiento]], [[mapa-viaje-cliente]], [[crear-prd]], [[priorizar-features]], [[historias-usuario]], [[pre-mortem]], [[planificar-sprint]], [[pm-challenge]], [[cerrar-proyecto]], [[pm-context-audit]], [[analisis-ab]], [[analisis-sentimiento]] | [pm-agent.md](agents/product/pm-agent.md) |
 | **[[marketing-agent\|Marketing Agent]]** | Campañas, copies, canales, métricas | ✅ Activo | [[ideas-posicionamiento]], [[metricas-norte]], [[ideas-marketing]], [[battlecard-competitivo]] | [marketing-agent.md](agents/marketing/marketing-agent.md) |
+| **[[social-media-agent\|Social Media Agent]]** | Guioniza IG & TikTok para avatares IA Fernando & Yolanda: calendarios editoriales, briefs de producción (HeyGen + KIE AI) e integración con DB de propiedades | ✅ Activo | [[guionizar]], [[brief-avatar]], [[calendar-social]], [[property-content]], [[actualizar-persona]] | [social-media-agent.md](agents/marketing/social-media-agent.md) |
+| **[[legal-agent\|Legal Agent]]** | Guía legal EAU para inversores hispanohablantes — zonas freehold, proceso de compra, RERA, Golden Visa, hipotecas, fiscalidad | ✅ Activo | — | [legal-agent.md](agents/legal/legal-agent.md) |
 
 ---
 
@@ -46,13 +50,13 @@ Agentes definidos conceptualmente pero sin implementación (.md, skills, tools).
 
 | Agente | Rol | Prioridad | Timeline Estimado | Bloqueadores |
 |--------|-----|-----------|-------------------|--------------|
-| **SEO Agent** | Keywords, metadatos, arquitectura de enlaces | Media | Q2 2026 | Espera a validación B2B con developers |
+| ~~**SEO Agent**~~ | Activado — ver [seo-agent.md](agents/seo/seo-agent.md) | — | — | — |
 | **Sales Agent** | Pipeline compradores hispanohablantes, leads | Alta | Q1 2026 | Necesita CRM + integración Telegram/WhatsApp |
 | **Customer Success Agent** | Onboarding, consultas, feedback | Media | Q2 2026 | Espera a primeros 10 clientes B2B |
 | **Media Buyer Agent** | Inversión publicitaria Meta/Google/TikTok | Baja | Q3 2026 | Espera a PMF + presupuesto marketing |
 | **Financial Agent** | Presupuestos, CAC, rentabilidad | Baja | Q3 2026 | Espera a revenue recurrente |
 | **Partnerships Agent** | Promotoras, agencias y brokers en EAU | Media | Q2 2026 | Espera a validación B2B |
-| **Legal & Compliance Agent** | Contratos, normativa EAU, compradores extranjeros | Baja | Q3 2026 | Espera a expansión internacional |
+| ~~**Legal & Compliance Agent**~~ | Activado — ver [legal-agent.md](agents/legal/legal-agent.md) | — | — | — |
 
 ---
 
@@ -69,12 +73,23 @@ Coordinación cross-agente mediante **WAT Memory** ([[postgresql]]).
 | [[frontend-agent]] | [[dev-agent]] | Diseño → Implementación | `designs_pending_review`, `ui_components_library` | Continua |
 | [[translation-agent]] | [[content-agent]] | Traducción → Publicación | `translations_queue`, `glossary_updates` | Diaria |
 | [[data-agent]] | [[pm-agent]] | Analytics → Decisiones Producto | `property_stats`, `user_behavior`, `market_trends` | Semanal |
+| [[legal-agent]] | [[content-agent]] | Preguntas frecuentes legales → Artículos de blog | `legal_topics_consulted` | Semanal |
+| [[legal-agent]] | [[pm-agent]] | Topics demandados → Roadmap features | `total_queries_answered`, `legal_topics_consulted` | Mensual |
+| [[analytics-agent]] | [[data-agent]] | Market Pulse → Inteligencia de Mercado | `last_scrape_at`, `total_properties`, `market_price_benchmark` | Post-scrape (diaria) |
+| [[analytics-agent]] | [[pm-agent]] | KPIs de Plataforma → Sprint Prioritization | `leads_total_this_week`, `last_funnel_report_at` | Semanal |
+| [[analytics-agent]] | [[marketing-agent]] | Tendencias de Mercado → Targeting de Campañas | `market_price_benchmark`, `last_market_pulse_at` | Semanal |
+| [[analytics-agent]] | [[sales-agent]] | Developer Reports → Pitch & Follow-up | `active_developer_ids`, `last_developer_report_at` | On-demand |
+| [[analytics-agent]] | [[financial-agent]] | Volumen de Leads → Cálculo CAC/LTV | `leads_total_this_week`, `last_funnel_report_at` | Mensual |
+| [[social-media-agent]] | [[content-agent]] | Guionización ↔ Copy de fichas de propiedades | `last_script_topic`, `last_post_generated` | Diaria |
+| [[social-media-agent]] | [[data-agent]] | Propiedades trending → Contenido basado en datos | `property_stats`, `market_trends` | Semanal |
+| [[social-media-agent]] | [[marketing-agent]] | Estrategia mensual → Calendario editorial | `campaigns_active`, `content_calendar_week` | Semanal |
+| [[social-media-agent]] | [[pm-agent]] | Estado del calendario → Prioridades de sprint | `content_calendar_week`, `last_brief_sent_at` | Semanal |
 
 ---
 
 ## 🚀 Cómo Operar con Agentes
 
-Los 9 agentes activos de Emiralia son accesibles desde **dos canales**:
+Los 10 agentes activos de Emiralia son accesibles desde **dos canales**:
 
 ### 📱 Telegram Bot
 
@@ -88,7 +103,7 @@ node tools/telegram/bot.js
 ```
 
 **Comandos principales:**
-- `/agents` — Ver lista de 9 agentes disponibles
+- `/agents` — Ver lista de 10 agentes disponibles
 - `/agent <id>` — Cambiar agente activo (ej: `/agent data-agent`)
 - `/whoami` — Ver agente actual
 - `/skill <name> [args]` — Ejecutar skill (ej: `/skill consultas-sql city=Dubai`)

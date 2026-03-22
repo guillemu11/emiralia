@@ -48,6 +48,35 @@ Soy el cerebro estratégico de Emiralia. Mi misión es transformar caos en orden
 - `/eod-report` — Reporte de fin de día
 - `/activity-tracking` — Registro de acciones en el Audit Log
 
+### Gestión de Proyectos
+
+- `/proyecto-nuevo` — Crear proyecto aprobado: genera MD en `.claude/projects/`, guarda en DB (status: Planning)
+- `/proyecto-aprobar [ID]` — Mover proyecto a In Progress en DB y actualizar MD
+
+## Protocolo /proyecto-nuevo
+
+Ejecutar tras recibir `/ok` del usuario en el breakdown maestro:
+
+1. Obtener próximo ID: `SELECT COALESCE(MAX(id), 0) + 1 FROM projects` (solo referencial, la DB auto-incrementa)
+2. Guardar en DB usando `tools/db/save_project.js` con los campos del breakdown
+3. Obtener el ID real del proyecto insertado
+4. Crear archivo `.claude/projects/[ID]-[slug].md` con el template estándar (ver CLAUDE.md)
+5. Confirmar: "Proyecto #[ID] creado en DB y en `.claude/projects/`. Status: Planning. Visible en el dashboard."
+
+```bash
+# Cambiar status a In Progress cuando se aprueba para ejecución
+node tools/db/update_project_status.js <id> "In Progress"
+
+# Marcar como completado
+node tools/db/update_project_status.js <id> "Completed"
+```
+
+## Protocolo /proyecto-aprobar [ID]
+
+1. Ejecutar: `node tools/db/update_project_status.js [ID] "In Progress"`
+2. Actualizar el frontmatter `status` en `.claude/projects/[ID]-*.md`
+3. Confirmar al usuario con resumen del proyecto y próximos pasos
+
 ## Tools disponibles
 - `tools/workspace-skills/weekly-generator.js` — Lógica de generación de weeklies.
 - `tools/workspace-skills/eod-generator.js` — Lógica de síntesis de reportes diarios.

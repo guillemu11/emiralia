@@ -2408,6 +2408,184 @@ app.get('/api/properties/:pf_id', async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// SEO: Bot-Detection for Property Pages
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const BOT_UA_REGEX = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebot|ia_archiver|linkedinbot|twitterbot|whatsapp|telegrambot|perplexitybot|chatgpt|gptbot|anthropic-ai|claude-web|cohere-ai|meta-externalagent/i;
+
+function isBot(userAgent) {
+    return BOT_UA_REGEX.test(userAgent || '');
+}
+
+function buildSeoPropertyHtml(row) {
+    const BASE_URL = process.env.SITE_URL || 'https://emiralia.com';
+    const title = row.title ? `${row.title} — Emiralia` : `Propiedad en ${row.community || row.city || 'EAU'} — Emiralia`;
+
+    const parts = [];
+    if (row.property_type) parts.push(row.property_type);
+    if (row.bedrooms) parts.push(`${row.bedrooms} dormitorios`);
+    if (row.community) parts.push(`en ${row.community}`);
+    if (row.city) parts.push(row.city);
+    if (row.price) parts.push(`por ${Number(row.price).toLocaleString('es-ES')} ${row.currency || 'AED'}`);
+    const description = parts.length
+        ? `${parts.join(' ')}. Análisis con IA, ROI estimado y datos verificados en Emiralia.`
+        : `Propiedad en Emiratos Árabes Unidos. Análisis con IA, ROI estimado y datos verificados en Emiralia.`;
+
+    const image = (row.photos && row.photos[0]) || `${BASE_URL}/og-image.jpg`;
+    const url = `${BASE_URL}/propiedad.html?id=${row.pf_id}`;
+    const price = row.price ? Number(row.price) : null;
+
+    const propertySchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: title,
+        description,
+        url,
+        image,
+        brand: { '@type': 'Organization', name: row.agency_name || 'Emiralia' },
+        ...(price && {
+            offers: {
+                '@type': 'Offer',
+                price,
+                priceCurrency: row.currency || 'AED',
+                availability: 'https://schema.org/InStock',
+                url,
+            }
+        }),
+        ...(row.latitude && row.longitude && {
+            locationCreated: {
+                '@type': 'Place',
+                name: row.community || row.city || 'EAU',
+                geo: { '@type': 'GeoCoordinates', latitude: row.latitude, longitude: row.longitude },
+                address: { '@type': 'PostalAddress', addressLocality: row.city || 'Dubai', addressCountry: 'AE' },
+            }
+        }),
+    };
+
+    const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${esc(title)}</title>
+  <meta name="description" content="${esc(description)}" />
+  <link rel="canonical" href="${url}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="${url}" />
+  <meta property="og:title" content="${esc(title)}" />
+  <meta property="og:description" content="${esc(description)}" />
+  <meta property="og:image" content="${esc(image)}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:site_name" content="Emiralia" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${esc(title)}" />
+  <meta name="twitter:description" content="${esc(description)}" />
+  <meta name="twitter:image" content="${esc(image)}" />
+  <script type="application/ld+json">${JSON.stringify(propertySchema)}</script>
+</head>
+<body>
+  <h1>${esc(title)}</h1>
+  <p>${esc(description)}</p>
+  ${row.price ? `<p><strong>Precio:</strong> ${Number(row.price).toLocaleString('es-ES')} ${row.currency || 'AED'}</p>` : ''}
+  ${row.bedrooms ? `<p><strong>Dormitorios:</strong> ${row.bedrooms}</p>` : ''}
+  ${row.bathrooms ? `<p><strong>Baños:</strong> ${row.bathrooms}</p>` : ''}
+  ${row.size_sqft ? `<p><strong>Superficie:</strong> ${row.size_sqft} ft²</p>` : ''}
+  ${row.community ? `<p><strong>Comunidad:</strong> ${esc(row.community)}</p>` : ''}
+  ${row.city ? `<p><strong>Ciudad:</strong> ${esc(row.city)}</p>` : ''}
+  <p><a href="${url}">Ver propiedad completa en Emiralia →</a></p>
+</body>
+</html>`;
+}
+
+// GET /seo/propiedad?id=XXX — serves enriched HTML for crawlers
+app.get('/seo/propiedad', async (req, res) => {
+    const { id } = req.query;
+    const ua = req.headers['user-agent'] || '';
+
+    if (!id) {
+        return res.status(400).send('Missing id parameter');
+    }
+
+    try {
+        const result = await pool.query('SELECT * FROM properties WHERE pf_id = $1', [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).send('Property not found');
+        }
+
+        const row = result.rows[0];
+        const html = buildSeoPropertyHtml(row);
+
+        res.set('Content-Type', 'text/html; charset=utf-8');
+        res.set('X-Robots-Tag', 'index, follow');
+        res.send(html);
+    } catch (err) {
+        console.error('[seo/propiedad] Error:', err.message);
+        res.status(500).send('Error generating SEO page');
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SEO: Dynamic Sitemap
+// ═══════════════════════════════════════════════════════════════════════════════
+
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        const BASE_URL = process.env.SITE_URL || 'https://emiralia.com';
+        const today = new Date().toISOString().split('T')[0];
+
+        const staticPages = [
+            { url: '/', priority: '1.0', changefreq: 'weekly' },
+            { url: '/propiedades.html', priority: '0.9', changefreq: 'daily' },
+            { url: '/desarrolladores.html', priority: '0.8', changefreq: 'weekly' },
+            { url: '/invertir.html', priority: '0.8', changefreq: 'monthly' },
+            { url: '/blog.html', priority: '0.7', changefreq: 'weekly' },
+            { url: '/articulo.html', priority: '0.7', changefreq: 'monthly' },
+            { url: '/ai-insights.html', priority: '0.6', changefreq: 'daily' },
+        ];
+
+        let propertyUrls = [];
+        try {
+            const result = await pool.query(
+                `SELECT pf_id, updated_at FROM properties WHERE status != 'inactive' ORDER BY updated_at DESC LIMIT 10000`
+            );
+            propertyUrls = result.rows.map(row => ({
+                url: `/propiedad.html?id=${row.pf_id}`,
+                priority: '0.6',
+                changefreq: 'weekly',
+                lastmod: new Date(row.updated_at || new Date()).toISOString().split('T')[0],
+            }));
+        } catch (dbErr) {
+            console.warn('[sitemap] DB query failed, serving static only:', dbErr.message);
+        }
+
+        const allEntries = [...staticPages, ...propertyUrls];
+        const urls = allEntries.map(({ url, priority, changefreq, lastmod }) => `
+  <url>
+    <loc>${BASE_URL}${url}</loc>
+    <lastmod>${lastmod || today}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`).join('');
+
+        const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+
+        res.set('Content-Type', 'application/xml');
+        res.set('Cache-Control', 'public, max-age=3600');
+        res.send(xml);
+    } catch (err) {
+        console.error('[sitemap] Error:', err.message);
+        res.status(500).send('Error generating sitemap');
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // PRODUCTION: Serve React Build
 // ═══════════════════════════════════════════════════════════════════════════════
 

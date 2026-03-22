@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /interes.html
+
+Sitemap: https://emiralia.com/sitemap.xml

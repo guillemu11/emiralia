@@ -1,25 +1,43 @@
 # Supabase — Integration
 
-**Status:** ⚠️ Planned (Not Yet Integrated)
+**Status:** ❌ Cancelado — DB consolidada en Railway (2026-03-22)
 
 **Service:** Supabase (PostgreSQL + Auth + Storage + Realtime)
 
 ---
 
-## Overview
+## Decisión de consolidación
 
-Supabase is planned as the **production database** for Emiralia's B2B platform, replacing Railway PostgreSQL when we launch the developer portal.
+El proyecto Supabase "Emiralia" (`lizjfuoreixzxdzzxfyk`) fue creado inicialmente pero **nunca recibió datos**. Al auditar el estado el 2026-03-22:
+- Supabase: 16 tablas, **0 filas en todas ellas**
+- Railway: producción activa con todos los datos reales
 
-**Why Supabase:**
+**Acción tomada:**
+
+- SDK `@supabase/supabase-js` eliminado de `package.json`
+- Proyecto Supabase "Emiralia" pausado (no eliminado — mantener 30 días por seguridad)
+- Plan de migración Q2 2026 → **cancelado**
+
+**La DB de producción es Railway PostgreSQL** (`mainline.proxy.rlwy.net:17638`).
+
+---
+
+## ¿Puede revisarse en el futuro?
+
+Sí. Si en fases B2B se necesita RLS real, auth multitenant o Realtime, se puede reactivar el proyecto Supabase y planificar la migración desde Railway. La decisión actual es simplificar al mínimo.
+
+---
+
+## Overview (histórico — referencia)
+
+Supabase estaba planificado como la **base de datos de producción** para la plataforma B2B, reemplazando Railway PostgreSQL al lanzar el developer portal.
+
+**Por qué Supabase (razones originales):**
 - **Free tier:** 500MB DB + 1GB bandwidth (sufficient for MVP)
 - **Instant APIs:** Auto-generated REST + GraphQL endpoints
 - **Auth built-in:** Row-Level Security (RLS) for multi-tenant B2B
 - **Realtime:** Live property updates via websockets
 - **Storage:** S3-compatible for property images
-
-**Current Status:**
-- PostgreSQL on Railway (active)
-- Migration to Supabase: **Q2 2026** (after B2B portal design)
 
 ---
 

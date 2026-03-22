@@ -1,12 +1,11 @@
 ---
 name: generar-imagen
 description: >
-  Genera imágenes AI con DALL-E 3 para contenido inmobiliario: posts sociales,
+  Genera imágenes AI con KIE AI Nano Banana 2 para contenido inmobiliario: posts sociales,
   banners web, headers, creatividades de campañas. Invocar cuando pidan generar
   imagen, crear visual, diseño AI, banner, creatividad, ilustración, o /generar-imagen.
-agent: Content Agent
 disable-model-invocation: false
-argument-hint: [descripción de imagen] [--size=square|landscape|portrait|wide] [--quality=standard|hd]
+argument-hint: "[descripción de imagen] [--size=square|landscape|portrait|wide] [--quality=standard|hd]"
 allowed-tools:
   - Bash
   - Read
