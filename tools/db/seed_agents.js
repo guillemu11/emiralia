@@ -136,6 +136,16 @@ const agents = [
         skills: ['market-pulse', 'roi-estimator', 'plataforma-kpis'],
         tools: ['memory', 'wat-memory'],
     },
+    {
+        id: 'paid-media-agent',
+        name: 'Paid Media Agent',
+        role: 'Publicidad pagada — briefs para Meta Ads, Google Ads y TikTok Ads',
+        department: 'marketing',
+        avatar: '📢',
+        status: 'active',
+        skills: ['brief-meta-ad', 'brief-google-ad', 'brief-tiktok-ad', 'reporte-paid-media'],
+        tools: ['memory', 'wat-memory', 'save_artifact'],
+    },
 ];
 
 const REAL_IDS = agents.map(a => a.id);

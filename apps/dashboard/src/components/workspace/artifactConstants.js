@@ -38,29 +38,29 @@ export const TYPE_LABELS = {
 };
 
 export const TYPE_ICONS = {
-    blog_post:         '✍',
-    property_listing:  '🏠',
-    email_template:    '📧',
+    blog_post:         'pen-line',
+    property_listing:  'building-2',
+    email_template:    'mail',
     // Analytics types
-    report:            '📊',
-    kpi_snapshot:      '📈',
-    funnel_analysis:   '⬇',
-    market_benchmark:  '⚖',
-    cohort_analysis:   '👥',
+    report:            'bar-chart-2',
+    kpi_snapshot:      'trending-up',
+    funnel_analysis:   'filter',
+    market_benchmark:  'scale',
+    cohort_analysis:   'users',
     // Legal types
-    faq_entry:         '⚖️',
-    legal_guide:       '📘',
-    investor_brief:    '📋',
-    regulatory_alert:  '🚨',
+    faq_entry:         'help-circle',
+    legal_guide:       'book-open',
+    investor_brief:    'clipboard',
+    regulatory_alert:  'alert-triangle',
     // SEO types
-    keyword:         '🔑',
-    seo_audit:       '🔍',
-    meta_tag:        '🏷',
-    structured_data: '{}',
+    keyword:         'key',
+    seo_audit:       'search',
+    meta_tag:        'tag',
+    structured_data: 'code-2',
     // WAT Auditor types
-    audit_report:         '📋',
-    inconsistency:        '⚠',
-    improvement_proposal: '💡',
+    audit_report:         'clipboard-list',
+    inconsistency:        'alert-circle',
+    improvement_proposal: 'lightbulb',
 };
 
 export const PUBLISH_DESTINATIONS = {
@@ -170,10 +170,10 @@ export const SOCIAL_TYPE_LABELS = {
 };
 
 export const SOCIAL_TYPE_ICONS = {
-    video_script:     '🎬',
-    social_post:      '📸',
-    avatar_brief:     '🎭',
-    content_calendar: '📅',
+    video_script:     'video',
+    social_post:      'image',
+    avatar_brief:     'user-check',
+    content_calendar: 'calendar',
 };
 
 export const AVATAR_OPTIONS = [
@@ -182,9 +182,9 @@ export const AVATAR_OPTIONS = [
 ];
 
 export const PLATFORM_OPTIONS = [
-    { id: 'Instagram', label: 'Instagram', icon: '📸' },
-    { id: 'TikTok',    label: 'TikTok',   icon: '🎵' },
-    { id: 'Both',      label: 'Ambas',    icon: '📱' },
+    { id: 'Instagram', label: 'Instagram', icon: 'instagram' },
+    { id: 'TikTok',    label: 'TikTok',   icon: 'smartphone' },
+    { id: 'Both',      label: 'Ambas',    icon: 'smartphone' },
 ];
 
 export const DURATION_OPTIONS = [
@@ -203,10 +203,10 @@ export const CTA_OPTIONS = [
 // ─── Marketing Workspace constants ───────────────────────────────────────────
 
 export const MARKETING_TYPES = [
-    { value: 'campaign_brief',  label: 'Campaign Brief',       icon: '🎯', desc: 'Brief completo de campaña de marketing' },
-    { value: 'positioning_doc', label: 'Documento Estratégico', icon: '📄', desc: 'ICP, propuesta de valor, battlecard o GTM Plan' },
-    { value: 'gtm_strategy',    label: 'GTM Strategy',          icon: '🗺', desc: 'Estrategia go-to-market por fase y canal' },
-    { value: 'channel_report',  label: 'Channel Report',        icon: '📊', desc: 'Reporte de rendimiento por canal de marketing' },
+    { value: 'campaign_brief',  label: 'Campaign Brief',       icon: 'target',    desc: 'Brief completo de campaña de marketing' },
+    { value: 'positioning_doc', label: 'Documento Estratégico', icon: 'file-text', desc: 'ICP, propuesta de valor, battlecard o GTM Plan' },
+    { value: 'gtm_strategy',    label: 'GTM Strategy',          icon: 'map',       desc: 'Estrategia go-to-market por fase y canal' },
+    { value: 'channel_report',  label: 'Channel Report',        icon: 'bar-chart', desc: 'Reporte de rendimiento por canal de marketing' },
 ];
 
 export const MARKETING_TYPE_LABELS = {
@@ -217,18 +217,18 @@ export const MARKETING_TYPE_LABELS = {
 };
 
 export const MARKETING_TYPE_ICONS = {
-    campaign_brief:  '🎯',
-    positioning_doc: '📄',
-    gtm_strategy:    '🗺',
-    channel_report:  '📊',
+    campaign_brief:  'target',
+    positioning_doc: 'file-text',
+    gtm_strategy:    'map',
+    channel_report:  'bar-chart',
 };
 
 export const CAMPAIGN_CHANNELS = [
-    { id: 'Organic',      label: 'Organic Search',   icon: '🔍' },
-    { id: 'Paid Social',  label: 'Paid Social',       icon: '💰' },
-    { id: 'Email',        label: 'Email Marketing',   icon: '📧' },
-    { id: 'SEO',          label: 'SEO',               icon: '📈' },
-    { id: 'Partnerships', label: 'Partnerships',      icon: '🤝' },
+    { id: 'Organic',      label: 'Organic Search',   icon: 'search' },
+    { id: 'Paid Social',  label: 'Paid Social',       icon: 'target' },
+    { id: 'Email',        label: 'Email Marketing',   icon: 'mail' },
+    { id: 'SEO',          label: 'SEO',               icon: 'trending-up' },
+    { id: 'Partnerships', label: 'Partnerships',      icon: 'users' },
 ];
 
 export const DOC_SUBTYPES = [
@@ -318,10 +318,10 @@ export const DATA_TYPE_LABELS = {
 };
 
 export const DATA_TYPE_ICONS = {
-    scrape_job:          '🕷',
-    dataset:             '🗄',
-    dedup_report:        '🔍',
-    data_quality_report: '✅',
+    scrape_job:          'server',
+    dataset:             'database',
+    dedup_report:        'layers',
+    data_quality_report: 'check-square',
 };
 
 export const DATA_JOB_STATUS = {
@@ -351,11 +351,11 @@ export const DESIGN_TYPE_LABELS = {
 };
 
 export const DESIGN_TYPE_ICONS = {
-    page_design:        '🖥',
-    component:          '🧩',
-    template:           '📐',
-    mockup:             '🎨',
-    brand_audit_report: '📋',
+    page_design:        'monitor',
+    component:          'puzzle',
+    template:           'layout',
+    mockup:             'pen-tool',
+    brand_audit_report: 'clipboard-list',
 };
 
 export const DESIGN_PUBLISH_DESTINATIONS = {
@@ -381,10 +381,10 @@ export const LEGAL_CATEGORIES = [
 ];
 
 export const LEGAL_TYPES = [
-    { id: 'faq_entry',        label: 'FAQ',               icon: '⚖️', desc: 'Pregunta frecuente con respuesta estructurada' },
-    { id: 'legal_guide',      label: 'Guía Legal',        icon: '📘', desc: 'Guía completa sobre un tema legal o regulatorio' },
-    { id: 'investor_brief',   label: 'Brief Inversor',    icon: '📋', desc: 'Resumen ejecutivo legal para inversores' },
-    { id: 'regulatory_alert', label: 'Alerta Regulatoria', icon: '🚨', desc: 'Cambio normativo reciente con impacto en inversores' },
+    { id: 'faq_entry',        label: 'FAQ',               icon: 'help-circle',   desc: 'Pregunta frecuente con respuesta estructurada' },
+    { id: 'legal_guide',      label: 'Guía Legal',        icon: 'book-open',     desc: 'Guía completa sobre un tema legal o regulatorio' },
+    { id: 'investor_brief',   label: 'Brief Inversor',    icon: 'clipboard',     desc: 'Resumen ejecutivo legal para inversores' },
+    { id: 'regulatory_alert', label: 'Alerta Regulatoria', icon: 'alert-triangle', desc: 'Cambio normativo reciente con impacto en inversores' },
 ];
 
 export const LEGAL_HANDOFF_AGENTS = [
@@ -403,10 +403,10 @@ export const DEV_TYPE_LABELS = {
 };
 
 export const DEV_TYPE_ICONS = {
-    feature:    '✦',
-    bug_fix:    '⚠',
-    migration:  '⬆',
-    deployment: '⬡',
+    feature:    'zap',
+    bug_fix:    'alert-circle',
+    migration:  'layers',
+    deployment: 'rocket',
 };
 
 // Kanban: mapeo artifact status → columna visual
@@ -438,10 +438,10 @@ export const DEV_HANDOFF_AGENTS = [
 // ─── SEO Workspace constants ──────────────────────────────────────────────────
 
 export const SEO_TYPES = [
-    { id: 'keyword',         label: 'Keyword',         icon: '🔑', desc: 'Keyword con vol, dificultad e intención de búsqueda' },
-    { id: 'seo_audit',       label: 'SEO Audit',       icon: '🔍', desc: 'Reporte de issues por página: Critical/Warning/Opportunity' },
-    { id: 'meta_tag',        label: 'Meta Tag',        icon: '🏷',  desc: 'Title, description y OG tags por página' },
-    { id: 'structured_data', label: 'Structured Data', icon: '{}', desc: 'Schema.org por tipo de página' },
+    { id: 'keyword',         label: 'Keyword',         icon: 'key',    desc: 'Keyword con vol, dificultad e intención de búsqueda' },
+    { id: 'seo_audit',       label: 'SEO Audit',       icon: 'search', desc: 'Reporte de issues por página: Critical/Warning/Opportunity' },
+    { id: 'meta_tag',        label: 'Meta Tag',        icon: 'tag',    desc: 'Title, description y OG tags por página' },
+    { id: 'structured_data', label: 'Structured Data', icon: 'code-2', desc: 'Schema.org por tipo de página' },
 ];
 
 export const KEYWORD_INTENTS = [
@@ -511,9 +511,9 @@ export const RESEARCH_HANDOFF_AGENTS = [
 // ─── WAT Auditor Workspace constants ──────────────────────────────────────────
 
 export const WAT_TYPES = [
-    { id: 'audit_report',         label: 'Audit Report',       icon: '📋', desc: 'Reporte completo de auditoría WAT con score 0-100' },
-    { id: 'inconsistency',        label: 'Inconsistencia',     icon: '⚠',  desc: 'Inconsistencia detectada en agentes, skills o tools' },
-    { id: 'improvement_proposal', label: 'Propuesta de Mejora',icon: '💡', desc: 'Mejora estructural propuesta para el sistema WAT' },
+    { id: 'audit_report',         label: 'Audit Report',        icon: 'clipboard-list', desc: 'Reporte completo de auditoría WAT con score 0-100' },
+    { id: 'inconsistency',        label: 'Inconsistencia',      icon: 'alert-circle',   desc: 'Inconsistencia detectada en agentes, skills o tools' },
+    { id: 'improvement_proposal', label: 'Propuesta de Mejora', icon: 'lightbulb',      desc: 'Mejora estructural propuesta para el sistema WAT' },
 ];
 
 export const WAT_TYPE_LABELS = {
@@ -523,9 +523,9 @@ export const WAT_TYPE_LABELS = {
 };
 
 export const WAT_TYPE_ICONS = {
-    audit_report:         '📋',
-    inconsistency:        '⚠',
-    improvement_proposal: '💡',
+    audit_report:         'clipboard-list',
+    inconsistency:        'alert-circle',
+    improvement_proposal: 'lightbulb',
 };
 
 export const WAT_PUBLISH_DESTINATIONS = {
@@ -552,10 +552,10 @@ export const PM_TYPE_LABELS = {
 };
 
 export const PM_TYPE_ICONS = {
-    prd:        '📄',
-    sprint:     '🏃',
-    user_story: '📝',
-    roadmap:    '🗺',
+    prd:        'file-text',
+    sprint:     'zap',
+    user_story: 'bookmark',
+    roadmap:    'map',
 };
 
 export const PM_PUBLISH_DESTINATIONS = {
@@ -575,10 +575,10 @@ export const PM_PUBLISH_DESTINATIONS = {
 };
 
 export const PM_ARTIFACT_TYPES = [
-    { id: 'prd',        label: 'PRD',                  icon: '📄', desc: 'Product Requirements Document' },
-    { id: 'sprint',     label: 'Sprint',               icon: '🏃', desc: 'Sprint planning document' },
-    { id: 'user_story', label: 'Historia de Usuario',  icon: '📝', desc: 'User story con criterios de aceptación' },
-    { id: 'roadmap',    label: 'Roadmap',               icon: '🗺', desc: 'Roadmap del producto por fases' },
+    { id: 'prd',        label: 'PRD',                 icon: 'file-text', desc: 'Product Requirements Document' },
+    { id: 'sprint',     label: 'Sprint',              icon: 'zap',       desc: 'Sprint planning document' },
+    { id: 'user_story', label: 'Historia de Usuario', icon: 'bookmark',  desc: 'User story con criterios de aceptación' },
+    { id: 'roadmap',    label: 'Roadmap',             icon: 'map',       desc: 'Roadmap del producto por fases' },
 ];
 
 export const WAT_HANDOFF_AGENTS = [

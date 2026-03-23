@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
+import WsIcon from '../components/workspace/WsIcon.jsx';
 import DailyEodModal from '../components/DailyEodModal.jsx';
 import DailyCoverageAlert from '../components/DailyCoverageAlert.jsx';
 import DailyTrends from '../components/DailyTrends.jsx';
@@ -31,14 +32,14 @@ export default function DailyStandup() {
     const { t, lang } = useLanguage();
 
     const moodConfig = {
-        productive: { emoji: '🚀', label: t('mood.productive') },
-        focused: { emoji: '🎯', label: t('mood.focused') },
-        creative: { emoji: '✨', label: t('mood.creative') },
-        energized: { emoji: '⚡', label: t('mood.energized') },
-        motivated: { emoji: '💪', label: t('mood.motivated') },
-        strategic: { emoji: '🧠', label: t('mood.strategic') },
-        blocked: { emoji: '🚧', label: t('mood.blocked') },
-        neutral: { emoji: '😐', label: t('mood.neutral') },
+        productive: { label: t('mood.productive') },
+        focused: { label: t('mood.focused') },
+        creative: { label: t('mood.creative') },
+        energized: { label: t('mood.energized') },
+        motivated: { label: t('mood.motivated') },
+        strategic: { label: t('mood.strategic') },
+        blocked: { label: t('mood.blocked') },
+        neutral: { label: t('mood.neutral') },
     };
 
     const severityConfig = {
@@ -272,19 +273,19 @@ export default function DailyStandup() {
                         className={`weekly-toggle-btn ${activeView === 'board' ? 'active' : ''}`}
                         onClick={() => { setActiveView('board'); setSelectedAgent(null); }}
                     >
-                        📊 {t('daily.standupBoard')}
+                        {t('daily.standupBoard')}
                     </button>
                     <button
                         className={`weekly-toggle-btn ${activeView === 'reports' ? 'active' : ''}`}
                         onClick={() => setActiveView('reports')}
                     >
-                        📝 {t('daily.eodReports')}
+                        {t('daily.eodReports')}
                     </button>
                     <button
                         className={`weekly-toggle-btn ${activeView === 'trends' ? 'active' : ''}`}
                         onClick={() => setActiveView('trends')}
                     >
-                        📈 {t('daily.analyticsTab')}
+                        {t('daily.analyticsTab')}
                     </button>
                 </div>
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { API_URL } from '../../api.js';
 import ArtifactCard from './ArtifactCard.jsx';
 import ArtifactPreviewModal from './ArtifactPreviewModal.jsx';
+import WsIcon from './WsIcon.jsx';
 import { PM_TYPE_LABELS, PM_TYPE_ICONS, PM_PUBLISH_DESTINATIONS } from './artifactConstants.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -264,7 +265,7 @@ function RoadmapSection({ projects }) {
     if (projects.length === 0) {
         return (
             <div style={{ textAlign: 'center', padding: 48 }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>🗺</div>
+                <div style={{ marginBottom: 12, color: '#cbd5e1' }}><WsIcon name="map" size={40} /></div>
                 <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>No hay proyectos aún</div>
                 <div style={{ color: '#64748b', fontSize: 13 }}>Los proyectos aparecerán agrupados por estado y trimestre.</div>
             </div>
@@ -466,10 +467,10 @@ function PrdsSection({ artifacts, artifactStats, filter, onFilterChange, onNewPr
     const filtered = filter === 'all' ? artifacts : artifacts.filter(a => a.status === filter);
 
     const stats = [
-        { label: 'Total PRDs',   value: artifactStats?.total ?? 0,         icon: '📄' },
-        { label: 'En Revisión',  value: artifactStats?.by_status?.pending_review ?? 0, icon: '🔍' },
-        { label: 'Aprobados',    value: artifactStats?.by_status?.approved ?? 0,        icon: '✅' },
-        { label: 'Publicados',   value: artifactStats?.by_status?.published ?? 0,       icon: '🌐' },
+        { label: 'Total PRDs',   value: artifactStats?.total ?? 0,         icon: 'file-text' },
+        { label: 'En Revisión',  value: artifactStats?.by_status?.pending_review ?? 0, icon: 'search' },
+        { label: 'Aprobados',    value: artifactStats?.by_status?.approved ?? 0,        icon: 'check-square' },
+        { label: 'Publicados',   value: artifactStats?.by_status?.published ?? 0,       icon: 'globe' },
     ];
 
     return (
@@ -484,7 +485,7 @@ function PrdsSection({ artifacts, artifactStats, filter, onFilterChange, onNewPr
                         background: '#fff', border: '1px solid #e2e8f0',
                         borderRadius: 12, padding: '14px 16px',
                     }}>
-                        <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
+                        <div style={{ marginBottom: 4, color: '#94a3b8' }}><WsIcon name={s.icon} size={20} /></div>
                         <div style={{ fontSize: 22, fontWeight: 700, color: '#0f172a' }}>{s.value}</div>
                         <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{s.label}</div>
                     </div>
@@ -524,7 +525,7 @@ function PrdsSection({ artifacts, artifactStats, filter, onFilterChange, onNewPr
             {/* Artifact grid */}
             {filtered.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: 48 }}>
-                    <div style={{ fontSize: 40, marginBottom: 12 }}>📄</div>
+                    <div style={{ marginBottom: 12, color: '#cbd5e1' }}><WsIcon name="file-text" size={40} /></div>
                     <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>
                         {filter === 'all' ? 'No hay PRDs aún' : `No hay PRDs con estado "${filter}"`}
                     </div>
@@ -578,7 +579,7 @@ function ReportsSection({ reports, expandedReport, onExpand, onGenerate, generat
 
             {reports.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: 48 }}>
-                    <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
+                    <div style={{ marginBottom: 12, color: '#cbd5e1' }}><WsIcon name="bar-chart-2" size={40} /></div>
                     <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>No hay reportes aún</div>
                     <div style={{ color: '#64748b', fontSize: 13 }}>Genera el primer reporte de PM para ver métricas y riesgos.</div>
                 </div>
@@ -945,16 +946,16 @@ export default function PmWorkspace({ agentId }) {
                     gap: 14, marginBottom: 28,
                 }}>
                     {[
-                        { label: 'Proyectos activos', value: activeCount,         icon: '🚀', sub: 'In Progress' },
-                        { label: 'Tareas pendientes', value: allTodos.length,     icon: '📋', sub: 'En Backlog'  },
-                        { label: 'PRDs activos',      value: prdCount,            icon: '📄', sub: 'Aprobados'   },
-                        { label: 'Reportes PM',       value: reports.length,      icon: '📊', sub: 'Total'        },
+                        { label: 'Proyectos activos', value: activeCount,         icon: 'rocket',      sub: 'In Progress' },
+                        { label: 'Tareas pendientes', value: allTodos.length,     icon: 'clipboard',   sub: 'En Backlog'  },
+                        { label: 'PRDs activos',      value: prdCount,            icon: 'file-text',   sub: 'Aprobados'   },
+                        { label: 'Reportes PM',       value: reports.length,      icon: 'bar-chart-2', sub: 'Total'       },
                     ].map(s => (
                         <div key={s.label} style={{
                             background: '#fff', border: '1px solid #e2e8f0',
                             borderRadius: 12, padding: '16px 18px',
                         }}>
-                            <div style={{ fontSize: 22, marginBottom: 6 }}>{s.icon}</div>
+                            <div style={{ marginBottom: 6, color: '#94a3b8' }}><WsIcon name={s.icon} size={22} /></div>
                             <div style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>{s.value}</div>
                             <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
                                 {s.label} · {s.sub}

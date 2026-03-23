@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '../../api.js';
 import ArtifactCard from './ArtifactCard.jsx';
 import ArtifactPreviewModal from './ArtifactPreviewModal.jsx';
+import WsIcon from './WsIcon.jsx';
 import {
     WAT_TYPES, WAT_HANDOFF_AGENTS, WAT_PUBLISH_DESTINATIONS,
     WAT_SEVERITIES, WAT_SCORE_COLORS,
@@ -12,9 +13,9 @@ const ACCENT_DARK = '#3730a3'; // indigo-800
 const ACCENT_BG   = '#eef2ff'; // indigo-50
 
 const TABS = [
-    { id: 'reports',   label: '📋 Audit Reports'      },
-    { id: 'issues',    label: '⚠ Issues Activos'      },
-    { id: 'proposals', label: '💡 Propuestas de Mejora' },
+    { id: 'reports',   label: 'Audit Reports',        icon: 'clipboard-list' },
+    { id: 'issues',    label: 'Issues Activos',        icon: 'alert-circle'   },
+    { id: 'proposals', label: 'Propuestas de Mejora',  icon: 'lightbulb'      },
 ];
 
 const STATUS_OPTS = [
@@ -404,6 +405,7 @@ export default function WatAuditorWorkspace({ agentId }) {
                         key={tab.id}
                         onClick={() => { setActiveTab(tab.id); setStatusFilter('all'); setSeverityFilter('all'); }}
                         style={{
+                            display: 'flex', alignItems: 'center', gap: 6,
                             padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
                             fontSize: 13, fontWeight: 500,
                             background: activeTab === tab.id ? ACCENT : 'transparent',
@@ -411,6 +413,7 @@ export default function WatAuditorWorkspace({ agentId }) {
                             transition: 'all 0.15s',
                         }}
                     >
+                        <WsIcon name={tab.icon} size={13} />
                         {tab.label}
                     </button>
                 ))}
@@ -568,21 +571,21 @@ export default function WatAuditorWorkspace({ agentId }) {
 function EmptyState({ tab, onRunAudit }) {
     const configs = {
         reports: {
-            icon: '📋',
+            icon: 'clipboard-list',
             title: 'Sin auditorías todavía',
             desc: 'Ejecuta tu primera auditoría WAT para generar un reporte con score 0-100 y breakdown por categoría.',
             cta: 'Ejecutar Auditoría',
             action: onRunAudit,
         },
         issues: {
-            icon: '⚠',
+            icon: 'alert-circle',
             title: 'Sin issues detectados',
             desc: 'Los issues se generan automáticamente durante una auditoría WAT.',
             cta: null,
             action: null,
         },
         proposals: {
-            icon: '💡',
+            icon: 'lightbulb',
             title: 'Sin propuestas de mejora',
             desc: 'Las propuestas se generan durante el análisis de gaps de una auditoría WAT.',
             cta: null,
@@ -597,7 +600,7 @@ function EmptyState({ tab, onRunAudit }) {
             padding: '64px 24px', textAlign: 'center',
             background: '#fff', borderRadius: 14, border: '1px solid #e2e8f0',
         }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>{cfg.icon}</div>
+            <div style={{ marginBottom: 16, color: '#94a3b8' }}><WsIcon name={cfg.icon} size={40} /></div>
             <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>
                 {cfg.title}
             </div>

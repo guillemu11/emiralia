@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { API_URL } from '../api.js';
+import WsIcon from '../components/workspace/WsIcon.jsx';
 
 const severityColors = {
     CRITICA: '#ef4444',
@@ -131,7 +132,7 @@ export default function PmReports() {
 
                 <header style={{ marginBottom: '32px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '2rem' }}>📋</span>
+                        <WsIcon name="clipboard-list" size={32} />
                         <div>
                             <h1 style={{ fontSize: '1.8rem' }}>{selected.title}</h1>
                             <p className="subtitle">{formatDate(selected.created_at)}</p>
@@ -264,7 +265,7 @@ export default function PmReports() {
         <div className="dashboard-container animate-fade-in">
             <header style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '2rem' }}>📋</span>
+                    <WsIcon name="clipboard-list" size={32} />
                     <div>
                         <h1 style={{ fontSize: '1.8rem' }}>{t('pmReports.title')}</h1>
                         <p className="subtitle">{t('pmReports.subtitle')}</p>
@@ -314,7 +315,7 @@ export default function PmReports() {
                                 </div>
 
                                 <div className="audit-event-icon-wrapper">
-                                    <div className="audit-event-icon">📋</div>
+                                    <div className="audit-event-icon"><WsIcon name="clipboard-list" size={16} /></div>
                                     {i < reports.length - 1 && <div className="audit-timeline-line"></div>}
                                 </div>
 
@@ -357,7 +358,7 @@ export default function PmReports() {
                     })}
                     {reports.length === 0 && (
                         <div className="card" style={{ textAlign: 'center', padding: '48px 24px' }}>
-                            <span style={{ fontSize: '3rem', display: 'block', marginBottom: '16px' }}>📋</span>
+                            <WsIcon name="clipboard-list" size={48} style={{ display: 'block', marginBottom: '16px', color: '#94a3b8' }} />
                             <p className="subtitle" style={{ fontSize: '1rem' }}>{t('pmReports.noReports')}</p>
                             <p className="subtitle" style={{ fontSize: '0.85rem', marginTop: '8px' }}>
                                 {t('pmReports.noReportsHint')}

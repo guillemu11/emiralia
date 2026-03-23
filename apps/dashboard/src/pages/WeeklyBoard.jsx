@@ -6,6 +6,7 @@ import WeeklyReport from '../components/WeeklyReport';
 import PipelineBoard from '../components/PipelineBoard';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { API_URL } from '../api.js';
+import WsIcon from '../components/workspace/WsIcon.jsx';
 
 const themeMap = {
     data: 'theme-green',
@@ -237,9 +238,9 @@ export default function WeeklyBoard() {
             {/* Top-level Tabs */}
             <div className="weekly-view-toggle">
                 {[
-                    { key: 'inbox', label: `📥 ${t('weeklyBoard.inboxTab')}`, },
-                    { key: 'weeklies', label: `📅 ${t('weeklyBoard.weekliesTab')}` },
-                    { key: 'pipeline', label: `📋 ${t('weeklyBoard.pipelineTab')}` },
+                    { key: 'inbox', label: t('weeklyBoard.inboxTab') },
+                    { key: 'weeklies', label: t('weeklyBoard.weekliesTab') },
+                    { key: 'pipeline', label: t('weeklyBoard.pipelineTab') },
                 ].map(tab => (
                     <button
                         key={tab.key}
@@ -300,7 +301,7 @@ export default function WeeklyBoard() {
                                                 title={t('weeklyBoard.deleteWeekly')}
                                                 style={{ fontSize: '0.85rem', padding: '4px 8px' }}
                                             >
-                                                🗑️
+                                                <WsIcon name="trash-2" size={14} />
                                             </button>
                                         </div>
                                     </div>
@@ -468,7 +469,7 @@ export default function WeeklyBoard() {
                                     <div style={{ fontSize: '0.8rem', color: '#64748B' }}>{t('weeklyBoard.contributionsLabel')}</div>
                                 </div>
                                 <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📊</div>
+                                    <div style={{ marginBottom: '8px', color: '#94a3b8' }}><WsIcon name="bar-chart-2" size={32} /></div>
                                     <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A' }}>
                                         {(statusConfig[selectedSession.status] || statusConfig.active).label}
                                     </div>

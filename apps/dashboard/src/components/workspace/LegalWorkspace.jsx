@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '../../api.js';
 import ArtifactCard from './ArtifactCard.jsx';
 import ArtifactPreviewModal from './ArtifactPreviewModal.jsx';
+import WsIcon from './WsIcon.jsx';
 import { LEGAL_TYPES, LEGAL_CATEGORIES, LANGUAGES } from './artifactConstants.js';
 
 const TABS = [
-    { id: 'faq',     label: '⚖️ FAQ Bank' },
-    { id: 'guides',  label: '📘 Guías Legales' },
-    { id: 'alerts',  label: '🚨 Alertas' },
-    { id: 'metrics', label: '📊 Métricas' },
+    { id: 'faq',     label: 'FAQ Bank',      icon: 'scale' },
+    { id: 'guides',  label: 'Guías Legales', icon: 'book-open' },
+    { id: 'alerts',  label: 'Alertas',       icon: 'alert-triangle' },
+    { id: 'metrics', label: 'Métricas',      icon: 'bar-chart-2' },
 ];
 
 const STATUS_OPTS = [
@@ -218,14 +219,14 @@ export default function LegalWorkspace({ agentId, agent }) {
 
     function EmptyState({ tab }) {
         const msgs = {
-            faq:    { icon: '⚖️', title: 'No hay FAQs todavía', desc: 'Genera la primera entrada FAQ sobre regulación EAU.' },
-            guides: { icon: '📘', title: 'Sin guías legales', desc: 'Genera una guía legal o brief para inversores.' },
-            alerts: { icon: '🚨', title: 'Sin alertas regulatorias', desc: 'Las alertas del Research Agent aparecerán aquí.' },
+            faq:    { icon: 'scale',          title: 'No hay FAQs todavía', desc: 'Genera la primera entrada FAQ sobre regulación EAU.' },
+            guides: { icon: 'book-open',       title: 'Sin guías legales', desc: 'Genera una guía legal o brief para inversores.' },
+            alerts: { icon: 'alert-triangle',  title: 'Sin alertas regulatorias', desc: 'Las alertas del Research Agent aparecerán aquí.' },
         };
         const m = msgs[tab] || msgs.faq;
         return (
             <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>{m.icon}</div>
+                <div style={{ marginBottom: '12px', color: '#cbd5e1' }}><WsIcon name={m.icon} size={40} /></div>
                 <h3 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1rem' }}>{m.title}</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '20px' }}>{m.desc}</p>
                 <button
@@ -278,7 +279,7 @@ export default function LegalWorkspace({ agentId, agent }) {
                             transition: 'all 0.15s',
                         }}
                     >
-                        {tab.label}
+                        <WsIcon name={tab.icon} size={13} /> {tab.label}
                         {tab.id === 'alerts' && legalStats?.regulatory_alert > 0 && (
                             <span style={{
                                 marginLeft: '6px', background: '#ef4444', color: '#fff',
@@ -364,7 +365,7 @@ export default function LegalWorkspace({ agentId, agent }) {
                         display: 'flex', alignItems: 'center', gap: '8px',
                         fontSize: '0.82rem', color: '#991b1b', fontWeight: 600,
                     }}>
-                        🚨 Las alertas regulatorias son detectadas por el Research Agent y pueden generar borradores de FAQ automáticamente.
+                        Las alertas regulatorias son detectadas por el Research Agent y pueden generar borradores de FAQ automáticamente.
                     </div>
                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                         <select

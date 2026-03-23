@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { API_URL } from '../../api.js';
 import PublishMenu from './PublishMenu.jsx';
+import WsIcon from './WsIcon.jsx';
 import {
     STATUS_COLORS,
     AVATAR_OPTIONS,
@@ -90,7 +91,7 @@ function PlatformBadge({ platform, small = false }) {
             background: '#f1f5f9',
             color: '#475569',
         }}>
-            {opt.icon} {opt.label}
+            <WsIcon name={opt.icon} size={11} style={{marginRight:3}} />{opt.label}
         </span>
     );
 }
@@ -328,7 +329,7 @@ export default function SocialWorkspace({ agentId, agent }) {
                             transition: 'all 0.15s',
                         }}
                     >
-                        {view === 'calendar' ? '📅 Calendario' : '📊 Métricas'}
+                        {view === 'calendar' ? 'Calendario' : 'Métricas'}
                     </button>
                 ))}
                 <button
@@ -426,7 +427,7 @@ export default function SocialWorkspace({ agentId, agent }) {
                                                 >
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
                                                         <StatusDot status={script.status} />
-                                                        {platform && <span style={{ fontSize: '0.65rem' }}>{platform.icon}</span>}
+                                                        {platform && <span style={{ color: '#64748b' }}><WsIcon name={platform.icon} size={10} /></span>}
                                                         {avatar && (
                                                             <span style={{ fontSize: '0.6rem', fontWeight: 700, color: avatar.color }}>
                                                                 {avatar.label[0]}
@@ -588,8 +589,9 @@ export default function SocialWorkspace({ agentId, agent }) {
                                 return (
                                     <div key={platform.id}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
-                                                {platform.icon} {platform.label}
+                                            <span style={{ display:'flex', alignItems:'center', gap:4, fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
+                                                <WsIcon name={platform.icon} size={12} />
+                                                {platform.label}
                                             </span>
                                             <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
                                                 {plScripts.length} scripts · {approved} aprobados
@@ -622,7 +624,7 @@ export default function SocialWorkspace({ agentId, agent }) {
                                         background: '#f8fafc', border: '1px solid #e5e7eb',
                                         textAlign: 'center', minWidth: '90px',
                                     }}>
-                                        <div style={{ fontSize: '1.4rem', marginBottom: '4px' }}>{SOCIAL_TYPE_ICONS[type]}</div>
+                                        <div style={{ marginBottom: '6px', color: '#64748b' }}><WsIcon name={SOCIAL_TYPE_ICONS[type] || 'video'} size={20} /></div>
                                         <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{n}</div>
                                         <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>{label}</div>
                                     </div>
@@ -697,7 +699,7 @@ export default function SocialWorkspace({ agentId, agent }) {
                                 </div>
                                 {selectedScript.metadata?.scheduled_date && (
                                     <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '4px' }}>
-                                        📅 {selectedScript.metadata.scheduled_date}
+                                        {selectedScript.metadata.scheduled_date}
                                     </div>
                                 )}
                             </div>
@@ -809,14 +811,14 @@ export default function SocialWorkspace({ agentId, agent }) {
                                             className="artifact-action-btn approve"
                                             style={{ flex: 1 }}
                                         >
-                                            ✅ Aprobar
+                                            Aprobar
                                         </button>
                                         <button
                                             onClick={() => setShowReject(r => !r)}
                                             className="artifact-action-btn reject"
                                             style={{ flex: 1 }}
                                         >
-                                            ❌ Rechazar
+                                            Rechazar
                                         </button>
                                     </div>
                                 )}
@@ -868,14 +870,14 @@ export default function SocialWorkspace({ agentId, agent }) {
                                         className="artifact-action-btn"
                                         style={{ textAlign: 'left', fontSize: '0.78rem' }}
                                     >
-                                        🎨 Pedir cover → Content Agent
+                                        Pedir cover → Content Agent
                                     </button>
                                     <button
                                         onClick={() => handleHandoff(selectedScript, 'social-media-agent', `Generar variante del script para la otra plataforma: "${selectedScript.title}"`)}
                                         className="artifact-action-btn"
                                         style={{ textAlign: 'left', fontSize: '0.78rem' }}
                                     >
-                                        🔄 Generar variante plataforma
+                                        Generar variante plataforma
                                     </button>
                                 </div>
                             </div>
@@ -975,7 +977,7 @@ export default function SocialWorkspace({ agentId, agent }) {
                                                 onClick={() => setWizard(w => ({ ...w, platform: p.id }))}
                                                 className={`wizard-option-pill ${wizard.platform === p.id ? 'selected' : ''}`}
                                             >
-                                                {p.icon} {p.label}
+                                                <WsIcon name={p.icon} size={12} style={{marginRight:4}} />{p.label}
                                             </button>
                                         ))}
                                     </div>
@@ -1093,7 +1095,7 @@ export default function SocialWorkspace({ agentId, agent }) {
                                     onClick={handleGenerate}
                                     disabled={generating}
                                 >
-                                    {generating ? 'Generando...' : '🎬 Generar Script'}
+                                    {generating ? 'Generando...' : 'Generar Script'}
                                 </button>
                             )}
                         </div>

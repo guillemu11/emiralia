@@ -2,7 +2,7 @@
 
 SOPs (Standard Operating Procedures) que coordinan múltiples agentes y tools.
 
-**Total: 7 activos** | **4 planificados** | Última actualización: 2026-03-13
+**Total: 8 activos** | **4 planificados** | Última actualización: 2026-03-23
 
 ---
 
@@ -17,6 +17,7 @@ SOPs (Standard Operating Procedures) que coordinan múltiples agentes y tools.
 | **[[scrape_propertyfinder\|Scrape PropertyFinder]]** | Scraping automatizado de PropertyFinder.ae vía [[apify]] | [[data-agent]] | Location, property type | Properties JSON + DB insert | Scheduled (diario 3am) | [scrape_propertyfinder.md](workflows/scrape_propertyfinder.md) |
 | **[[screenshot_design_loop\|Screenshot Design Loop]]** | Iteración de diseño: screenshot → feedback → edit → repeat | [[frontend-agent]] | Screenshot + feedback | Updated HTML + screenshot | Manual (on-demand) | [screenshot_design_loop.md](workflows/screenshot_design_loop.md) |
 | **[[sprint-planning\|Sprint Planning]]** | Planificar sprint semanal para equipo de agentes | [[pm-agent]], [[dev-agent]], [[data-agent]], [[frontend-agent]] | Backlog + prioridades | Sprint plan + tasks asignadas | Scheduled (lunes 9am) | [sprint-planning.md](workflows/sprint-planning.md) |
+| **[[campaign-execution\|Campaign Execution]]** | Orquestación completa de campaña multi-canal: brief → producción paralela por canal → revisión humana → scheduling → publicación | [[marketing-agent]], [[content-agent]], [[social-media-agent]], [[paid-media-agent]], [[seo-agent]] | Campaign goal + canales + budget + fechas | campaigns + campaign_items en DB + artefactos por canal + calendar editorial | Manual (on-demand) | [campaign-execution.md](workflows/campaign-execution.md) |
 
 ---
 

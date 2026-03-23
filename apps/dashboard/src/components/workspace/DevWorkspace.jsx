@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import WsIcon from './WsIcon.jsx';
 import {
     KANBAN_COLUMNS,
     DEV_TYPE_LABELS,
@@ -25,11 +26,7 @@ const DEV_TYPES = [
 
 const PRIORITY_OPTIONS = ['Critical', 'High', 'Medium', 'Low'];
 
-const MOCK_DEPLOYS = [
-    { id: 1, ref: 'aa06331', message: 'feat: WAT system v2 — nuevos agentes, SEO', env: 'production', status: 'success', deployed_at: '2026-03-22T18:00:00Z', duration_s: 47 },
-    { id: 2, ref: '52abf4c', message: 'fix: route image chat to proper handler',    env: 'production', status: 'success', deployed_at: '2026-03-21T14:30:00Z', duration_s: 52 },
-    { id: 3, ref: 'adcc307', message: 'fix: send image as buffer to Telegram',      env: 'production', status: 'success', deployed_at: '2026-03-20T11:00:00Z', duration_s: 39 },
-];
+const MOCK_DEPLOYS = [];
 
 function formatDate(iso) {
     if (!iso) return '—';
@@ -79,8 +76,9 @@ function KanbanCard({ artifact, onMove, onHandoff, movingId }) {
         }}>
             {/* Type + Priority badges */}
             <div style={{ display: 'flex', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 11, background: '#f1f5f9', color: '#475569', borderRadius: 6, padding: '2px 7px', fontWeight: 600 }}>
-                    {DEV_TYPE_ICONS[artifact.type]} {DEV_TYPE_LABELS[artifact.type] || artifact.type}
+                <span style={{ display:'flex', alignItems:'center', gap:4, fontSize: 11, background: '#f1f5f9', color: '#475569', borderRadius: 6, padding: '2px 7px', fontWeight: 600 }}>
+                    <WsIcon name={DEV_TYPE_ICONS[artifact.type] || 'zap'} size={10} />
+                    {DEV_TYPE_LABELS[artifact.type] || artifact.type}
                 </span>
                 {pc && (
                     <span style={{ fontSize: 11, background: pc.bg, color: pc.color, borderRadius: 6, padding: '2px 7px', fontWeight: 600 }}>
@@ -639,7 +637,7 @@ export default function DevWorkspace({ agentId }) {
                                     padding: '14px 16px', marginBottom: 8,
                                     display: 'flex', alignItems: 'flex-start', gap: 12,
                                 }}>
-                                    <span style={{ fontSize: 18, marginTop: 1 }}>{m.applied ? '✅' : '⏳'}</span>
+                                    <span style={{ marginTop: 1 }}><WsIcon name={m.applied ? 'check-square' : 'clock'} size={18} /></span>
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', fontFamily: 'monospace' }}>{m.file}</div>
                                         {m.tables.length > 0 && (
@@ -706,7 +704,7 @@ export default function DevWorkspace({ agentId }) {
                         <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8' }}>Cargando errores…</div>
                     ) : errors?.total === 0 ? (
                         <div style={{ textAlign: 'center', padding: 60 }}>
-                            <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
+                            <div style={{ marginBottom: 12, color: '#10b981' }}><WsIcon name="check-square" size={48} /></div>
                             <div style={{ fontSize: 16, fontWeight: 700, color: '#10b981' }}>Sin errores en las últimas 24 horas</div>
                             <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 6 }}>El sistema funciona correctamente</div>
                         </div>

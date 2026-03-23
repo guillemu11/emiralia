@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '../../api.js';
 import ArtifactCard from './ArtifactCard.jsx';
 import ArtifactPreviewModal from './ArtifactPreviewModal.jsx';
+import WsIcon from './WsIcon.jsx';
 import {
     MARKETING_TYPES, CAMPAIGN_CHANNELS, DOC_SUBTYPES,
     REPORT_PERIODS, MARKETING_HANDOFF_AGENTS,
 } from './artifactConstants.js';
 
 const INNER_TABS = [
-    { id: 'campaigns',  label: 'Campañas',   icon: '🎯' },
-    { id: 'documents',  label: 'Documentos', icon: '📄' },
-    { id: 'channels',   label: 'Canales',    icon: '📊' },
-    { id: 'calendar',   label: 'Calendario', icon: '📅' },
+    { id: 'campaigns',  label: 'Campañas',   icon: 'target'    },
+    { id: 'documents',  label: 'Documentos', icon: 'file-text' },
+    { id: 'channels',   label: 'Canales',    icon: 'bar-chart' },
+    { id: 'calendar',   label: 'Calendario', icon: 'calendar'  },
 ];
 
 const STATUS_COLORS = {
@@ -269,6 +270,7 @@ export default function MarketingWorkspace({ agentId, agent }) {
                         key={tab.id}
                         onClick={() => setInnerTab(tab.id)}
                         style={{
+                            display: 'flex', alignItems: 'center', gap: 5,
                             padding: '8px 16px', border: 'none', cursor: 'pointer', fontWeight: 600,
                             fontSize: '0.82rem', borderRadius: '8px 8px 0 0',
                             background: innerTab === tab.id ? '#fff' : 'transparent',
@@ -276,7 +278,8 @@ export default function MarketingWorkspace({ agentId, agent }) {
                             borderBottom: innerTab === tab.id ? '2px solid var(--primary)' : '2px solid transparent',
                         }}
                     >
-                        {tab.icon} {tab.label}
+                        <WsIcon name={tab.icon} size={13} />
+                        {tab.label}
                     </button>
                 ))}
             </div>
@@ -324,7 +327,7 @@ export default function MarketingWorkspace({ agentId, agent }) {
                         <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>Cargando campañas...</div>
                     ) : filteredCampaigns.length === 0 ? (
                         <EmptyState
-                            icon="🎯"
+                            icon="target"
                             title="No hay campañas"
                             desc="Crea tu primer campaign brief con el wizard."
                             cta="Nueva Campaña"
@@ -375,7 +378,7 @@ export default function MarketingWorkspace({ agentId, agent }) {
                         <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>Cargando documentos...</div>
                     ) : documents.length === 0 ? (
                         <EmptyState
-                            icon="📄"
+                            icon="file-text"
                             title="No hay documentos estratégicos"
                             desc="Crea un ICP, propuesta de valor, battlecard o GTM Plan."
                             cta="Nuevo Documento"
@@ -419,7 +422,7 @@ export default function MarketingWorkspace({ agentId, agent }) {
                         <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>Cargando reportes...</div>
                     ) : channelRpts.length === 0 ? (
                         <EmptyState
-                            icon="📊"
+                            icon="bar-chart"
                             title="No hay reportes de canal"
                             desc="Genera un reporte de rendimiento por canal de marketing."
                             cta="Nuevo Reporte"
@@ -438,7 +441,7 @@ export default function MarketingWorkspace({ agentId, agent }) {
                         <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>Cargando calendario...</div>
                     ) : calendarCampaigns.length === 0 ? (
                         <EmptyState
-                            icon="📅"
+                            icon="calendar"
                             title="No hay campañas con fecha"
                             desc="Las campañas con fechas inicio/fin aparecen aquí ordenadas cronológicamente."
                             cta="Nueva Campaña"
@@ -545,7 +548,7 @@ export default function MarketingWorkspace({ agentId, agent }) {
 function EmptyState({ icon, title, desc, cta, onCta }) {
     return (
         <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '12px', opacity: 0.35 }}>{icon}</div>
+            <div style={{ marginBottom: '16px', color: '#cbd5e1' }}><WsIcon name={icon} size={36} /></div>
             <h3 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1rem' }}>{title}</h3>
             <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '20px' }}>{desc}</p>
             <button
@@ -792,8 +795,9 @@ function WizardModal({ wizardType, wizardStep, wizard, generating, totalSteps, o
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>
-                            {typeInfo.icon} {typeInfo.label}
+                        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <WsIcon name={typeInfo.icon} size={15} />
+                            {typeInfo.label}
                         </h3>
                         <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
                             Paso {wizardStep} de {totalSteps}
@@ -826,7 +830,8 @@ function WizardModal({ wizardType, wizardStep, wizard, generating, totalSteps, o
                                         className={`wizard-option-pill ${wizard.channel === c.id ? 'selected' : ''}`}
                                         onClick={() => onWizardChange({ channel: c.id })}
                                     >
-                                        {c.icon} {c.label}
+                                        <WsIcon name={c.icon} size={12} style={{marginRight:4}} />
+                                        {c.label}
                                     </button>
                                 ))}
                             </div>

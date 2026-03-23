@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { API_URL } from '../api.js';
+import WsIcon from '../components/workspace/WsIcon.jsx';
 
 const WORKFLOWS = [
     {
         id: 'pm-review',
         name: 'PM Review',
         description: 'Validacion de ideas y desglose en proyectos, fases y tareas',
-        icon: '📋',
+        icon: 'clipboard-list',
         agents: ['pm-agent'],
         category: 'execution',
         automatable: false,
@@ -38,7 +39,7 @@ const WORKFLOWS = [
         id: 'screenshot-design-loop',
         name: 'Screenshot Design Loop',
         description: 'Iteracion de UI de alta fidelidad basada en capturas y comparacion visual',
-        icon: '🎨',
+        icon: 'pen-tool',
         agents: ['frontend-agent'],
         category: 'design',
         automatable: false,
@@ -53,7 +54,7 @@ const WORKFLOWS = [
         id: 'data-intelligence',
         name: 'Data Intelligence',
         description: 'Pipeline de inteligencia de datos: analisis, dedup y enriquecimiento de propiedades',
-        icon: '📊',
+        icon: 'bar-chart-2',
         agents: ['data-agent', 'pm-agent'],
         category: 'data',
         automatable: false,
@@ -68,7 +69,7 @@ const WORKFLOWS = [
         id: 'gtm-planning',
         name: 'GTM Planning',
         description: 'Planificacion de Go-to-Market: canales, roadmap y presupuesto',
-        icon: '🚀',
+        icon: 'rocket',
         agents: ['pm-agent', 'marketing-agent'],
         category: 'strategy',
         automatable: false,
@@ -202,13 +203,13 @@ export default function WorkflowsHub() {
         } catch { /* ignore */ }
     };
 
-    const statusIcon = (status) => {
+    const statusIconName = (status) => {
         switch (status) {
-            case 'completed': return '✅';
-            case 'failed': return '❌';
-            case 'running': return '🔄';
-            case 'pending': return '⏳';
-            default: return '⚪';
+            case 'completed': return 'check-square';
+            case 'failed': return 'x-circle';
+            case 'running': return 'zap';
+            case 'pending': return 'clock';
+            default: return 'bar-chart';
         }
     };
 
@@ -216,7 +217,7 @@ export default function WorkflowsHub() {
         return (
             <div className="dashboard-container animate-fade-in" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '16px' }}>⚡</div>
+                    <div style={{ marginBottom: '16px', color: '#94a3b8' }}><WsIcon name="zap" size={32} /></div>
                     <p className="subtitle">{t('workflows.loading')}</p>
                 </div>
             </div>
@@ -240,7 +241,7 @@ export default function WorkflowsHub() {
 
                 <div className="card" style={{ marginBottom: '32px' }}>
                     <div className="workflow-detail-header">
-                        <span className="workflow-detail-icon">{wf.icon}</span>
+                        <span className="workflow-detail-icon"><WsIcon name={wf.icon} size={24} /></span>
                         <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
                                 <h2 style={{ fontSize: '1.3rem', fontWeight: 800 }}>{wf.name}</h2>
@@ -306,7 +307,7 @@ export default function WorkflowsHub() {
                                     <span className="audit-time">{timeAgo(run.started_at)}</span>
                                 </div>
                                 <div className="audit-event-icon-wrapper">
-                                    <div className="audit-event-icon">{statusIcon(run.status)}</div>
+                                    <div className="audit-event-icon"><WsIcon name={statusIconName(run.status)} size={16} /></div>
                                     <div className="audit-timeline-line"></div>
                                 </div>
                                 <div className="card audit-event-card">
@@ -353,7 +354,7 @@ export default function WorkflowsHub() {
             {/* Header */}
             <header>
                 <div>
-                    <h1>⚡ {t('workflows.title')}</h1>
+                    <h1>{t('workflows.title')}</h1>
                     <p className="subtitle">{t('workflows.subtitle')}</p>
                 </div>
             </header>
@@ -413,7 +414,7 @@ export default function WorkflowsHub() {
                                 {/* Header */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <span style={{ fontSize: '1.3rem' }}>{wf.icon}</span>
+                                        <WsIcon name={wf.icon} size={20} />
                                         <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>{wf.name}</h3>
                                     </div>
                                     <div style={{ display: 'flex', gap: '6px' }}>
@@ -485,7 +486,7 @@ export default function WorkflowsHub() {
                                             <span className="audit-time">{timeAgo(run.started_at)}</span>
                                         </div>
                                         <div className="audit-event-icon-wrapper">
-                                            <div className="audit-event-icon">{wf?.icon || '⚡'}</div>
+                                            <div className="audit-event-icon"><WsIcon name={wf?.icon || 'zap'} size={16} /></div>
                                             <div className="audit-timeline-line"></div>
                                         </div>
                                         <div className="card audit-event-card">

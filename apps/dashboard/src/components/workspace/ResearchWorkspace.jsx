@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { API_URL } from '../../api.js';
+import WsIcon from './WsIcon.jsx';
 import ArtifactCard from './ArtifactCard.jsx';
 import ArtifactPreviewModal from './ArtifactPreviewModal.jsx';
 import {
@@ -11,10 +12,10 @@ import {
 } from './artifactConstants.js';
 
 const TABS = [
-    { id: 'feed',    label: '📡 Intelligence Feed' },
-    { id: 'sources', label: '🔍 Source Monitor'    },
-    { id: 'actions', label: '⚡ Action Items'       },
-    { id: 'trends',  label: '📈 Trend Analysis'    },
+    { id: 'feed',    label: 'Intelligence Feed' },
+    { id: 'sources', label: 'Source Monitor'    },
+    { id: 'actions', label: 'Action Items'      },
+    { id: 'trends',  label: 'Trend Analysis'    },
 ];
 
 const STATUS_OPTS = [
@@ -461,7 +462,7 @@ export default function ResearchWorkspace({ agentId, agent }) {
                         </div>
                     ) : artifacts.length === 0 ? (
                         <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
-                            <div className="text-4xl mb-3">✅</div>
+                            <div className="mb-3" style={{ color: '#10b981' }}><WsIcon name="check-square" size={40} /></div>
                             <div className="text-slate-500 font-medium">No hay action items pendientes</div>
                             <div className="text-slate-400 text-sm mt-1">
                                 Los hallazgos con <code className="text-xs">requires_action: true</code> aparecerán aquí
@@ -555,7 +556,7 @@ export default function ResearchWorkspace({ agentId, agent }) {
                     </p>
                     {trendData.length === 0 ? (
                         <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
-                            <div className="text-4xl mb-3">📈</div>
+                            <div className="mb-3" style={{ color: '#94a3b8' }}><WsIcon name="trending-up" size={40} /></div>
                             <div className="text-slate-500 font-medium">Sin datos de tendencias</div>
                             <div className="text-slate-400 text-sm mt-1">
                                 Los reportes con <code className="text-xs">metadata.topic</code> alimentan este panel

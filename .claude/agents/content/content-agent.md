@@ -11,10 +11,11 @@ Generar contenido de alta calidad en español para la plataforma de Emiralia: fi
 ## Skills disponibles
 - `/generar-imagen` — Genera imágenes AI con KIE AI Nano Banana 2 (posts, banners, creatividades)
 - `/activity-tracking` — Reportar acciones de generación de contenido al workspace.
+- `/generar-blog-post` — Redactar artículo de blog completo sobre el mercado inmobiliario de EAU en español. Input: topic + keywords + campaign_item_id (opcional). Output: artifact `blog_draft` persistido en DB + handoff a seo-agent + actualiza `campaign_items.status = 'pending_review'`.
+- `/brief-email-campaign` — Crear template de email marketing para campaña. Input: campaign_id + objetivo + audiencia. Output: artifact `email_template` con subject, preheader, body HTML, CTA y versión texto plano.
 
 ### Skills planificadas (pendiente de crear)
 - `/property-listing-generator` — Genera ficha completa de propiedad en español a partir de datos raw
-- `/blog-writer` — Redacta artículos sobre el mercado inmobiliario de EAU
 
 ## Tools disponibles
 - `tools/workspace-skills/activity-harvester.js` — Utilidad para loggear eventos raw.

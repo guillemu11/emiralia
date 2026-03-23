@@ -29,16 +29,20 @@ import Anthropic from '@anthropic-ai/sdk';
 import { generateEodReport } from '../../tools/workspace-skills/eod-generator.js';
 import { completeProject } from '../../tools/db/complete_project.js';
 import { generateImageService, parseImageArgs } from '../../tools/images/generate-service.js';
+import { createCreativeRouter } from './routes/creative.js';
+import { createCampaignsRouter } from './routes/campaigns.js';
+import { createLeadsRouter, createCrmRouter } from './routes/crm.js';
 
 const { Pool } = pg;
 const app = express();
 const port = process.env.PORT || process.env.DASHBOARD_PORT || 3001;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
 
 // Serve generated images from website public directory
 app.use('/generated', express.static(path.resolve(__dirname, '../../apps/website/public/generated')));
+app.use('/avatars', express.static(path.resolve(__dirname, '../../apps/website/public/avatars')));
 
 // ─── API Key Auth Middleware (Feature 11: Security & Auth) ──────────────────
 
@@ -83,6 +87,13 @@ const pool = process.env.DATABASE_URL
         password: process.env.PG_PASSWORD || 'changeme',
         ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
     });
+
+// Ensure every DB connection uses UTF-8 encoding (prevents mojibake with Spanish accents)
+pool.on('connect', (client) => {
+    client.query("SET client_encoding = 'UTF8'").catch(err =>
+        console.warn('[DB] Could not set client_encoding:', err.message)
+    );
+});
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -2667,6 +2678,17 @@ app.get('/api/artifacts/stats', async (req, res) => {
     }
 });
 
+// GET /api/artifacts/:id — obtener un artefacto por ID
+app.get('/api/artifacts/:id', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM artifacts WHERE id = $1', [req.params.id]);
+        if (!result.rows[0]) return res.status(404).json({ error: 'Artefacto no encontrado' });
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // GET /api/artifacts/:id/publications — publicaciones de un artefacto
 app.get('/api/artifacts/:id/publications', async (req, res) => {
     try {
@@ -3228,6 +3250,16 @@ app.get('/api/dev/migrations', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ─── CRM Routers (Project 045) ────────────────────────────────────────────────
+app.use('/api/leads', createLeadsRouter(pool));
+app.use('/api/crm', createCrmRouter(pool));
+
+// ─── Campaign Manager Router ──────────────────────────────────────────────────
+app.use('/api/campaigns', createCampaignsRouter(pool));
+
+// ─── Creative Studio Router ───────────────────────────────────────────────────
+app.use('/api/creative', createCreativeRouter(pool));
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // PRODUCTION: Serve React Build

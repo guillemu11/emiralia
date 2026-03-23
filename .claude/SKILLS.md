@@ -96,6 +96,16 @@ Skills para campañas, métricas y battlecards competitivos.
 | `metricas-norte` | `/metricas-norte` | [[marketing-agent]] | sonnet | fork | North Star Metric + input metrics |
 | `ideas-marketing` | `/ideas-marketing` | [[marketing-agent]] | opus | fork | Ideas creativas de campañas cost-effective |
 | `battlecard-competitivo` | `/battlecard-competitivo` | [[marketing-agent]] | sonnet | fork | Battlecards de ventas vs competidores |
+| `crear-campana` | `/crear-campana` | [[marketing-agent]] | sonnet | shared | Crear campaña multi-canal en DB (campaigns + campaign_items) vía API |
+| `revisar-campana` | `/revisar-campana` | [[marketing-agent]] | haiku | shared | Revisar estado de campaña: KPIs, items pendientes, recomendaciones |
+| `generar-blog-post` | `/generar-blog-post` | [[content-agent]] | sonnet | fork | Redactar artículo blog EAU → artifact blog_draft → handoff seo-agent |
+| `brief-email-campaign` | `/brief-email-campaign` | [[content-agent]] | sonnet | fork | Template email marketing: subject, preheader, body HTML, CTA, texto plano |
+| `brief-social-image` | `/brief-social-image` | [[social-media-agent]] | sonnet | fork | Brief imagen IG/LinkedIn: prompt KIE AI + copy + CTA + hashtags + specs |
+| `brief-paid-avatar-video` | `/brief-paid-avatar-video` | [[social-media-agent]] | sonnet | fork | Brief vídeo avatar ≤15s para TikTok Ads/Reels Ads (orientado a conversión) |
+| `brief-meta-ad` | `/brief-meta-ad` | [[paid-media-agent]] | sonnet | fork | Brief completo Meta Ads: objective, targeting, copy, creative specs, budget, bid |
+| `brief-google-ad` | `/brief-google-ad` | [[paid-media-agent]] | sonnet | fork | Brief Google Ads: campaign type, keywords, headlines×15, descriptions×4, landing |
+| `brief-tiktok-ad` | `/brief-tiktok-ad` | [[paid-media-agent]] | sonnet | fork | Brief TikTok Ads: script In-Feed ≤15s, caption, CTA, budget, KPIs |
+| `reporte-paid-media` | `/reporte-paid-media` | [[paid-media-agent]] | sonnet | fork | Informe rendimiento: spend vs budget, CTR, CPC, CPL, ROAS, recomendaciones |
 
 ---
 

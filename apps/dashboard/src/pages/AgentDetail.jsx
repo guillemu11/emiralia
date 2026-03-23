@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { API_URL } from '../api.js';
 import AgentChat from '../components/AgentChat.jsx';
+import WsIcon from '../components/workspace/WsIcon.jsx';
 import ContentWorkspace from '../components/workspace/ContentWorkspace.jsx';
 import SocialWorkspace from '../components/workspace/SocialWorkspace.jsx';
 import MarketingWorkspace from '../components/workspace/MarketingWorkspace.jsx';
@@ -79,11 +80,11 @@ export default function AgentDetail() {
     };
 
     const moodLabels = {
-        productive: { emoji: '🟢', label: t('mood.productive') },
-        neutral: { emoji: '🟡', label: t('mood.neutral') },
-        blocked: { emoji: '🔴', label: t('mood.blocked') },
-        frustrated: { emoji: '😤', label: t('mood.frustrated') || 'Frustrado' },
-        focused: { emoji: '🎯', label: t('mood.focused') },
+        productive: { label: t('mood.productive') },
+        neutral: { label: t('mood.neutral') },
+        blocked: { label: t('mood.blocked') },
+        frustrated: { label: t('mood.frustrated') || 'Frustrado' },
+        focused: { label: t('mood.focused') },
     };
 
     const [activeTab, setActiveTab] = useState('workspace');
@@ -185,13 +186,13 @@ export default function AgentDetail() {
     const WorkspaceComponent = workspaceMap[agentId];
 
     const tabs = [
-        ...(WorkspaceComponent ? [{ id: 'workspace', label: 'Workspace', icon: '◈', count: 0 }] : []),
-        { id: 'chat', label: 'Chat', icon: '💬', count: 0 },
-        { id: 'skills', label: 'Skills', icon: '🛠', count: skills.length },
-        { id: 'tools', label: 'Tools', icon: '🔧', count: tools.length },
-        { id: 'workflows', label: 'Workflows', icon: '📋', count: 0 },
-        { id: 'activity', label: t('agentDetail.activity'), icon: '📊', count: recentEvents.length },
-        { id: 'eod', label: 'EOD Reports', icon: '📝', count: eodReports.length },
+        ...(WorkspaceComponent ? [{ id: 'workspace', label: 'Workspace', icon: 'layout', count: 0 }] : []),
+        { id: 'chat', label: 'Chat', icon: 'edit-2', count: 0 },
+        { id: 'skills', label: 'Skills', icon: 'tool', count: skills.length },
+        { id: 'tools', label: 'Tools', icon: 'tool', count: tools.length },
+        { id: 'workflows', label: 'Workflows', icon: 'clipboard-list', count: 0 },
+        { id: 'activity', label: t('agentDetail.activity'), icon: 'bar-chart-2', count: recentEvents.length },
+        { id: 'eod', label: 'EOD Reports', icon: 'file-text', count: eodReports.length },
     ];
 
     return (
@@ -237,7 +238,7 @@ export default function AgentDetail() {
                         className={`agent-tab ${activeTab === tab.id ? 'active' : ''}`}
                         onClick={() => setActiveTab(tab.id)}
                     >
-                        <span>{tab.icon}</span>
+                        <WsIcon name={tab.icon} size={14} />
                         <span>{tab.label}</span>
                         <span className="agent-tab-count">{tab.count}</span>
                     </button>
@@ -291,13 +292,16 @@ export default function AgentDetail() {
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                                 {tools.map((toolId) => (
                                     <span key={toolId} className="card tool-detail-card animate-fade-in" style={{
-                                        display: 'inline-block',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
                                         padding: '8px 16px',
                                         borderRadius: '20px',
                                         fontSize: '0.9rem',
                                         fontWeight: 600,
                                     }}>
-                                        🔧 {toolId}
+                                        <WsIcon name="tool" size={14} />
+                                        {toolId}
                                     </span>
                                 ))}
                             </div>
@@ -364,7 +368,7 @@ export default function AgentDetail() {
                     <div className="agent-eod-reports">
                         {eodReports.length > 0 ? (
                             eodReports.map((report) => {
-                                const m = moodLabels[report.mood] || { emoji: '⚪', label: report.mood };
+                                const m = moodLabels[report.mood] || { label: report.mood };
                                 const completedCount = Array.isArray(report.completed_tasks) ? report.completed_tasks.length : 0;
                                 const blockersCount = Array.isArray(report.blockers) ? report.blockers.length : 0;
                                 const inProgressCount = Array.isArray(report.in_progress_tasks) ? report.in_progress_tasks.length : 0;
@@ -385,7 +389,7 @@ export default function AgentDetail() {
                                                 fontWeight: 600,
                                                 background: '#f1f5f9',
                                             }}>
-                                                {m.emoji} {m.label}
+                                                {m.label}
                                             </span>
                                         </div>
                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>

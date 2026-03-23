@@ -25,6 +25,8 @@ Soy el responsable de atraer inversores hispanohablantes a Emiralia. Diseño cam
 - `/ideas-posicionamiento` — Brainstorm de territorios de posicionamiento diferencial.
 - `/mapa-viaje-cliente` — Mapear el journey completo del comprador hispanohablante en EAU.
 - `/estrategia-gtm` — Plan de Go-to-Market por mercado objetivo.
+- `/crear-campana` — Crear campaña multi-canal completa: POST `/api/campaigns` con objetivo/audiencia/canales/presupuesto/fechas, luego bulk POST de `campaign_items` por canal usando CHANNEL_DEFAULTS. Guarda `active_campaigns` en memoria. Retorna URL de la campaña creada en el dashboard.
+- `/revisar-campana` — Revisar estado de una campaña activa: GET `/api/campaigns/:id` + `/api/campaigns/:id/items`. Genera resumen ejecutivo con status de cada item, budget burn, items en pending_review, recomendaciones de próximos pasos. Actualiza `last_task_completed` en memoria.
 
 ## Tools disponibles
 - `tools/db/memory.js` — Leer y escribir memoria persistente del agente.

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
+import WsIcon from '../components/workspace/WsIcon.jsx';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     AreaChart, Area, PieChart, Pie, Cell, Legend
@@ -90,7 +91,7 @@ export default function SkillUsageTracker() {
             {/* Header */}
             <header style={{ marginBottom: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '2rem' }}>🎯</span>
+                    <span><WsIcon name="target" size={32} /></span>
                     <div>
                         <h1 style={{ fontSize: '1.8rem' }}>Skill Usage Tracker</h1>
                         <p className="subtitle">Monitoreo de invocaciones de skills por agente, dominio y tendencia</p>

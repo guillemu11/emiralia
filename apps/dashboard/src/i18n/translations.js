@@ -14,6 +14,9 @@ export const translations = {
       pmReports: 'PM Reports',
       workflows: 'Workflows',
       skillTracker: 'Skill Tracker',
+      creativeStudio: 'Creative Studio',
+      campaignManager: 'Campaign Manager',
+      crm: 'CRM',
     },
 
     // Error Boundary
@@ -545,6 +548,9 @@ export const translations = {
       pmReports: 'PM Reports',
       workflows: 'Workflows',
       skillTracker: 'Skill Tracker',
+      creativeStudio: 'Creative Studio',
+      campaignManager: 'Campaign Manager',
+      crm: 'CRM',
     },
 
     error: {

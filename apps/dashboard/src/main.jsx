@@ -17,6 +17,10 @@ import PmReports from './pages/PmReports.jsx'
 import Inbox from './pages/Inbox.jsx'
 import WorkflowsHub from './pages/WorkflowsHub.jsx'
 import SkillUsageTracker from './pages/SkillUsageTracker.jsx'
+import CreativeStudio from './pages/CreativeStudio.jsx'
+import CampaignManager from './pages/CampaignManager.jsx'
+import CampaignDetail from './pages/CampaignDetail.jsx'
+import CRM from './pages/CRM.jsx'
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
@@ -60,6 +64,10 @@ createRoot(document.getElementById('root')).render(
             <Route path="/workspace/agent/:agentId" element={<AgentDetail />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/pm-reports" element={<PmReports />} />
+            <Route path="/creative-studio" element={<CreativeStudio />} />
+            <Route path="/campaign-manager" element={<CampaignManager />} />
+            <Route path="/campaign-manager/:id" element={<CampaignDetail />} />
+            <Route path="/crm" element={<CRM />} />
           </Route>
         </Routes>
       </BrowserRouter>

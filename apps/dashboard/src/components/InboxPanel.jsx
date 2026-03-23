@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { API_URL } from '../api.js';
+import WsIcon from './workspace/WsIcon.jsx';
 
 const DEPARTMENTS = ['data', 'seo', 'dev', 'content', 'sales', 'marketing', 'design', 'product'];
 
@@ -13,18 +14,18 @@ export default function InboxPanel({ department, selectedId, onSelectItem, onDel
     const [quickDept, setQuickDept] = useState(department || '');
 
     const STATUS_FILTERS = [
-        { value: 'all', label: t('inboxPanel.all') },
-        { value: 'chat', label: `💬 ${t('inboxPanel.chat')}` },
-        { value: 'borrador', label: `📝 ${t('inboxPanel.draft')}` },
-        { value: 'proyecto', label: `🚀 ${t('inboxPanel.project')}` },
-        { value: 'discarded', label: t('inboxPanel.discarded') },
+        { value: 'all',       label: t('inboxPanel.all')      },
+        { value: 'chat',      label: t('inboxPanel.chat')     },
+        { value: 'borrador',  label: t('inboxPanel.draft')    },
+        { value: 'proyecto',  label: t('inboxPanel.project')  },
+        { value: 'discarded', label: t('inboxPanel.discarded')},
     ];
 
     const STATUS_LABELS = {
-        chat: `💬 ${t('inboxPanel.statusChat')}`,
-        borrador: `📝 ${t('inboxPanel.statusDraft')}`,
-        proyecto: `🚀 ${t('inboxPanel.statusProject')}`,
-        discarded: `🗑️ ${t('inboxPanel.statusDiscarded')}`,
+        chat:      t('inboxPanel.statusChat'),
+        borrador:  t('inboxPanel.statusDraft'),
+        proyecto:  t('inboxPanel.statusProject'),
+        discarded: t('inboxPanel.statusDiscarded'),
     };
 
     useEffect(() => {
@@ -162,7 +163,7 @@ export default function InboxPanel({ department, selectedId, onSelectItem, onDel
                             </div>
                             <div className="inbox-item-meta">
                                 <span className={`source-badge ${item.source}`}>
-                                    {item.source === 'telegram' ? `📱 ${t('inboxPanel.telegram')}` : item.source === 'agent' ? `🤖 ${t('inboxPanel.agent')}` : `💻 ${t('inboxPanel.dashboardSource')}`}
+                                    {item.source === 'telegram' ? t('inboxPanel.telegram') : item.source === 'agent' ? t('inboxPanel.agent') : t('inboxPanel.dashboardSource')}
                                 </span>
                                 <span className={`inbox-status-dot ${item.status}`}></span>
                                 <span>{STATUS_LABELS[item.status] || item.status}</span>

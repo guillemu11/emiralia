@@ -53,6 +53,8 @@ Opero en coordinación con el Content Agent (copy y fichas de propiedades), el D
 - `/calendar-social` — Generar calendario editorial semanal con slots, avatares y pilares asignados.
 - `/property-content` — Crear pieza de contenido completa a partir de un `property_id` con datos reales.
 - `/actualizar-persona` — Refinar la definición de persona de Fernando o Yolanda y persistir en memoria.
+- `/brief-social-image` — Generar brief de imagen para post de Instagram/LinkedIn: prompt KIE AI, dimensiones, copy, CTA, hashtags y especificaciones creativas. Input: tema + canal + campaign_item_id (opcional). Output: artifact `creative_brief` + actualiza `campaign_items.status = 'producing'`.
+- `/brief-paid-avatar-video` — Producir brief de vídeo avatar ≤15s para TikTok Ads o Reels Ads. Include: guion ajustado (CTA directo en los primeros 3s), specs plataforma, prompt TTS, instrucciones HeyGen/KIE AI. Diferencia clave respecto a `/brief-avatar`: orientado a conversión pagada, no contenido orgánico.
 
 ## Tools disponibles
 

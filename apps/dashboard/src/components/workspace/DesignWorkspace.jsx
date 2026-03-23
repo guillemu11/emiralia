@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { API_URL } from '../../api.js';
 import ArtifactPreviewModal from './ArtifactPreviewModal.jsx';
+import WsIcon from './WsIcon.jsx';
 import {
     STATUS_COLORS,
     DESIGN_TYPES,
@@ -69,7 +70,7 @@ function DesignPreviewModal({ artifact, onClose }) {
             >
                 {/* Header */}
                 <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontSize: 22 }}>{DESIGN_TYPE_ICONS[artifact.type] || '🎨'}</span>
+                    <span style={{ color: '#6366f1' }}><WsIcon name={DESIGN_TYPE_ICONS[artifact.type] || 'pen-tool'} size={20} /></span>
                     <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>{artifact.title || '(sin título)'}</div>
                         <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: 2 }}>
@@ -147,7 +148,7 @@ function DesignArtifactCard({ artifact, onPreview, onEdit, onStatusChange, onDep
     const statusMeta = STATUS_COLORS[artifact.status] || STATUS_COLORS.draft;
     const statusLabel = artifact.status === 'published' ? 'Deployed' : statusMeta.label;
     const typeLabel   = DESIGN_TYPE_LABELS[artifact.type] || artifact.type;
-    const typeIcon    = DESIGN_TYPE_ICONS[artifact.type] || '🎨';
+    const typeIcon    = DESIGN_TYPE_ICONS[artifact.type] || 'pen-tool';
     const canBrandCheck = ['page_design', 'mockup'].includes(artifact.type);
 
     useEffect(() => {
@@ -168,8 +169,9 @@ function DesignArtifactCard({ artifact, onPreview, onEdit, onStatusChange, onDep
             <div style={{ padding: '16px 16px 12px' }}>
                 {/* Badges row */}
                 <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: '#ede9fe', color: '#6d28d9' }}>
-                        {typeIcon} {typeLabel}
+                    <span style={{ display:'flex', alignItems:'center', gap:4, fontSize: '0.72rem', fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: '#ede9fe', color: '#6d28d9' }}>
+                        <WsIcon name={typeIcon} size={11} />
+                        {typeLabel}
                     </span>
                     <span style={{
                         fontSize: '0.72rem', fontWeight: 600, padding: '2px 8px', borderRadius: 20,
@@ -209,7 +211,7 @@ function DesignArtifactCard({ artifact, onPreview, onEdit, onStatusChange, onDep
                             background: '#eef2ff', padding: '2px 8px', borderRadius: 12, display: 'inline-block' }}
                         onClick={e => e.stopPropagation()}
                     >
-                        🔗 {artifact.metadata.url.replace(/^https?:\/\//, '').slice(0, 40)}
+                        {artifact.metadata.url.replace(/^https?:\/\//, '').slice(0, 40)}
                     </a>
                 )}
 
@@ -222,8 +224,8 @@ function DesignArtifactCard({ artifact, onPreview, onEdit, onStatusChange, onDep
             {/* Actions */}
             <div style={{ padding: '8px 12px 12px', borderTop: '1px solid #f1f5f9', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                 {/* Ver siempre visible */}
-                <button className="artifact-action-btn" onClick={() => onPreview(artifact)} title="Ver">👁 Ver</button>
-                <button className="artifact-action-btn" onClick={() => onEdit(artifact)} title="Editar">✏️</button>
+                <button className="artifact-action-btn" onClick={() => onPreview(artifact)} title="Ver">Ver</button>
+                <button className="artifact-action-btn" onClick={() => onEdit(artifact)} title="Editar">Editar</button>
 
                 {/* Draft */}
                 {artifact.status === 'draft' && (
@@ -239,11 +241,11 @@ function DesignArtifactCard({ artifact, onPreview, onEdit, onStatusChange, onDep
                     <>
                         <button className="artifact-action-btn approve"
                             onClick={() => onStatusChange(artifact.id, 'approved')}>
-                            ✅ Aprobar
+                            Aprobar
                         </button>
                         <button className="artifact-action-btn reject"
                             onClick={() => setRejectOpen(true)}>
-                            ❌
+                            Rechazar
                         </button>
                     </>
                 )}
@@ -270,18 +272,18 @@ function DesignArtifactCard({ artifact, onPreview, onEdit, onStatusChange, onDep
                         onClick={() => onDeploy(artifact)}
                         style={{ background: '#6366f1', color: '#fff', borderColor: '#6366f1' }}
                         title="Deploy a Dev Agent">
-                        🚀 Deploy
+                        Deploy
                     </button>
                 )}
 
                 {/* Fork (approved, published, rejected) */}
                 {['approved', 'published', 'rejected'].includes(artifact.status) && (
-                    <button className="artifact-action-btn" onClick={() => onFork(artifact)} title="Fork">🔀 Fork</button>
+                    <button className="artifact-action-btn" onClick={() => onFork(artifact)} title="Fork">Fork</button>
                 )}
 
                 {/* Brand Check */}
                 {canBrandCheck && (
-                    <button className="artifact-action-btn" onClick={() => onBrandCheck(artifact)} title="Brand Check">📐</button>
+                    <button className="artifact-action-btn" onClick={() => onBrandCheck(artifact)} title="Brand Check">Brand Check</button>
                 )}
 
                 {/* Handoff */}
@@ -361,7 +363,7 @@ function DesignSystemPanel() {
             {/* Colors */}
             <div style={sectionStyle}>
                 <div style={headerStyle} onClick={() => toggle('colors')}>
-                    <span style={{ fontWeight: 600, color: '#0f172a' }}>🎨 Color Tokens</span>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>Color Tokens</span>
                     <span style={{ color: '#6366f1' }}>{expanded.colors ? '▲' : '▼'}</span>
                 </div>
                 {expanded.colors && (
@@ -411,7 +413,7 @@ function DesignSystemPanel() {
             {/* Rules */}
             <div style={sectionStyle}>
                 <div style={headerStyle} onClick={() => toggle('rules')}>
-                    <span style={{ fontWeight: 600, color: '#0f172a' }}>📐 Reglas Clave</span>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>Reglas Clave</span>
                     <span style={{ color: '#6366f1' }}>{expanded.rules ? '▲' : '▼'}</span>
                 </div>
                 {expanded.rules && (
@@ -473,7 +475,7 @@ function DesignSystemPanel() {
 
                         {/* Validation command */}
                         <div style={{ padding: 16, background: '#f8fafc', borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                            <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>🔍 Validación rápida (terminal)</div>
+                            <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>Validación rápida (terminal)</div>
                             <pre style={{ fontSize: '0.78rem', color: '#475569', margin: 0, background: '#1e293b', color: '#94a3b8', padding: 12, borderRadius: 6, overflowX: 'auto' }}>
                                 {'# Contar secciones oscuras (≤2 = OK, ≤3 = review, ≥4 = rechazar)\ngrep -c "bg-slate-[89]00\\|bg-black" index.html\n\n# Buscar anti-patrón text-white en cards blancas\ngrep -A10 "bg-white" index.html | grep "text-white"'}
                             </pre>
@@ -488,10 +490,10 @@ function DesignSystemPanel() {
 // ─── Main Component ────────────────────────────────────────────────────────────
 
 const INNER_TABS = [
-    { id: 'assets',         label: 'Assets',        icon: '🖼' },
-    { id: 'design-system',  label: 'Design System', icon: '🎨' },
-    { id: 'comparativa',    label: 'Comparativa',   icon: '📸' },
-    { id: 'pending-deploy', label: 'Pending Deploy', icon: '🚀' },
+    { id: 'assets',         label: 'Assets',        icon: 'image' },
+    { id: 'design-system',  label: 'Design System', icon: 'pen-tool' },
+    { id: 'comparativa',    label: 'Comparativa',   icon: 'layers' },
+    { id: 'pending-deploy', label: 'Pending Deploy', icon: 'rocket' },
 ];
 
 const STATUS_OPTIONS = [
@@ -739,7 +741,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                             fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 6,
                         }}
                     >
-                        <span>{t.icon}</span> {t.label}
+                        <WsIcon name={t.icon} size={13} /> {t.label}
                         {t.id === 'pending-deploy' && pendingDeploy.length > 0 && (
                             <span style={{ background: '#6366f1', color: '#fff', borderRadius: 20, padding: '1px 7px', fontSize: '0.72rem', fontWeight: 700, marginLeft: 4 }}>
                                 {pendingDeploy.length}
@@ -783,7 +785,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                         <div style={{ textAlign: 'center', padding: 60, color: '#94a3b8' }}>Cargando assets…</div>
                     ) : filtered.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: 60 }}>
-                            <div style={{ fontSize: 40, marginBottom: 12 }}>🎨</div>
+                            <div style={{ marginBottom: 12, color: '#cbd5e1' }}><WsIcon name="pen-tool" size={40} /></div>
                             <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>No hay assets aquí todavía</div>
                             <div style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: 20 }}>Crea tu primer diseño con el botón "Nuevo Asset"</div>
                             <button
@@ -897,7 +899,7 @@ export default function DesignWorkspace({ agentId, agent }) {
 
                     {pendingDeploy.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: 60, border: '2px dashed #e2e8f0', borderRadius: 12 }}>
-                            <div style={{ fontSize: 36, marginBottom: 10 }}>🚀</div>
+                            <div style={{ marginBottom: 10, color: '#94a3b8' }}><WsIcon name="rocket" size={32} /></div>
                             <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 4 }}>No hay diseños pendientes de deploy</div>
                             <div style={{ color: '#64748b', fontSize: '0.82rem' }}>Aprueba un asset desde la pestaña Assets.</div>
                         </div>
@@ -905,7 +907,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                             {pendingDeploy.map(a => (
                                 <div key={a.id} className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-                                    <span style={{ fontSize: 24 }}>{DESIGN_TYPE_ICONS[a.type] || '🎨'}</span>
+                                    <span style={{ color: '#6366f1' }}><WsIcon name={DESIGN_TYPE_ICONS[a.type] || 'pen-tool'} size={22} /></span>
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '0.9rem' }}>{a.title}</div>
                                         <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: 2 }}>
@@ -914,7 +916,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                                         {a.metadata?.url && (
                                             <a href={a.metadata.url} target="_blank" rel="noreferrer"
                                                 style={{ fontSize: '0.75rem', color: '#6366f1', textDecoration: 'none' }}>
-                                                🔗 {a.metadata.url.slice(0, 60)}
+                                                {a.metadata.url.slice(0, 60)}
                                             </a>
                                         )}
                                     </div>
@@ -933,7 +935,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                                         onClick={() => handleDeploy(a)}
                                         style={{ padding: '10px 20px', background: '#6366f1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
                                     >
-                                        🚀 Deploy ahora
+                                        Deploy ahora
                                     </button>
                                 </div>
                             ))}
@@ -961,7 +963,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                     onClick={() => setEditArtifact(null)}>
                     <div style={{ background: '#fff', borderRadius: 16, padding: 28, width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
                         onClick={e => e.stopPropagation()}>
-                        <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem', marginBottom: 20 }}>✏️ Editar Asset</div>
+                        <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem', marginBottom: 20 }}>Editar Asset</div>
                         <div style={{ marginBottom: 14 }}>
                             <label style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 600, display: 'block', marginBottom: 6 }}>Título</label>
                             <input className="edit-input-inline" value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))} placeholder="Título del asset" />
@@ -988,7 +990,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                     onClick={() => { setBrandCheckResult(null); setBrandCheckArtifact(null); }}>
                     <div style={{ background: '#fff', borderRadius: 16, padding: 28, width: '100%', maxWidth: 480, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
                         onClick={e => e.stopPropagation()}>
-                        <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem', marginBottom: 4 }}>📐 Brand Check</div>
+                        <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem', marginBottom: 4 }}>Brand Check</div>
                         <div style={{ color: '#64748b', fontSize: '0.82rem', marginBottom: 20 }}>{brandCheckArtifact.title}</div>
 
                         {/* Score */}
@@ -1000,7 +1002,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                             <div style={{ marginTop: 8, display: 'inline-block', padding: '4px 16px', borderRadius: 20, fontWeight: 600, fontSize: '0.82rem',
                                 background: brandCheckResult.passed ? '#ecfdf5' : '#fef2f2',
                                 color: brandCheckResult.passed ? '#059669' : '#ef4444' }}>
-                                {brandCheckResult.passed ? '✅ Brand Compliant' : '❌ Issues encontrados'}
+                                {brandCheckResult.passed ? 'Brand Compliant' : 'Issues encontrados'}
                             </div>
                         </div>
 
@@ -1010,7 +1012,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                                 <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '0.85rem', marginBottom: 8 }}>Issues detectados:</div>
                                 {brandCheckResult.issues.map((issue, i) => (
                                     <div key={i} style={{ display: 'flex', gap: 8, padding: '7px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.82rem', color: '#475569' }}>
-                                        <span>⚠️</span> {issue}
+                                        <WsIcon name="alert-triangle" size={14} /> {issue}
                                     </div>
                                 ))}
                             </div>
@@ -1075,7 +1077,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                                                 borderRadius: 10, padding: '14px 16px', cursor: 'pointer', transition: 'all 0.15s',
                                             }}
                                         >
-                                            <div style={{ fontSize: '1.4rem', marginBottom: 6 }}>{DESIGN_TYPE_ICONS[t.id]}</div>
+                                            <div style={{ marginBottom: 8, color: '#6366f1' }}><WsIcon name={DESIGN_TYPE_ICONS[t.id] || 'pen-tool'} size={22} /></div>
                                             <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '0.85rem' }}>{t.label}</div>
                                             <div style={{ color: '#64748b', fontSize: '0.75rem', marginTop: 3 }}>{t.desc}</div>
                                         </div>
@@ -1093,8 +1095,9 @@ export default function DesignWorkspace({ agentId, agent }) {
                         {/* Step 2 — Descripción */}
                         {wizardStep === 2 && (
                             <div>
-                                <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 14, fontSize: '0.9rem' }}>
-                                    {DESIGN_TYPE_ICONS[wizard.type]} {DESIGN_TYPE_LABELS[wizard.type]} — Descripción
+                                <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 14, fontSize: '0.9rem', display:'flex', alignItems:'center', gap:6 }}>
+                                    <WsIcon name={DESIGN_TYPE_ICONS[wizard.type] || 'pen-tool'} size={14} />
+                                    {DESIGN_TYPE_LABELS[wizard.type]} — Descripción
                                 </div>
                                 <div style={{ marginBottom: 14 }}>
                                     <label style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 600, display: 'block', marginBottom: 6 }}>Descripción del diseño *</label>
@@ -1143,7 +1146,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                                 <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 14, fontSize: '0.9rem' }}>Confirmar nuevo asset</div>
                                 <div style={{ background: '#f8fafc', borderRadius: 10, padding: 16, marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
                                     {[
-                                        { label: 'Tipo', value: `${DESIGN_TYPE_ICONS[wizard.type]} ${DESIGN_TYPE_LABELS[wizard.type]}` },
+                                        { label: 'Tipo', value: DESIGN_TYPE_LABELS[wizard.type] },
                                         { label: 'Descripción', value: wizard.description },
                                         { label: 'URL', value: wizard.url || '—' },
                                         { label: 'Estado inicial', value: 'Draft' },
@@ -1158,7 +1161,7 @@ export default function DesignWorkspace({ agentId, agent }) {
                                     <button onClick={() => setWizardStep(2)} style={{ padding: '10px 20px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', color: '#475569', cursor: 'pointer', fontWeight: 500, fontSize: '0.85rem' }}>← Atrás</button>
                                     <button onClick={handleCreateDraft} disabled={generating}
                                         style={{ padding: '10px 24px', background: generating ? '#cbd5e1' : '#6366f1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: generating ? 'wait' : 'pointer', fontSize: '0.85rem' }}>
-                                        {generating ? 'Creando…' : '✅ Crear Draft'}
+                                        {generating ? 'Creando…' : 'Crear Draft'}
                                     </button>
                                 </div>
                             </div>

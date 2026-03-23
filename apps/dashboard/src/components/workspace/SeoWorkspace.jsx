@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { API_URL } from '../../api.js';
+import WsIcon from './WsIcon.jsx';
 import ArtifactCard from './ArtifactCard.jsx';
 import ArtifactPreviewModal from './ArtifactPreviewModal.jsx';
 import {
@@ -11,11 +12,11 @@ const ACCENT_DARK = '#92400e';    // amber-900 (text on light bg)
 const ACCENT_BG = '#fffbeb';      // amber-50
 
 const TABS = [
-    { id: 'keywords',        label: '🔑 Keyword Matrix'  },
-    { id: 'audit',           label: '🔍 Site Audit'      },
-    { id: 'meta',            label: '🏷 Meta Tags'        },
+    { id: 'keywords',        label: 'Keyword Matrix'  },
+    { id: 'audit',           label: 'Site Audit'      },
+    { id: 'meta',            label: 'Meta Tags'       },
     { id: 'structured_data', label: '{} Structured Data' },
-    { id: 'ranking',         label: '📈 Ranking Tracker' },
+    { id: 'ranking',         label: 'Ranking Tracker' },
 ];
 
 const STATUS_OPTS = [
@@ -28,10 +29,10 @@ const STATUS_OPTS = [
 ];
 
 const EMPTY_STATES = {
-    keywords:        { icon: '🔑', title: 'Sin keywords todavía',        desc: 'Añade keywords para construir tu matriz SEO.' },
-    audit:           { icon: '🔍', title: 'Sin auditorías',              desc: 'Lanza un audit de página para detectar issues.' },
-    meta:            { icon: '🏷',  title: 'Sin meta tags gestionados',   desc: 'Añade meta tags para controlar el SEO on-page.' },
-    structured_data: { icon: '{}', title: 'Sin structured data',         desc: 'Genera schemas para mejorar el SEO estructurado.' },
+    keywords:        { icon: 'key',    title: 'Sin keywords todavía',        desc: 'Añade keywords para construir tu matriz SEO.' },
+    audit:           { icon: 'search', title: 'Sin auditorías',              desc: 'Lanza un audit de página para detectar issues.' },
+    meta:            { icon: 'tag',    title: 'Sin meta tags gestionados',   desc: 'Añade meta tags para controlar el SEO on-page.' },
+    structured_data: { icon: '{}',    title: 'Sin structured data',         desc: 'Genera schemas para mejorar el SEO estructurado.' },
 };
 
 export default function SeoWorkspace({ agentId }) {
@@ -245,7 +246,7 @@ export default function SeoWorkspace({ agentId }) {
         const m = EMPTY_STATES[tab] || EMPTY_STATES.keywords;
         return (
             <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>{m.icon}</div>
+                <div style={{ marginBottom: '12px', color: '#94a3b8' }}><WsIcon name={m.icon} size={40} /></div>
                 <h3 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1rem' }}>{m.title}</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '20px' }}>{m.desc}</p>
                 <button
@@ -411,7 +412,7 @@ export default function SeoWorkspace({ agentId }) {
                         display: 'flex', alignItems: 'center', gap: '8px',
                         fontSize: '0.82rem', color: '#991b1b', fontWeight: 600,
                     }}>
-                        🔍 Los issues detectados en el audit pueden escalarse directamente al Dev Agent o generar un brief para el Content Agent.
+                        Los issues detectados en el audit pueden escalarse directamente al Dev Agent o generar un brief para el Content Agent.
                     </div>
                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                         {AUDIT_SEVERITIES.map(s => (
@@ -490,7 +491,7 @@ export default function SeoWorkspace({ agentId }) {
             {/* Tab: Ranking Tracker (placeholder) */}
             {activeTab === 'ranking' && (
                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '12px', opacity: 0.4 }}>📈</div>
+                    <div style={{ marginBottom: '12px', opacity: 0.4 }}><WsIcon name="trending-up" size={32} /></div>
                     <h3 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1rem' }}>
                         Ranking Tracker
                     </h3>

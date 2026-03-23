@@ -63,13 +63,13 @@ export function parseImageArgs(argsString) {
  * @param {string} [params.agentId='content-agent'] - Agent that triggered the generation
  * @returns {Promise<Object>} Full result with url, filename, path, cost, etc.
  */
-export async function generateImageService({ prompt, size = 'square', quality = 'standard', generatedBy = 'unknown', agentId = 'content-agent' }) {
+export async function generateImageService({ prompt, size = 'square', quality = 'standard', model = 'nano-banana-2', generatedBy = 'unknown', agentId = 'content-agent' }) {
   if (!prompt) {
     throw new Error('Prompt is required');
   }
 
-  // 1. Generate image via KIE AI Nano Banana 2
-  const result = await generateImage(prompt, { size, quality });
+  // 1. Generate image via KIE AI
+  const result = await generateImage(prompt, { size, quality, model });
 
   // 2. Calculate cost
   const cost = COST_MAP[quality] || 0.04;

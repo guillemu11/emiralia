@@ -187,7 +187,7 @@ export default function PMAgentChat({ inboxItemId, onItemCreated, onStatusChange
         return (
             <div className="chat-container">
                 <div className="chat-header">
-                    <span className="chat-header-title">{`📝 ${t('pmChat.draft')}`}</span>
+                    <span className="chat-header-title">{t('pmChat.draft')}</span>
                     {onClose && (
                         <button className="chat-header-close" onClick={onClose}>&times;</button>
                     )}
@@ -224,7 +224,7 @@ export default function PMAgentChat({ inboxItemId, onItemCreated, onStatusChange
                                 opacity: advancing ? 0.6 : 1,
                             }}
                         >
-                            {advancing ? t('pmChat.generatingProject') : `🚀 ${t('pmChat.confirmCreateProject')}`}
+                            {advancing ? t('pmChat.generatingProject') : t('pmChat.confirmCreateProject')}
                         </button>
                         <button
                             onClick={handleReopen}
@@ -240,7 +240,7 @@ export default function PMAgentChat({ inboxItemId, onItemCreated, onStatusChange
                                 cursor: advancing ? 'wait' : 'pointer',
                             }}
                         >
-                            {`💬 ${t('pmChat.keepRefining')}`}
+                            {t('pmChat.keepRefining')}
                         </button>
                     </div>
                 </div>
@@ -253,7 +253,7 @@ export default function PMAgentChat({ inboxItemId, onItemCreated, onStatusChange
         return (
             <div className="chat-container">
                 <div className="chat-header">
-                    <span className="chat-header-title">{`🚀 ${t('pmChat.projectCreated')}`}</span>
+                    <span className="chat-header-title">{t('pmChat.projectCreated')}</span>
                     {onClose && (
                         <button className="chat-header-close" onClick={onClose}>&times;</button>
                     )}
@@ -297,7 +297,7 @@ export default function PMAgentChat({ inboxItemId, onItemCreated, onStatusChange
                                 opacity: advancing ? 0.6 : 1,
                             }}
                         >
-                            {advancing ? t('pmChat.generating') : `📝 ${t('pmChat.createDraft')}`}
+                            {advancing ? t('pmChat.generating') : t('pmChat.createDraft')}
                         </button>
                     )}
                     {onClose && (
@@ -309,7 +309,9 @@ export default function PMAgentChat({ inboxItemId, onItemCreated, onStatusChange
             <div className="chat-messages">
                 {messages.length === 0 && (
                     <div className="chat-empty">
-                        <div className="chat-empty-icon">💬</div>
+                        <div className="chat-empty-icon">
+                            <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
                         <div className="chat-empty-text">
                             {t('pmChat.describeIdea')}
                         </div>

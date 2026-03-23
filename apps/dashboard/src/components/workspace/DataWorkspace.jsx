@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { API_URL } from '../../api.js';
 import { DATA_JOB_STATUS } from './artifactConstants.js';
+import WsIcon from './WsIcon.jsx';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -270,16 +271,16 @@ export default function DataWorkspace({ agentId }) {
                     gap: 14, marginBottom: 28,
                 }}>
                     {[
-                        { label: 'Propiedades', value: totalProps.toLocaleString(), icon: '🏠', sub: 'PropertyFinder' },
-                        { label: 'Price Drops',  value: totalDrops.toLocaleString(), icon: '📉', sub: 'PanicSelling'   },
-                        { label: 'Calidad',      value: typeof qualityScore === 'number' ? `${qualityScore}%` : qualityScore, icon: '✅', sub: 'Global'  },
-                        { label: 'Duplicados',   value: typeof dupCount === 'number' ? dupCount.toLocaleString() : dupCount, icon: '🔍', sub: 'Detectados' },
+                        { label: 'Propiedades', value: totalProps.toLocaleString(), icon: 'home',        sub: 'PropertyFinder' },
+                        { label: 'Price Drops',  value: totalDrops.toLocaleString(), icon: 'trending-down', sub: 'PanicSelling'   },
+                        { label: 'Calidad',      value: typeof qualityScore === 'number' ? `${qualityScore}%` : qualityScore, icon: 'check-square', sub: 'Global'  },
+                        { label: 'Duplicados',   value: typeof dupCount === 'number' ? dupCount.toLocaleString() : dupCount, icon: 'layers', sub: 'Detectados' },
                     ].map(s => (
                         <div key={s.label} style={{
                             background: '#fff', border: '1px solid #e2e8f0',
                             borderRadius: 12, padding: '16px 18px',
                         }}>
-                            <div style={{ fontSize: 22, marginBottom: 6 }}>{s.icon}</div>
+                            <div style={{ marginBottom: 8, color: '#94a3b8' }}><WsIcon name={s.icon} size={20} /></div>
                             <div style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>{s.value}</div>
                             <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
                                 {s.label} · {s.sub}
@@ -321,9 +322,9 @@ export default function DataWorkspace({ agentId }) {
                         gap: 16,
                     }}>
                         {[
-                            { job: pfJob,    source: 'propertyfinder', label: 'PropertyFinder', icon: '🏠', desc: 'Propiedades residenciales y comerciales de UAE' },
-                            { job: psJob,    source: 'panicselling',   label: 'PanicSelling',   icon: '📉', desc: 'Price drops de propiedades de lujo en Dubai' },
-                            { job: bayutJob, source: 'bayut',          label: 'Bayut',           icon: '🔍', desc: 'Portal inmobiliario alternativo de UAE' },
+                            { job: pfJob,    source: 'propertyfinder', label: 'PropertyFinder', icon: 'home',         desc: 'Propiedades residenciales y comerciales de UAE' },
+                            { job: psJob,    source: 'panicselling',   label: 'PanicSelling',   icon: 'trending-down', desc: 'Price drops de propiedades de lujo en Dubai' },
+                            { job: bayutJob, source: 'bayut',          label: 'Bayut',           icon: 'search',        desc: 'Portal inmobiliario alternativo de UAE' },
                         ].map(({ job, source, label, icon, desc }) => (
                             <div key={source} style={{
                                 background: '#fff', border: '1px solid #e2e8f0',
@@ -331,7 +332,7 @@ export default function DataWorkspace({ agentId }) {
                                 opacity: source === 'bayut' ? 0.65 : 1,
                             }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-                                    <span style={{ fontSize: 28 }}>{icon}</span>
+                                    <span style={{ color: '#64748b' }}><WsIcon name={icon} size={24} /></span>
                                     <StatusBadge status={job?.status || 'idle'} />
                                 </div>
 
@@ -549,9 +550,9 @@ export default function DataWorkspace({ agentId }) {
                                          : dedupJob.status === 'done'    ? '#065f46'
                                          : '#991b1b',
                                 }}>
-                                    {dedupJob.status === 'running' && '⏳ Deduplicación en curso…'}
-                                    {dedupJob.status === 'done'    && '✅ Deduplicación completada'}
-                                    {dedupJob.status === 'error'   && '❌ Error en deduplicación'}
+                                    {dedupJob.status === 'running' && 'Deduplicación en curso…'}
+                                    {dedupJob.status === 'done'    && 'Deduplicación completada'}
+                                    {dedupJob.status === 'error'   && 'Error en deduplicación'}
                                 </div>
                             )}
                         </div>

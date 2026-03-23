@@ -10,6 +10,14 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true
+      },
+      '/generated': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/avatars': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
       }
     }
   },
