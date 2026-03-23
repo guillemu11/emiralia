@@ -15,13 +15,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootEnvPath = path.resolve(__dirname, '../../.env');
 dotenv.config({ path: rootEnvPath });
 
-const pool = new pg.Pool({
-    host: process.env.PG_HOST || 'localhost',
-    port: parseInt(process.env.PG_PORT || '5433', 10),
-    database: process.env.PG_DB || 'emiralia',
-    user: process.env.PG_USER || 'emiralia',
-    password: process.env.PG_PASSWORD || 'changeme',
-    ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
-});
+const pool = process.env.DATABASE_URL
+    ? new pg.Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
+    })
+    : new pg.Pool({
+        host: process.env.PG_HOST || 'localhost',
+        port: parseInt(process.env.PG_PORT || '5433', 10),
+        database: process.env.PG_DB || 'emiralia',
+        user: process.env.PG_USER || 'emiralia',
+        password: process.env.PG_PASSWORD || 'changeme',
+        ssl: process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }
+    });
 
 export default pool;
