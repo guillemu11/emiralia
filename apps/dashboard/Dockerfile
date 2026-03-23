@@ -43,8 +43,9 @@ RUN npm install --omit=dev
 # Copy built React app
 COPY --from=builder /app/apps/dashboard/dist ./dist
 
-# Copy server and tools
+# Copy server, routes and tools
 COPY --from=builder /app/apps/dashboard/server.js ./
+COPY --from=builder /app/apps/dashboard/routes ./routes
 COPY --from=builder /app/tools /app/tools
 COPY --from=builder /app/.claude /app/.claude
 
