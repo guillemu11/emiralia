@@ -49,6 +49,12 @@ COPY --from=builder /app/apps/dashboard/routes ./routes
 COPY --from=builder /app/tools /app/tools
 COPY --from=builder /app/.claude /app/.claude
 
+# Copy static assets (avatars, generated images committed to repo)
+COPY --from=builder /app/apps/website/public /app/apps/website/public
+
+# Ensure generated dir exists for runtime-created files
+RUN mkdir -p /app/apps/website/public/generated
+
 ENV NODE_ENV=production
 EXPOSE 3001
 

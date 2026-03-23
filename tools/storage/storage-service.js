@@ -2,10 +2,16 @@
  * Storage Service — Abstraction layer for asset storage
  *
  * Backends:
- *   local — saves to local filesystem, served via express.static (development)
- *   r2    — Cloudflare R2 via S3-compatible API (production)
+ *   local    — saves to local filesystem, served via express.static (development)
+ *   supabase — Supabase Storage (production, free tier 1GB)
+ *   r2       — Cloudflare R2 via S3-compatible API (production)
  *
- * Selector: STORAGE_BACKEND=local|r2 (default: local)
+ * Selector: STORAGE_BACKEND=local|supabase|r2 (default: local)
+ *
+ * Supabase config (required when STORAGE_BACKEND=supabase):
+ *   SUPABASE_URL          — Project URL, e.g. https://xxx.supabase.co
+ *   SUPABASE_ANON_KEY     — Anon key (public)
+ *   SUPABASE_BUCKET       — Bucket name (default: emiralia-assets)
  *
  * R2 config (required when STORAGE_BACKEND=r2):
  *   R2_ACCOUNT_ID         — Cloudflare account ID
@@ -25,6 +31,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const STORAGE_BACKEND    = process.env.STORAGE_BACKEND || 'local';
+
+// Supabase config
+const SUPABASE_URL       = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_ANON_KEY  = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_BUCKET    = process.env.SUPABASE_BUCKET || 'emiralia-assets';
+
+// R2 config
 const R2_ACCOUNT_ID      = process.env.R2_ACCOUNT_ID;
 const R2_ACCESS_KEY_ID   = process.env.R2_ACCESS_KEY_ID;
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
@@ -66,6 +79,9 @@ export function generateKey(prefix, ext) {
  * @returns {Promise<{ url: string, key: string }>}
  */
 export async function upload(buffer, key, contentType) {
+    if (STORAGE_BACKEND === 'supabase') {
+        return uploadToSupabase(buffer, key, contentType);
+    }
     if (STORAGE_BACKEND === 'r2') {
         return uploadToR2(buffer, key, contentType);
     }
@@ -78,6 +94,9 @@ export async function upload(buffer, key, contentType) {
  * @param {string} key - Storage key returned by upload()
  */
 export async function deleteAsset(key) {
+    if (STORAGE_BACKEND === 'supabase') {
+        return deleteFromSupabase(key);
+    }
     if (STORAGE_BACKEND === 'r2') {
         return deleteFromR2(key);
     }
@@ -92,6 +111,9 @@ export async function deleteAsset(key) {
  * @returns {string}
  */
 export function getPublicUrl(key) {
+    if (STORAGE_BACKEND === 'supabase') {
+        return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${key}`;
+    }
     if (STORAGE_BACKEND === 'r2') {
         return `${R2_PUBLIC_URL}/${key}`;
     }
@@ -100,7 +122,7 @@ export function getPublicUrl(key) {
 
 /**
  * Returns which backend is active.
- * @returns {'local'|'r2'}
+ * @returns {'local'|'supabase'|'r2'}
  */
 export function getBackend() {
     return STORAGE_BACKEND;
@@ -128,6 +150,38 @@ async function deleteFromLocal(key) {
     } catch (err) {
         if (err.code !== 'ENOENT') throw err;
     }
+}
+
+// ─── Supabase Backend ─────────────────────────────────────────────────────────
+
+let _supabaseClient = null;
+
+async function getSupabaseClient() {
+    if (_supabaseClient) return _supabaseClient;
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        throw new Error('Supabase credentials not configured. Required: SUPABASE_URL, SUPABASE_ANON_KEY');
+    }
+    const { createClient } = await import('@supabase/supabase-js');
+    _supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return _supabaseClient;
+}
+
+async function uploadToSupabase(buffer, key, contentType) {
+    const supabase = await getSupabaseClient();
+    const { error } = await supabase.storage
+        .from(SUPABASE_BUCKET)
+        .upload(key, buffer, { contentType, upsert: true });
+    if (error) throw new Error(`[Storage:supabase] Upload failed: ${error.message}`);
+    const url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${key}`;
+    console.log(`[Storage:supabase] ✓ ${key} → ${url}`);
+    return { url, key };
+}
+
+async function deleteFromSupabase(key) {
+    const supabase = await getSupabaseClient();
+    const { error } = await supabase.storage.from(SUPABASE_BUCKET).remove([key]);
+    if (error) throw new Error(`[Storage:supabase] Delete failed: ${error.message}`);
+    console.log(`[Storage:supabase] Deleted ${key}`);
 }
 
 // ─── R2 Backend ───────────────────────────────────────────────────────────────

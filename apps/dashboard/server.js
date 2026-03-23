@@ -40,9 +40,13 @@ const port = process.env.PORT || process.env.DASHBOARD_PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: '15mb' }));
 
-// Serve generated images from website public directory
-app.use('/generated', express.static(path.resolve(__dirname, '../../apps/website/public/generated')));
-app.use('/avatars', express.static(path.resolve(__dirname, '../../apps/website/public/avatars')));
+// Serve generated images — uses GENERATED_IMAGES_DIR env var in production (Railway volume)
+const GENERATED_DIR = process.env.GENERATED_IMAGES_DIR
+  || path.resolve(__dirname, '../../apps/website/public/generated');
+const AVATARS_DIR = process.env.AVATARS_DIR
+  || path.resolve(__dirname, '../../apps/website/public/avatars');
+app.use('/generated', express.static(GENERATED_DIR));
+app.use('/avatars', express.static(AVATARS_DIR));
 
 // ─── API Key Auth Middleware (Feature 11: Security & Auth) ──────────────────
 
